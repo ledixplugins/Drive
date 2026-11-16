@@ -182,6 +182,24 @@ O teste confere a cadeia de cada um dos oito presets, que sai som, que nenhum
 preset passa de 0 dBFS, que a oitava abaixo aparece no espectro, os footswitches,
 os knobs, o menu, o estado salvo e as telas pequenas.
 
+## AURA Guitar Board (pedalboard de guitarra, no navegador)
+
+**https://thiagorgalvao-sketch.github.io/AURA/guitarboard/**
+
+Cinco pedais virtuais para guitarra, em ordem fixa: **overdrive → distorção →
+detune → chorus → delay**. Oito presets (LIMPO, CRUNCH, LEAD BLUES, ROCK, PESADO,
+SHOEGAZE, AMBIENTE, TUDO JUNTO) criados para este app, como ponto de partida.
+
+- O detune é um deslocador de altura de -50 a +50 cents, feito em
+  `guitarboard/gt-processor.js`; os demais pedais usam o Web Audio.
+- Mesmos gestos do pedalboard de baixo: footswitch, arrastar o knob, toque duplo
+  para o valor original, teclas `1` a `8`. Ajustes salvos no aparelho.
+
+```bash
+node Tests/guitarboard-dsp-test.js                       # detune, curvas, presets
+python3 -I Tests/guitarboard-ui-test.py site /tmp/gb     # Chromium de verdade
+```
+
 ### Publicar a versão web
 
 O site é montado a partir do próprio projeto (mesmo painel, mesmas IRs, mesmo

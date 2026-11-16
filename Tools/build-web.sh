@@ -69,6 +69,15 @@ cp pedalboard/icons/icon-192.png pedalboard/icons/icon-512.png "$OUT/pedalboard/
 cp LICENSE "$OUT/pedalboard/LICENSE.txt"
 cp "$OUT/CREDITOS.txt" "$OUT/pedalboard/CREDITOS.txt"
 
+# ---- Pedalboard de guitarra AURA Guitar Board (app separado, em /guitarboard) ---------------
+mkdir -p "$OUT/guitarboard/assets"
+cp guitarboard/index.html guitarboard/style.css guitarboard/app.js guitarboard/engine.js \
+   guitarboard/presets.js guitarboard/gt-processor.js guitarboard/sw.js \
+   guitarboard/manifest.webmanifest "$OUT/guitarboard/"
+cp guitarboard/icons/icon-192.png guitarboard/icons/icon-512.png "$OUT/guitarboard/assets/"
+cp LICENSE "$OUT/guitarboard/LICENSE.txt"
+cp "$OUT/CREDITOS.txt" "$OUT/guitarboard/CREDITOS.txt"
+
 # ---- Planejador de Pedalboard (layout e cabos, em /boardplanner) ----------------------------
 mkdir -p "$OUT/boardplanner"
 cp boardplanner/index.html boardplanner/pedais-rivus.json "$OUT/boardplanner/"

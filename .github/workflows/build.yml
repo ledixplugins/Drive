@@ -123,7 +123,14 @@ jobs:
           cp -R "$ART/VST3/AURA Bass.vst3" "dist/win/VST3/"
           cp "$ART/Standalone/AURA Bass.exe" "dist/win/"
           cp packaging/EULA.txt dist/win/
-          "/c/Program Files (x86)/NSIS/makensis.exe" -DVERSAO="$VERSION" -DSRC="$(pwd -W)/dist/win" packaging/aura-bass.nsi
+          choco install nsis -y --no-progress --limit-output >/dev/null
+          NSIS=""
+          for c in "/c/Program Files (x86)/NSIS/makensis.exe" "/c/Program Files/NSIS/makensis.exe"; do
+            [ -x "$c" ] && NSIS="$c" && break
+          done
+          if [ -z "$NSIS" ]; then echo "makensis não encontrado"; ls "/c/Program Files (x86)" | head -40; exit 1; fi
+          echo "usando $NSIS"
+          "$NSIS" -DVERSAO="$VERSION" -DSRC="$(pwd -W)/dist/win" packaging/aura-bass.nsi
           mv packaging/AURA-Bass-Windows.exe dist/ 2>/dev/null || mv AURA-Bass-Windows.exe dist/
           ls -la dist/
 

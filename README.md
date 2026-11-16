@@ -86,6 +86,25 @@ entrada → HPF 18 Hz → pré-ênfase (+6 dB @ 800 Hz)
 
 Todos os parâmetros têm suavização (sem cliques), o Blend é alinhado com a latência do oversampling (sem phasing), e o plugin aceita mono e estéreo.
 
+## Licença e instaladores
+
+O AURA Bass tem **teste de 15 dias** com todos os recursos. Depois disso é
+preciso uma chave de ativação; cada chave vale para até 3 aparelhos e funciona
+por 30 dias sem internet entre as confirmações. As regras estão em
+`Source/Licenca.cpp` e são cobertas por 27 testes.
+
+Os instaladores saem da própria Release:
+
+- **Windows:** `AURA-Bass-Windows.exe` (NSIS — `packaging/aura-bass.nsi`), com
+  o VST3 na pasta padrão e o programa autônomo com atalho no menu Iniciar;
+- **macOS:** `AURA-Bass-macOS.pkg`, com três escolhas: programa, VST3 e AU.
+
+Os dois mostram o contrato de `packaging/EULA.txt` — que é **minuta** e precisa
+de revisão de um advogado antes da venda. Nenhum dos dois é assinado: o sistema
+avisa que o desenvolvedor é desconhecido.
+
+Página do produto: `plugins/aurabass/` no repositório `escala-b6`.
+
 ## Medidor de entrada e trim
 
 Na faixa entre os dois footswitches há um medidor que mostra o que está

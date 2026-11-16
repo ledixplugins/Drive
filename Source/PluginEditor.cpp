@@ -371,11 +371,15 @@ AuraPanel::AuraPanel (AuraBassAudioProcessor& p) : processor (p)
         spot->onContextMenu = [this, param] { if (onParameterContextMenu) onParameterContextMenu (*param); };
     }
 
+    licencaOverlay = std::make_unique<LicencaOverlay> (processor);
+    addChildComponent (*licencaOverlay);
+
     // Antes do setSize: é ele que dispara o resized que posiciona os filhos.
     meter = std::make_unique<InputMeter> (processor,
                dynamic_cast<RangedAudioParameter*> (processor.apvts.getParameter (ParamIDs::trim)));
     meter->setTitle ("Entrada");
     addAndMakeVisible (*meter);
+    if (licencaOverlay != nullptr) licencaOverlay->toFront (false);   // sempre por cima
 
     setSize (L::width, L::height);
     timerCallback();
@@ -437,6 +441,20 @@ void AuraPanel::repaintKnobArea (size_t index)
 void AuraPanel::timerCallback()
 {
     if (meter != nullptr) meter->tick();
+
+    // Uma vez por segundo: o teste pode ter acabado com o plugin aberto.
+    if (--quadrosAteRevisarLicenca <= 0)
+    {
+        quadrosAteRevisarLicenca = 30;
+        const bool antes = processor.licenca.liberado();
+        processor.revisarLicenca();
+        if (licencaOverlay != nullptr && (antes != processor.licenca.liberado()
+                                          || licencaOverlay->isVisible() != ! processor.licenca.liberado()))
+        {
+            licencaOverlay->atualizar();
+            repaint();
+        }
+    }
 
     const bool d = processor.apvts.getRawParameterValue (ParamIDs::driveOn)->load() > 0.5f;
     const bool c = processor.apvts.getRawParameterValue (ParamIDs::cab)->load() > 0.5f;
@@ -516,6 +534,19 @@ void AuraPanel::paint (Graphics& g)
 
 void AuraPanel::paintOverChildren (Graphics& g)
 {
+    // Aviso do teste: discreto, mas sempre à vista, à esquerda do menu.
+    if (processor.licenca.status() == AuraLicenca::Status::teste)
+    {
+        namespace L = AuraLayout;
+        const int dias = processor.licenca.diasRestantes();
+        const auto texto = String::fromUTF8 (dias == 1 ? "TESTE · ÚLTIMO DIA"
+                                                       : "TESTE · ") + (dias == 1 ? String() : String (dias) + String::fromUTF8 (" DIAS"));
+        g.setFont (Font (FontOptions (9.5f)).withExtraKerningFactor (0.16f));
+        g.setColour (Colour (dias <= 3 ? 0xffe8890c : 0xff8a9099));
+        g.drawText (texto, (int) (L::menuButton.x - 168.0f), (int) (L::menuButton.y + 4.0f),
+                    160, 14, Justification::centredRight, false);
+    }
+
     if (tunerOn) return;   // o visor do afinador cobre os knobs
 
     const auto& font = assets->valueFont;
@@ -583,6 +614,225 @@ void AuraPanel::showCabMenu()
             safe->chooseIrFile();
         safe->timerCallback();
     });
+}
+
+//==============================================================================
+namespace
+{
+    /** Thread descartável que roda uma função e termina. */
+    class LambdaThread : public juce::Thread
+    {
+    public:
+        LambdaThread (const juce::String& nome, std::function<void()> f)
+            : juce::Thread (nome), funcao (std::move (f)) {}
+        ~LambdaThread() override { stopThread (3000); }
+        void run() override { if (funcao) funcao(); }
+    private:
+        std::function<void()> funcao;
+    };
+}
+
+//==============================================================================
+LicencaOverlay::LicencaOverlay (AuraBassAudioProcessor& p) : processor (p)
+{
+    campoChave.setTextToShowWhenEmpty (String::fromUTF8 ("cole aqui a sua chave de ativação"),
+                                       Colours::white.withAlpha (0.35f));
+    campoChave.setJustification (Justification::centred);
+    campoChave.setFont (Font (FontOptions (15.0f)));
+    campoChave.setColour (TextEditor::backgroundColourId, Colour (0xff0e0f11));
+    campoChave.setColour (TextEditor::outlineColourId, Colour (0xff454a52));
+    campoChave.setColour (TextEditor::focusedOutlineColourId, Colour (0xffe8890c));
+    campoChave.setColour (TextEditor::textColourId, Colours::white);
+    campoChave.onReturnKey = [this] { tentarAtivar(); };
+    addAndMakeVisible (campoChave);
+
+    botaoAcao.onClick = [this]
+    {
+        if (processor.licenca.status() == AuraLicenca::Status::licenciada) tentarDesativar();
+        else                                                              tentarAtivar();
+    };
+    addAndMakeVisible (botaoAcao);
+
+    // A venda ainda não está aberta: o botão fica avisando, sem levar a lugar nenhum.
+    botaoComprar.setEnabled (false);
+    botaoComprar.setTooltip (String::fromUTF8 ("A venda abre em breve."));
+    addAndMakeVisible (botaoComprar);
+
+    setInterceptsMouseClicks (true, true);
+    atualizar();
+    // Aberta pelo menu durante o teste, fecha com Esc
+    setWantsKeyboardFocus (true);
+}
+
+LicencaOverlay::~LicencaOverlay()
+{
+    stopTimer();
+    if (trabalho != nullptr) trabalho->stopThread (3000);
+}
+
+void LicencaOverlay::atualizar()
+{
+    using S = AuraLicenca::Status;
+    const auto st = processor.licenca.status();
+    const bool precisa = forcada || ! AuraLicenca::liberado (st);
+
+    setVisible (precisa);
+    if (! precisa) { stopTimer(); return; }
+
+    if (forcada && AuraLicenca::liberado (st))
+    {
+        mensagem = st == AuraLicenca::Status::licenciada
+                     ? String::fromUTF8 ("Licença ativa neste aparelho. Chave ")
+                         + processor.licenca.chaveMascarada() + "."
+                     : String::fromUTF8 ("Você está no teste de 15 dias — faltam ")
+                         + String (processor.licenca.diasRestantes())
+                         + String::fromUTF8 (" dias. Já tem uma chave? Cole abaixo.");
+        botaoAcao.setButtonText (st == AuraLicenca::Status::licenciada
+                                   ? String::fromUTF8 ("DESATIVAR ESTE APARELHO")
+                                   : String::fromUTF8 ("ATIVAR"));
+        botaoComprar.setButtonText (String::fromUTF8 ("COMPRAR LICENÇA — em breve"));
+        campoChave.setVisible (st != AuraLicenca::Status::licenciada);
+        botaoAcao.setVisible (true);
+        repaint();
+        return;
+    }
+
+    switch (st)
+    {
+        case S::relogio:
+            mensagem = String::fromUTF8 ("O relógio do computador está atrasado em relação ao último uso. "
+                                         "Acerte a data e a hora do sistema para continuar.");
+            break;
+        case S::revalidar:
+            mensagem = String::fromUTF8 ("Faz mais de 30 dias que não conseguimos confirmar a sua licença. "
+                                         "Conecte-se à internet e toque em ATIVAR.");
+            break;
+        case S::expirado:
+        default:
+            mensagem = String::fromUTF8 ("O seu teste de 15 dias terminou. Para continuar usando o AURA Bass, "
+                                         "cole a sua chave de ativação.");
+            break;
+    }
+
+    botaoAcao.setButtonText (st == S::licenciada ? String::fromUTF8 ("DESATIVAR ESTE APARELHO")
+                                                 : String::fromUTF8 ("ATIVAR"));
+    botaoComprar.setButtonText (String::fromUTF8 ("COMPRAR LICENÇA — em breve"));
+    campoChave.setVisible (st != S::relogio);
+    botaoAcao.setVisible (st != S::relogio);
+    repaint();
+}
+
+void LicencaOverlay::tentarAtivar()
+{
+    if (ocupado) return;
+    const auto chave = campoChave.getText().trim();
+    if (chave.isEmpty()) { erro = String::fromUTF8 ("Cole a chave de ativação."); repaint(); return; }
+
+    ocupado = true;
+    erro = {};
+    botaoAcao.setEnabled (false);
+    repaint();
+
+    // A rede não pode bloquear a interface: vai para uma thread própria.
+    trabalho.reset (new LambdaThread ("aura-licenca", [this, chave]
+    {
+        const auto r = processor.licenca.ativar (chave);
+        MessageManager::callAsync ([this, r]
+        {
+            ocupado = false;
+            botaoAcao.setEnabled (true);
+            erro = r.ok ? String() : r.erro;
+            processor.revisarLicenca();
+            atualizar();
+        });
+    }));
+    trabalho->startThread();
+}
+
+void LicencaOverlay::tentarDesativar()
+{
+    if (ocupado) return;
+    ocupado = true;
+    erro = {};
+    botaoAcao.setEnabled (false);
+    repaint();
+
+    trabalho.reset (new LambdaThread ("aura-licenca", [this]
+    {
+        const auto r = processor.licenca.desativar();
+        MessageManager::callAsync ([this, r]
+        {
+            ocupado = false;
+            botaoAcao.setEnabled (true);
+            erro = r.ok ? String() : r.erro;
+            processor.revisarLicenca();
+            atualizar();
+        });
+    }));
+    trabalho->startThread();
+}
+
+void LicencaOverlay::abrirSempre()
+{
+    forcada = true;
+    erro = {};
+    atualizar();
+    toFront (true);
+}
+
+void LicencaOverlay::timerCallback() {}
+
+void LicencaOverlay::paint (Graphics& g)
+{
+    namespace L = AuraLayout;
+    const float esc = (float) getWidth() / L::width;
+
+    g.fillAll (Colour (0xfa08090b));
+
+    auto area = getLocalBounds().toFloat().reduced (40.0f * esc, 26.0f * esc);
+
+    g.setColour (Colours::white);
+    g.setFont (Font (FontOptions (26.0f * esc)).withExtraKerningFactor (0.18f));
+    g.drawText ("AURA BASS", area.removeFromTop (34.0f * esc), Justification::centred, false);
+
+    g.setColour (Colour (0xffe8890c));
+    g.setFont (Font (FontOptions (11.0f * esc)).withExtraKerningFactor (0.3f));
+    g.drawText (String::fromUTF8 (ocupado ? "FALANDO COM O SERVIDOR..." : "ATIVAÇÃO"),
+                area.removeFromTop (18.0f * esc), Justification::centred, false);
+
+    area.removeFromTop (4.0f * esc);
+    g.setColour (Colours::white.withAlpha (0.82f));
+    g.setFont (Font (FontOptions (13.5f * esc)));
+    g.drawFittedText (mensagem, area.removeFromTop (44.0f * esc).toNearestInt(),
+                      Justification::centredTop, 3);
+
+    if (erro.isNotEmpty())
+    {
+        g.setColour (Colour (0xffe8503a));
+        g.setFont (Font (FontOptions (12.5f * esc)));
+        g.drawFittedText (erro, getLocalBounds().withTop ((int) (266.0f * esc)).withHeight ((int) (20.0f * esc)),
+                          Justification::centred, 2);
+    }
+
+    g.setColour (Colours::white.withAlpha (0.42f));
+    g.setFont (Font (FontOptions (10.5f * esc)));
+    g.drawFittedText (String::fromUTF8 ("Cada chave vale para até 3 aparelhos seus.  Aparelho: ")
+                        + processor.licenca.nomeDoAparelho()
+                        + String::fromUTF8 ("\nDepois de ativada, a licença funciona até 30 dias sem internet."),
+                      getLocalBounds().removeFromBottom ((int) (32.0f * esc)).translated (0, (int) (-10.0f * esc)),
+                      Justification::centredTop, 2);
+}
+
+void LicencaOverlay::resized()
+{
+    namespace L = AuraLayout;
+    const float esc = (float) getWidth() / L::width;
+    const int larg = (int) (340.0f * esc);
+    const int meio = getWidth() / 2;
+
+    campoChave.setBounds (meio - larg / 2, (int) (150.0f * esc), larg, (int) (36.0f * esc));
+    botaoAcao.setBounds (meio - larg / 2, (int) (194.0f * esc), larg, (int) (32.0f * esc));
+    botaoComprar.setBounds (meio - larg / 2, (int) (232.0f * esc), larg, (int) (28.0f * esc));
 }
 
 //==============================================================================
@@ -773,6 +1023,13 @@ void AuraPanel::showMainMenu (bool fromButton)
                       "Arrastar no medidor IN: trim de entrada" })
         m.addItem (-1, String::fromUTF8 (tip), false);
 
+    m.addSeparator();
+    m.addSectionHeader (String::fromUTF8 ("Licença"));
+    m.addItem (-1, AuraLicenca::textoDoStatus (processor.licenca.status(),
+                                               processor.licenca.diasRestantes()), false);
+    m.addItem (910, String::fromUTF8 (processor.licenca.status() == AuraLicenca::Status::licenciada
+                                        ? "Gerenciar a licença..." : "Ativar com uma chave..."));
+
 #if JucePlugin_Build_Standalone
     m.addSeparator();
     m.addSectionHeader (String::fromUTF8 ("Áudio"));
@@ -802,6 +1059,11 @@ void AuraPanel::showMainMenu (bool fromButton)
     m.showMenuAsync (options, [safe = SafePointer<AuraPanel> (this), scales] (int r)
     {
         if (safe == nullptr) return;
+        if (r == 910)
+        {
+            if (safe->licencaOverlay != nullptr) safe->licencaOverlay->abrirSempre();
+            return;
+        }
 #if JucePlugin_Build_Standalone
         if (r == 900 || r == 901)
         {
@@ -830,6 +1092,7 @@ void AuraPanel::resized()
         knobs[i]->centre = { k.cx - (float) b.getX(), k.cy - (float) b.getY() };
     }
     if (meter != nullptr) meter->setBounds (toInt (L::meterHit));
+    if (licencaOverlay != nullptr) licencaOverlay->setBounds (getLocalBounds());
     driveSpot.setBounds (toInt (L::driveHit));
     tunerSpot.setBounds (toInt (L::tunerHit));
     cabSpot.setBounds (toInt (L::cabHit));

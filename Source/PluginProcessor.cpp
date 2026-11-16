@@ -56,6 +56,8 @@ AuraBassAudioProcessor::AuraBassAudioProcessor()
     static const char* volatile auraSelo = AuraAutoria::marca;
     juce::ignoreUnused (auraSelo);
 
+    licencaLiberada.store (licenca.liberado(), std::memory_order_relaxed);
+
     pTrim     = apvts.getRawParameterValue (ParamIDs::trim);
     pLevel    = apvts.getRawParameterValue (ParamIDs::level);
     pDrive    = apvts.getRawParameterValue (ParamIDs::drive);
@@ -394,6 +396,15 @@ void AuraBassAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
         autoGain.setTargetValue (levelCompensation (d));
     }
 
+    // Sem licença válida o plugin não processa: sai silêncio, e a interface
+    // explica o porquê. Durante o teste de 15 dias fica tudo liberado.
+    if (! licencaLiberada.load (std::memory_order_relaxed))
+    {
+        buffer.clear();
+        inputPeak.store (0.0f, std::memory_order_relaxed);
+        return;
+    }
+
     // Trim de entrada, antes de tudo: o afinador e o medidor já veem o sinal
     // ajustado, e o Drive não precisa compensar a saída da interface.
     trimGain.setTargetValue (dbToGain (pTrim->load()));
@@ -657,6 +668,12 @@ void AuraBassAudioProcessor::setStateInformation (const void* data, int sizeInBy
     if (auto* t = apvts.getParameter (ParamIDs::tuner))
         t->setValueNotifyingHost (0.0f);
     setCabIR (ir);
+}
+
+void AuraBassAudioProcessor::revisarLicenca()
+{
+    licenca.recalcular();
+    licencaLiberada.store (licenca.liberado(), std::memory_order_relaxed);
 }
 
 juce::AudioProcessorEditor* AuraBassAudioProcessor::createEditor()

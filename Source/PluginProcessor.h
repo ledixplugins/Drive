@@ -5,6 +5,8 @@
 // Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
 #pragma once
 
+#include "Licenca.h"
+
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_dsp/juce_dsp.h>
 #include "Tuner.h"
@@ -101,6 +103,12 @@ public:
 
     // Afinador: com o parâmetro "tuner" ligado, a saída fica muda e a entrada alimenta o detector
     Tuner& getTuner() noexcept { return tuner; }
+
+    // Licença: o teste de 15 dias e a ativação. A thread de áudio só lê o
+    // sinalizador atômico; quem mexe no disco e na rede é a interface.
+    AuraLicenca::Gerente licenca;
+    std::atomic<bool> licencaLiberada { true };
+    void revisarLicenca();
 
     // Medidor de entrada: pico do bloco (linear, já com o trim aplicado) e um
     // aviso de clip que fica grudado até a interface ler.

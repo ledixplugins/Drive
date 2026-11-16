@@ -7,6 +7,7 @@
 // estabilidade numérica e o alinhamento do Blend (sem phasing).
 #include "../Source/PluginProcessor.h"
 #include "../Source/PluginEditor.h"
+#include "../Source/Licenca.h"
 #include <cstdio>
 
 namespace
@@ -131,6 +132,81 @@ int main()
                      drive, juce::Decibels::gainToDecibels (rms (out, from) * std::sqrt (2.0)), thd,
                      juce::Decibels::gainToDecibels (h2 / h1), juce::Decibels::gainToDecibels (h3 / h1));
         check (finite (out), "sem NaN/Inf");
+    }
+
+    std::printf ("Licença: teste de 15 dias, relógio e ativação\n");
+    {
+        using namespace AuraLicenca;
+        const double dia = umDiaMs;
+        const double hoje = 1.7e12;                      // um instante qualquer
+
+        Estado novo;                                     // nunca aberto
+        check (avaliar (novo, hoje) == Status::teste, "sem histórico, começa em teste");
+        check (diasRestantes (novo, hoje) == 15, "teste começa com 15 dias");
+
+        Estado e; e.t0 = hoje; e.seen = hoje;
+        check (diasRestantes (e, hoje + 1 * dia) == 14, "passou um dia, restam 14");
+        check (diasRestantes (e, hoje + 14.9 * dia) == 1, "no último dia ainda resta 1");
+        check (avaliar (e, hoje + 15.0 * dia) == Status::expirado, "no 15º dia o teste acaba");
+        check (! liberado (avaliar (e, hoje + 15.0 * dia)), "expirado não libera o processamento");
+        check (liberado (avaliar (e, hoje + 14.0 * dia)), "dentro do teste libera");
+
+        // Atrasar o relógio não devolve dias nem destrava nada
+        Estado usado; usado.t0 = hoje; usado.seen = hoje + 20 * dia;
+        check (avaliar (usado, hoje + 1 * dia) == Status::relogio, "relógio atrasado bloqueia");
+        check (diasRestantes (usado, hoje + 1 * dia) == 0, "relógio atrasado não devolve dias");
+
+        // Adiantar o relógio só gasta o teste mais rápido
+        Estado frente; frente.t0 = hoje; frente.seen = hoje;
+        check (avaliar (frente, hoje + 400 * dia) == Status::expirado, "adiantar o relógio não estende o teste");
+
+        // Chave ativa: vale offline por 30 dias, depois pede revalidação
+        Estado lic; lic.t0 = hoje; lic.seen = hoje; lic.chave = "ABC-123"; lic.instancia = "i1"; lic.val = hoje;
+        check (avaliar (lic, hoje + 29 * dia) == Status::licenciada, "licença vale offline por 30 dias");
+        check (liberado (avaliar (lic, hoje + 29 * dia)), "licença em dia libera o processamento");
+        check (avaliar (lic, hoje + 31 * dia) == Status::revalidar, "passados 30 dias, pede revalidação");
+        check (! liberado (avaliar (lic, hoje + 31 * dia)), "revalidação pendente não libera");
+        check (avaliar (lic, hoje + 400 * dia) == Status::revalidar, "licença nunca volta a ser teste");
+
+        // Mesclar os dois arquivos: vale a abertura mais antiga
+        Estado a1; a1.t0 = hoje + 5 * dia; a1.seen = hoje + 6 * dia;
+        Estado a2; a2.t0 = hoje;           a2.seen = hoje + 2 * dia;
+        const auto m = mesclar (a1, a2);
+        check (m.t0 == hoje, "mesclar mantém a primeira abertura mais antiga");
+        check (m.seen == hoje + 6 * dia, "mesclar mantém a maior data vista");
+        check (mesclar (Estado{}, a2).t0 == hoje, "arquivo apagado não reinicia o teste");
+
+        Estado comChave; comChave.chave = "K"; comChave.instancia = "i"; comChave.val = hoje + 9 * dia;
+        check (mesclar (a1, comChave).temChave(), "mesclar preserva a chave ativada");
+
+        // O gerente grava nos dois lugares e não reinicia ao apagar um deles
+        Gerente g;
+        auto base = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("aura-lic-teste");
+        base.deleteRecursively();
+        g.arquivo1 = base.getChildFile ("a/lic.json");
+        g.arquivo2 = base.getChildFile ("b/.lic");
+        double relogio = hoje;
+        g.agora = [&relogio] { return relogio; };
+        g.atualizar();
+        check (g.status() == Status::teste && g.diasRestantes() == 15, "primeira abertura: 15 dias");
+        check (g.arquivo1.existsAsFile() && g.arquivo2.existsAsFile(), "grava o estado nos dois lugares");
+
+        relogio = hoje + 10 * dia;
+        g.atualizar();
+        check (g.diasRestantes() == 5, "dez dias depois, restam 5");
+
+        g.arquivo1.deleteFile();                       // "reinstalou o plugin"
+        g.atualizar();
+        check (g.diasRestantes() == 5, "apagar um dos arquivos não reinicia o teste");
+        check (g.arquivo1.existsAsFile(), "o arquivo apagado é refeito");
+
+        relogio = hoje;                                // "voltou o relógio"
+        g.atualizar();
+        check (g.status() == Status::relogio, "voltar o relógio é detectado pelo gerente");
+        check (! g.liberado(), "com o relógio atrasado o plugin não processa");
+
+        check (g.idDoAparelho().length() == 32, "o aparelho tem um identificador estável");
+        base.deleteRecursively();
     }
 
     std::printf ("Trim de entrada e medidor\n");
@@ -611,10 +687,20 @@ int main()
         }
         if (auto* sc = std::getenv ("AURA_SNAPSHOT_SCALE"))
             p.setUiScale (juce::String (sc).getFloatValue());
+
+        // Tela de ativação: força o teste a parecer vencido só para a imagem
+        if (std::getenv ("AURA_SNAPSHOT_LICENCA") != nullptr)
+        {
+            p.licenca.agora = [] { return (double) juce::Time::currentTimeMillis()
+                                          + 400.0 * AuraLicenca::umDiaMs; };
+            p.revisarLicenca();
+        }
+
         std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor());
         std::printf ("Editor %dx%d\n", ed->getWidth(), ed->getHeight());
-        if (std::getenv ("AURA_SNAPSHOT_TUNER") != nullptr)
-            for (int i = 0; i < 12; ++i)     // deixa o timer da interface ler o detector
+        if (std::getenv ("AURA_SNAPSHOT_TUNER") != nullptr
+            || std::getenv ("AURA_SNAPSHOT_LICENCA") != nullptr)
+            for (int i = 0; i < 40; ++i)     // deixa o timer da interface rodar
                 juce::MessageManager::getInstance()->runDispatchLoopUntil (40);
         auto img = ed->createComponentSnapshot (ed->getLocalBounds(), true, 2.0f);
         juce::File file (outPath);

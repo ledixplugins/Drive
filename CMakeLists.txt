@@ -78,7 +78,8 @@ juce_add_binary_data(AuraAssets SOURCES
 
 target_sources(AuraBass PRIVATE
     Source/PluginProcessor.cpp
-    Source/PluginEditor.cpp)
+    Source/PluginEditor.cpp
+    Source/Licenca.cpp)
 
 target_compile_definitions(AuraBass PUBLIC
     JUCE_WEB_BROWSER=0
@@ -105,7 +106,8 @@ if(AURA_BUILD_TESTS)
     target_sources(AuraDSPTest PRIVATE
         Tests/DspTest.cpp
         Source/PluginProcessor.cpp
-        Source/PluginEditor.cpp)
+        Source/PluginEditor.cpp
+        Source/Licenca.cpp)
     target_compile_definitions(AuraDSPTest PRIVATE
         JucePlugin_Name="AURA Bass"
         JucePlugin_VersionString="${PROJECT_VERSION}"
@@ -115,6 +117,7 @@ if(AURA_BUILD_TESTS)
     target_link_libraries(AuraDSPTest PRIVATE
         AuraAssets
         juce::juce_audio_utils
+        juce::juce_cryptography
         juce::juce_dsp
         juce::juce_recommended_config_flags)
 endif()

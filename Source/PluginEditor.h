@@ -60,6 +60,40 @@ private:
 };
 
 //==============================================================================
+// Tela de ativação: aparece quando o teste acaba, quando a licença precisa de
+// revalidação ou quando o relógio do sistema está atrasado.
+class LicencaOverlay : public juce::Component,
+                       private juce::Timer
+{
+public:
+    explicit LicencaOverlay (AuraBassAudioProcessor&);
+    ~LicencaOverlay() override;
+
+    void paint (juce::Graphics&) override;
+    void resized() override;
+
+    /** Mostra ou esconde conforme o status, e atualiza os textos. */
+    void atualizar();
+
+    /** Abre a tela mesmo durante o teste (item do menu). */
+    void abrirSempre();
+
+private:
+    void timerCallback() override;
+    void tentarAtivar();
+    void tentarDesativar();
+
+    AuraBassAudioProcessor& processor;
+    juce::TextEditor campoChave;
+    juce::TextButton botaoAcao;
+    juce::TextButton botaoComprar;
+    juce::String mensagem, erro;
+    bool ocupado = false;
+    bool forcada = false;
+    std::unique_ptr<juce::Thread> trabalho;
+};
+
+//==============================================================================
 // Medidor de entrada com ajuste de trim: mostra o pico que está chegando e
 // acende o ponto de clip. Arrastar na vertical muda o trim; duplo clique zera.
 class InputMeter : public juce::Component
@@ -165,6 +199,8 @@ private:
     MenuButton menuButton;
 
     std::unique_ptr<InputMeter> meter;
+    std::unique_ptr<LicencaOverlay> licencaOverlay;
+    int quadrosAteRevisarLicenca = 0;
     HotSpot driveSpot, cabSpot, tunerSpot;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> driveAttachment, cabAttachment, tunerAttachment;
     TunerDisplay tunerDisplay { *assets };

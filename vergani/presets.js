@@ -116,13 +116,13 @@ const PRESETS = [
 
 const PEDAIS = {
   tuner: {
-    nome: 'AFINADOR', sub: 'liga = saída muda', cor: '#3c4a3c',
+    nome: 'AFINADOR', sub: 'liga = saída muda', cor: '#2c6b46', luz: '#7bf0a0',
     knobs: [
       { id: 'ref', rot: 'LÁ =', min: 430, max: 450, passo: 1, un: 'Hz' },
     ],
   },
   overdrive: {
-    nome: 'OVERDRIVE', sub: 'saturação macia', cor: '#8a6a24',
+    nome: 'OVERDRIVE', sub: 'saturação macia', cor: '#8a6a24', luz: '#f0c45a',
     knobs: [
       { id: 'drive', rot: 'DRIVE', min: 0,   max: 100,  passo: 1,   un: '' },
       { id: 'tone',  rot: 'TONE',  min: 800, max: 8000, passo: 10,  un: 'Hz' },
@@ -130,7 +130,7 @@ const PEDAIS = {
     ],
   },
   distortion: {
-    nome: 'DISTORTION', sub: 'corte duro', cor: '#7a2626',
+    nome: 'DISTORTION', sub: 'corte duro', cor: '#7a2626', luz: '#ff7a6a',
     knobs: [
       { id: 'drive', rot: 'DRIVE', min: 0,   max: 100,  passo: 1,   un: '' },
       { id: 'tone',  rot: 'TONE',  min: 800, max: 8000, passo: 10,  un: 'Hz' },
@@ -138,14 +138,14 @@ const PEDAIS = {
     ],
   },
   detune: {
-    nome: 'DETUNE', sub: 'afinação em cents', cor: '#5a4590',
+    nome: 'DETUNE', sub: 'afinação em cents', cor: '#5a4590', luz: '#b59cff',
     knobs: [
       { id: 'cents', rot: 'CENTS', min: -50, max: 50,  passo: 1, un: 'ct' },
       { id: 'mix',   rot: 'MIX',   min: 0,   max: 100, passo: 1, un: '%' },
     ],
   },
   chorus: {
-    nome: 'CHORUS', sub: 'duas vozes', cor: '#26645f',
+    nome: 'CHORUS', sub: 'duas vozes', cor: '#26645f', luz: '#4fe0cc',
     knobs: [
       { id: 'rate',  rot: 'RATE',  min: 0.05, max: 6,   passo: 0.01, un: 'Hz' },
       { id: 'depth', rot: 'DEPTH', min: 0,    max: 100, passo: 1,    un: '%' },
@@ -153,7 +153,7 @@ const PEDAIS = {
     ],
   },
   delay: {
-    nome: 'DELAY', sub: 'repetições escuras', cor: '#2f5a7a',
+    nome: 'DELAY', sub: 'repetições escuras', cor: '#2f5a7a', luz: '#62b8f5',
     knobs: [
       { id: 'time',     rot: 'TIME',     min: 40,  max: 1000, passo: 5,  un: 'ms' },
       { id: 'feedback', rot: 'FEEDBACK', min: 0,   max: 90,   passo: 1,  un: '%' },

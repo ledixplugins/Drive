@@ -3,8 +3,8 @@ Autor e titular: Thiago Galvão
 Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 Leis 9.609/1998 e 9.610/1998 — a proteção independe de registro.
 
-Gerado em (UTC): 2026-11-16T23:16:08Z
-Commit do repositório: 4f7ffcfd642a62f62a1f110c85fd6c07ffe22e38
+Gerado em (UTC): 2026-11-16T23:23:44Z
+Commit do repositório: c69ae570f2802b30b7c8dd74f8465911378f3e28
 Arquivos: 52
 
 SHA-256 de cada arquivo:
@@ -44,7 +44,7 @@ d1c2a509a2ba9c6b9f4a64ba6b3bb8ef80395e539638f1521376157023565daa  Tests/web-dsp-
 7e3e41e2dbce769a293d4779b6f74e5a13cca42e117c7761793dd1dc0a6d6982  Tests/web-ui-test.py
 a5537db14b7262ec697372816e461ab69384bca35c81588cd1a1b4838e57d065  Tools/FootswitchRender/Main.cpp
 63102f994f228c5d8bd9ce4a79776d7d6af6687faf72e22d6e7852f11db99fe7  Tools/autoria-hashes.sh
-c9333717e2acbef8b8297a78776a96a3f36dcd072c3964dffd7f7bc565af19fc  Tools/build-web.sh
+d5c44c9800b8b77fa4e95768d3567da5850cd180121dd3e840aaff181538976e  Tools/build-web.sh
 ca7626bc0e261e70fa463ae8508a8df0ce7bab1dc0146ab2bee34ecd834fd0ed  Tools/build_ui_assets.py
 ffb95917793c105ab113fe9414b69c8c0d90c44963ac6aed67e8e864641e39c1  Tools/make_cab_irs.py
 a82db1dd7ee949c87cc30bcf6683559b023feb8fb9ea60aedcd97a7dae03c192  Tools/versiona-site.py
@@ -64,7 +64,7 @@ e960945871ee31fc5289a364b0bfa00850150cd3828ee602e790722bc487aeab  web/tuner.js
 --------------------------------------------------------------------
 
 RESUMO DA OBRA (SHA-256 da lista acima):
-1885fbfc4dfecfdc6316ca10efe7771e7e80e1d9157204567fea4695ff7abf67
+93b36a84ea09bfbe466e6b29a00a73fbf257df8731b27530b56348e7c99f5668
 
 Esse resumo identifica a obra inteira nesta data. Qualquer alteração em
 qualquer arquivo muda o resumo. Para ter prova de data independente,

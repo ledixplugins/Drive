@@ -91,25 +91,20 @@ function aplicaVolume(tau) {
 // ---- Desenho --------------------------------------------------------------
 
 function knobSvg(frac) {
-  const a0 = -135, a1 = 135;
+  const a0 = -135, a1 = 135, c = 28, raio = 25;
   const ang = a0 + (a1 - a0) * frac;
   const r = Math.PI / 180;
-  const arco = (de, ate, raio) => {
-    const x1 = 22 + raio * Math.sin(de * r), y1 = 22 - raio * Math.cos(de * r);
-    const x2 = 22 + raio * Math.sin(ate * r), y2 = 22 - raio * Math.cos(ate * r);
+  const arco = (de, ate) => {
+    const x1 = c + raio * Math.sin(de * r), y1 = c - raio * Math.cos(de * r);
+    const x2 = c + raio * Math.sin(ate * r), y2 = c - raio * Math.cos(ate * r);
     const big = Math.abs(ate - de) > 180 ? 1 : 0;
     return `M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${raio} ${raio} 0 ${big} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
   };
-  const px = 22 + 10.5 * Math.sin(ang * r), py = 22 - 10.5 * Math.cos(ang * r);
-  return `<svg viewBox="0 0 44 44" aria-hidden="true">
-    <path d="${arco(a0, a1, 19)}" fill="none" stroke="rgba(0,0,0,.45)" stroke-width="3" stroke-linecap="round"/>
-    <path d="${arco(a0, Math.max(a0 + 0.01, ang), 19)}" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="3" stroke-linecap="round"/>
-    <circle cx="22" cy="22" r="13.5" fill="url(#g)" stroke="rgba(0,0,0,.6)"/>
-    <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#cfd4db"/><stop offset=".55" stop-color="#8d949f"/><stop offset="1" stop-color="#4d535c"/>
-    </linearGradient></defs>
-    <line x1="22" y1="22" x2="${px.toFixed(2)}" y2="${py.toFixed(2)}" stroke="#15171c" stroke-width="2.4" stroke-linecap="round"/>
-  </svg>`;
+  return `<div class="k" aria-hidden="true">
+    <svg viewBox="0 0 56 56"><path d="${arco(a0, a1)}" fill="none" stroke="rgba(0,0,0,.7)" stroke-width="4" stroke-linecap="round"/>
+      <path d="${arco(a0, a1)}" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1.4" stroke-linecap="round" transform="translate(0 .8)"/>
+      <path d="${arco(a0, Math.max(a0 + 0.01, ang))}" fill="none" style="stroke:var(--luz)" stroke-width="2.6" stroke-linecap="round"/></svg>
+    <i class="anel"></i><i class="tampa"></i><i class="pont" style="transform:rotate(${ang.toFixed(1)}deg)"></i></div>`;
 }
 
 function formata(k, v) {
@@ -143,6 +138,7 @@ function desenha() {
     const el = document.createElement('section');
     el.className = 'pedal' + (st.on ? '' : ' off') + (pid === 'tuner' ? ' afinador' : '');
     el.style.setProperty('--cor', def.cor);
+    el.style.setProperty('--luz', def.luz);
     el.dataset.pedal = pid;
 
     const knobs = def.knobs.map((k) => {
@@ -223,7 +219,7 @@ function poeValor(pid, kid, v, el) {
   const alvo = el || boardEl.querySelector(`[data-pedal="${pid}"] [data-knob="${kid}"]`);
   if (alvo && def) {
     const frac = Math.max(0, Math.min(1, (v - def.min) / (def.max - def.min)));
-    alvo.querySelector('svg').outerHTML = knobSvg(frac);
+    alvo.querySelector('.k').outerHTML = knobSvg(frac);
     alvo.querySelector('.val').textContent = formata(def, v);
   }
 }

@@ -75,6 +75,7 @@ cp vergani/index.html vergani/style.css vergani/app.js vergani/engine.js \
    vergani/presets.js vergani/gt-processor.js vergani/tuner.js vergani/sw.js \
    vergani/manifest.webmanifest "$OUT/vergani/"
 cp vergani/icons/icon-192.png vergani/icons/icon-512.png "$OUT/vergani/assets/"
+cp Resources/fonts/Roboto.ttf Resources/fonts/RussoOne-Regular.ttf Resources/fonts/OFL-Roboto.txt Resources/fonts/OFL-RussoOne.txt "$OUT/vergani/assets/"
 cp LICENSE "$OUT/vergani/LICENSE.txt"
 cp "$OUT/CREDITOS.txt" "$OUT/vergani/CREDITOS.txt"
 

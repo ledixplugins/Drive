@@ -78,7 +78,6 @@ jobs:
             <pkg-ref id="com.thiagogalvao.aurabass.au">au.pkg</pkg-ref>
           </installer-gui-script>
           XML
-          sed -i '' 's/^          //' pkgs/dist.xml
           productbuild --distribution pkgs/dist.xml --package-path pkgs --resources pkgs dist/AURA-Bass-macOS.pkg
           ls -la dist/
 

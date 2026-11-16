@@ -91,6 +91,7 @@ target_link_libraries(AuraBass
     PRIVATE
         AuraAssets
         juce::juce_audio_utils
+        juce::juce_cryptography
         juce::juce_dsp
     PUBLIC
         juce::juce_recommended_config_flags

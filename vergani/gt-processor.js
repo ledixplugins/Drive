@@ -1,4 +1,4 @@
-// AURA Guitar Board — processador de áudio do detune (Web Audio não tem pronto).
+// VERGANI PEDALBOARD — processador de áudio do detune (Web Audio não tem pronto).
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
 //

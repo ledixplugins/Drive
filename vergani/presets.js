@@ -1,4 +1,4 @@
-// AURA Guitar Board — presets e descrição dos pedais.
+// VERGANI PEDALBOARD — presets e descrição dos pedais.
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
 //
@@ -10,6 +10,7 @@
 // ---- Ajustes de fábrica de cada pedal --------------------------------------
 
 const PADROES = {
+  tuner:      { ref: 440 },
   overdrive:  { drive: 35, tone: 3500, nivel: 0 },
   distortion: { drive: 60, tone: 3000, nivel: -4 },
   detune:     { cents: 14, mix: 50 },
@@ -114,6 +115,12 @@ const PRESETS = [
 // ---- Descrição dos pedais para a interface ---------------------------------
 
 const PEDAIS = {
+  tuner: {
+    nome: 'AFINADOR', sub: 'liga = saída muda', cor: '#3c4a3c',
+    knobs: [
+      { id: 'ref', rot: 'LÁ =', min: 430, max: 450, passo: 1, un: 'Hz' },
+    ],
+  },
   overdrive: {
     nome: 'OVERDRIVE', sub: 'saturação macia', cor: '#8a6a24',
     knobs: [
@@ -156,6 +163,6 @@ const PEDAIS = {
   },
 };
 
-const ORDEM_PEDAIS = ['overdrive', 'distortion', 'detune', 'chorus', 'delay'];
+const ORDEM_PEDAIS = ['tuner', 'overdrive', 'distortion', 'detune', 'chorus', 'delay'];
 
 if (typeof module !== 'undefined') module.exports = { PRESETS, PEDAIS, PADROES, ORDEM_PEDAIS };

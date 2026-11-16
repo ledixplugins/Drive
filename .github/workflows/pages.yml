@@ -6,7 +6,7 @@ on:
     paths:
       - 'web/**'
       - 'pedalboard/**'
-      - 'guitarboard/**'
+      - 'vergani/**'
       - 'boardplanner/**'
       - 'Resources/ui/**'
       - 'Resources/ir/**'
@@ -14,7 +14,7 @@ on:
       - 'Source/Layout.h'
       - 'Tools/build-web.sh'
       - 'Tests/web-dsp-test.js'
-      - 'Tests/guitarboard-dsp-test.js'
+      - 'Tests/vergani-dsp-test.js'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
 
@@ -38,7 +38,7 @@ jobs:
       - name: Testar o processamento de áudio
         run: |
           node Tests/web-dsp-test.js
-          node Tests/guitarboard-dsp-test.js
+          node Tests/vergani-dsp-test.js
 
       - name: Montar o site
         run: bash Tools/build-web.sh site

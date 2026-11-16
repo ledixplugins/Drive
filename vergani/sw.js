@@ -1,8 +1,8 @@
-// AURA Guitar Board — service worker: guarda o app para funcionar sem internet.
+// VERGANI PEDALBOARD — service worker: guarda o app para funcionar sem internet.
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
-const CACHE = 'aura-guitarboard-v1';
+const CACHE = 'vergani-pedalboard-v1';
 const FILES = [
-  './', 'index.html', 'style.css', 'app.js', 'engine.js', 'presets.js', 'gt-processor.js',
+  './', 'index.html', 'style.css', 'app.js', 'engine.js', 'presets.js', 'gt-processor.js', 'tuner.js',
   'manifest.webmanifest', 'assets/icon-192.png', 'assets/icon-512.png',
 ];
 self.addEventListener('install', (e) => {

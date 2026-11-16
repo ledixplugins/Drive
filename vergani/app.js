@@ -1,4 +1,4 @@
-// AURA Guitar Board — interface e ligação com o motor de áudio.
+// VERGANI PEDALBOARD — interface e ligação com o motor de áudio.
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
 
@@ -6,16 +6,16 @@
 
 const VERSAO_SITE = 'AURA_VERSAO';   // trocado na publicação por Tools/versiona-site.py
 const AUTORIA = [
-  'AURA Guitar Board',
+  'VERGANI PEDALBOARD',
   'Copyright (c) 2026 Thiago Galvão',
   'Todos os direitos reservados — Leis 9.609/1998 e 9.610/1998',
   'github.com/thiagorgalvao-sketch/AURA',
 ];
-const AURA_PROV = 'AURA-PROV/1 obra=AURA-Guitar-Board autor=Thiago-Galvao ano=2026 '
+const AURA_PROV = 'AURA-PROV/1 obra=VERGANI-PEDALBOARD autor=Thiago-Galvao ano=2026 '
   + 'lei=9609/1998+9610/1998 origem=github.com/thiagorgalvao-sketch/AURA direitos=reservados';
 try { window.AURA_PROV = AURA_PROV; } catch (e) { /* sem window */ }
 
-const CHAVE = 'aura-guitarboard-v1';
+const CHAVE = 'vergani-pedalboard-v1';
 
 const $ = (s) => document.querySelector(s);
 const boardEl = $('#board'), presetsEl = $('#presets'), menuEl = $('#menu');
@@ -78,7 +78,14 @@ function mandaTudo() {
     b.bypass(st.on);
     for (const [k, v] of Object.entries(st.params)) b.set(k, v);
   }
-  rig.volume.gain.setTargetAtTime(Math.pow(10, estado.volume / 20), ctx.currentTime, 0.02);
+  aplicaVolume(0.02);
+}
+
+/** Volume geral; com o afinador ligado a saída fica totalmente muda (inclusive caudas). */
+function aplicaVolume(tau) {
+  if (!rig) return;
+  const g = estado.pedais.tuner.on ? 0 : Math.pow(10, estado.volume / 20);
+  rig.volume.gain.setTargetAtTime(g, ctx.currentTime, tau);
 }
 
 // ---- Desenho --------------------------------------------------------------
@@ -134,7 +141,7 @@ function desenha() {
   for (const pid of ORDEM_PEDAIS) {
     const def = PEDAIS[pid], st = estado.pedais[pid];
     const el = document.createElement('section');
-    el.className = 'pedal' + (st.on ? '' : ' off');
+    el.className = 'pedal' + (st.on ? '' : ' off') + (pid === 'tuner' ? ' afinador' : '');
     el.style.setProperty('--cor', def.cor);
     el.dataset.pedal = pid;
 
@@ -147,27 +154,33 @@ function desenha() {
 
     el.innerHTML = `<h2>${def.nome}</h2><div class="tipo">${def.sub}</div>
       <div class="knobs">${knobs}</div>
+      ${pid === 'tuner' ? '<div class="afina"><div class="nota">--</div><div class="hzv">&nbsp;</div><div class="escala"><i class="agulha"></i></div></div>' : ''}
       <div class="rodapePedal"><i class="led"></i>
         <button class="foot" aria-label="Ligar ou desligar ${def.nome}"></button></div>`;
     boardEl.appendChild(el);
   }
 
-  cadeiaEl.innerHTML = 'Ordem fixa: ' + ORDEM_PEDAIS.map((c) => PEDAIS[c].nome).join(' → ')
-    + ' · <a href="../" style="color:inherit">AURA</a>';
+  cadeiaEl.textContent = 'Ordem fixa: ' + ORDEM_PEDAIS.map((c) => PEDAIS[c].nome).join(' → ')
+    + ' · true bypass';
 }
 
 // ---- Interação ------------------------------------------------------------
+
+function alternaPedal(pid) {
+  estado.pedais[pid].on = !estado.pedais[pid].on;
+  rig && rig.blocos[pid].bypass(estado.pedais[pid].on);
+  const el = boardEl.querySelector(`[data-pedal="${pid}"]`);
+  if (el) el.classList.toggle('off', !estado.pedais[pid].on);
+  if (pid === 'tuner') { afina.resetar = true; mostraAfinador(false); aplicaVolume(0.01); }
+  salva();
+}
 
 let arrasto = null, ultimoToque = { t: 0, alvo: null };
 
 boardEl.addEventListener('pointerdown', (ev) => {
   const foot = ev.target.closest('.foot');
   if (foot) {
-    const pid = foot.closest('.pedal').dataset.pedal;
-    estado.pedais[pid].on = !estado.pedais[pid].on;
-    rig && rig.blocos[pid].bypass(estado.pedais[pid].on);
-    foot.closest('.pedal').classList.toggle('off', !estado.pedais[pid].on);
-    salva();
+    alternaPedal(foot.closest('.pedal').dataset.pedal);
     return;
   }
   const knobEl = ev.target.closest('.knob');
@@ -221,6 +234,9 @@ window.addEventListener('keydown', (ev) => {
     if (p) aplicaPreset(p.id);
   }
   if (ev.key === 'Escape') fechaMenu();
+  if ((ev.key === 't' || ev.key === 'T') && !ev.metaKey && !ev.ctrlKey && !menuEl.contains(document.activeElement)) {
+    alternaPedal('tuner');
+  }
 });
 
 // ---- Menu -----------------------------------------------------------------
@@ -281,7 +297,7 @@ function abreMenu() {
   h('Volume geral');
   for (const v of [-12, -6, 0, 6]) b(`${v > 0 ? '+' : ''}${v} dB${estado.volume === v ? '  ✓' : ''}`, () => {
     estado.volume = v;
-    rig && rig.volume.gain.setTargetAtTime(Math.pow(10, v / 20), ctx.currentTime, 0.05);
+    aplicaVolume(0.05);
     salva();
   });
 
@@ -294,7 +310,7 @@ function abreMenu() {
   menuEl.appendChild(ancora);
   h('Presets');
   b('Voltar o preset aos valores originais', () => aplicaPreset(estado.preset));
-  b('Ligar todos os pedais', () => { ORDEM_PEDAIS.forEach((p) => { estado.pedais[p].on = true; }); mandaTudo(); desenha(); salva(); });
+  b('Ligar todos os pedais', () => { ORDEM_PEDAIS.forEach((p) => { estado.pedais[p].on = p !== 'tuner'; }); mandaTudo(); desenha(); salva(); });
   b('Desligar todos os pedais', () => { ORDEM_PEDAIS.forEach((p) => { estado.pedais[p].on = false; }); mandaTudo(); desenha(); salva(); });
 
   menuEl.appendChild(document.createElement('hr'));
@@ -303,6 +319,8 @@ function abreMenu() {
   d('Shift + arrastar: ajuste fino');
   d('Toque duplo no knob: valor original');
   d('Teclas 1 a 8: trocar de preset');
+  d('Tecla T: liga e desliga o afinador (deixa o som mudo)');
+  d('Todos os pedais são true bypass: desligado, o sinal passa direto');
 
   menuEl.appendChild(document.createElement('hr'));
   h('Sobre');
@@ -336,7 +354,7 @@ function carrega() {
     if (typeof s.saidaId === 'string') estado.saidaId = s.saidaId;
     for (const pid of ORDEM_PEDAIS) {
       if (!s.pedais[pid]) continue;
-      estado.pedais[pid].on = !!s.pedais[pid].on;
+      estado.pedais[pid].on = pid === 'tuner' ? false : !!s.pedais[pid].on;
       Object.assign(estado.pedais[pid].params, s.pedais[pid].params || {});
     }
     return true;
@@ -507,6 +525,53 @@ $('#entrarButton').onclick = async () => {
   }
 };
 
+// ---- Afinador -------------------------------------------------------------
+// Lê a entrada (antes de qualquer pedal) e mostra a nota e os cents. Com o
+// afinador ligado a saída fica muda; desligado, ele não está no caminho do som.
+
+const afina = {
+  det: window.AuraTuner ? new window.AuraTuner.TunerDetector() : null,
+  buf: null, nota: null, cents: 0, hz: 0, ultimo: 0, resetar: true,
+};
+
+function mostraAfinador(valido) {
+  const el = boardEl.querySelector('.afina');
+  if (!el) return;
+  const nota = el.querySelector('.nota'), hz = el.querySelector('.hzv'), ag = el.querySelector('.agulha');
+  if (valido && afina.nota !== null) {
+    const T = window.AuraTuner;
+    nota.textContent = T.noteName(afina.nota) + T.noteOctave(afina.nota);
+    hz.textContent = afina.hz.toFixed(1) + ' Hz · ' + (afina.cents > 0 ? '+' : '') + Math.round(afina.cents) + ' ct';
+    ag.style.left = (50 + Math.max(-50, Math.min(50, afina.cents))) + '%';
+    el.classList.toggle('ok', Math.abs(afina.cents) <= 5);
+  } else {
+    nota.textContent = '--'; hz.innerHTML = '&nbsp;';
+    ag.style.left = '50%'; el.classList.remove('ok');
+  }
+}
+
+function cicloAfinador() {
+  if (!ctx || !rig || !afina.det || !estado.pedais.tuner.on) return;
+  const an = rig.blocos.tuner.analisador;
+  if (afina.resetar) { afina.det.reset(); afina.nota = null; afina.resetar = false; }
+  if (!afina.buf || afina.buf.length !== an.fftSize) afina.buf = new Float32Array(an.fftSize);
+  an.getFloatTimeDomainData(afina.buf);
+  const f = Math.max(1, Math.round(ctx.sampleRate / 12000));       // ~12 kHz, como o detector espera
+  const n = Math.floor(afina.buf.length / f), bloco = new Float32Array(n);
+  for (let i = 0; i < n; i++) { let s = 0; for (let j = 0; j < f; j++) s += afina.buf[i * f + j]; bloco[i] = s / f; }
+  afina.det.push(bloco, ctx.sampleRate / f);
+  const r = afina.det.analyse();
+  const agora = performance.now();
+  if (r.valid) {
+    const m = 69 + 12 * Math.log2(r.hz / estado.pedais.tuner.params.ref);
+    const nota = Math.round(m), cents = (m - nota) * 100;
+    afina.cents = (afina.nota === nota && agora - afina.ultimo < 800) ? afina.cents + 0.4 * (cents - afina.cents) : cents;
+    afina.nota = nota; afina.hz = r.hz; afina.ultimo = agora;
+  }
+  mostraAfinador(agora - afina.ultimo < 700);
+}
+setInterval(cicloAfinador, 90);
+
 // ---- Início ---------------------------------------------------------------
 
 estado.pedais = estadoPadrao();
@@ -526,4 +591,5 @@ window.__pb = {
   poeValor,
   get audio() { return ctx; },
   get rig() { return rig; },
+  alternaPedal,
 };

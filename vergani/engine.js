@@ -1,4 +1,4 @@
-// AURA Guitar Board — montagem da cadeia de áudio.
+// VERGANI PEDALBOARD — montagem da cadeia de áudio.
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
 //
@@ -46,24 +46,29 @@ function curvaDistorcao(drive, n = 2048) {
 // ---------------------------------------------------------------------------
 
 function blocoBase(ctx) {
-  const entrada = ctx.createGain();
-  const saida = ctx.createGain();
-  const wet = ctx.createGain();
-  const dry = ctx.createGain();
-  wet.gain.value = 1; dry.gain.value = 0;
-  entrada.connect(dry); dry.connect(saida); wet.connect(saida);
-  return { ctx, entrada, saida, wet, dry, ligado: true };
+  return { ctx, entrada: ctx.createGain(), saida: ctx.createGain(), ligado: false };
 }
 
+const desconecta = (de, para) => { try { de.disconnect(para); } catch (e) { /* já estava solto */ } };
+
+// BYPASS VERDADEIRO: com o pedal desligado, o sinal vai da entrada direto para
+// a saída, por um único nó de ganho 1, e o pedal fica totalmente desconectado
+// do caminho (não processa nada, nem em paralelo). Ligado, o contrário.
 function finaliza(b, cabeca, cauda) {
-  b.entrada.connect(cabeca);
-  cauda.connect(b.wet);
+  b.cabeca = cabeca; b.cauda = cauda;
   b.bypass = (ligado) => {
-    b.ligado = ligado;
-    const t = b.ctx.currentTime;
-    b.wet.gain.setTargetAtTime(ligado ? 1 : 0, t, RAMPA / 3);
-    b.dry.gain.setTargetAtTime(ligado ? 0 : 1, t, RAMPA / 3);
+    if (ligado) {
+      desconecta(b.entrada, b.saida);
+      b.entrada.connect(cabeca);
+      cauda.connect(b.saida);
+    } else {
+      desconecta(b.entrada, cabeca);
+      desconecta(cauda, b.saida);
+      b.entrada.connect(b.saida);
+    }
+    b.ligado = !!ligado;
   };
+  b.bypass(false);
   return b;
 }
 
@@ -168,20 +173,49 @@ function fazDelay(ctx) {
   tone.connect(molhado); entrada.connect(seco);
   molhado.connect(soma); seco.connect(soma);
   molhado.gain.value = 0.3; seco.gain.value = 1;
+  // Valores pedidos pelo usuário; a cauda do delay é silenciada ao desligar,
+  // para repetições antigas não vazarem quando o pedal for religado.
+  let fbv = 0.35, mixv = 0.3, tDesliga = -10;
   b.set = (id, v) => {
     const t = ctx.currentTime;
     if (id === 'time') atraso.delayTime.setTargetAtTime(v / 1000, t, 0.06);
-    if (id === 'feedback') fb.gain.setTargetAtTime(Math.min(0.92, v / 100), t, RAMPA);
+    if (id === 'feedback') { fbv = Math.min(0.92, v / 100); if (b.ligado) fb.gain.setTargetAtTime(fbv, t, RAMPA); }
     if (id === 'tone') tone.frequency.setTargetAtTime(v, t, RAMPA);
-    if (id === 'mix') molhado.gain.setTargetAtTime(v / 100, t, RAMPA);
+    if (id === 'mix') { mixv = v / 100; if (b.ligado) molhado.gain.setTargetAtTime(mixv, t, RAMPA); }
   };
-  return finaliza(b, entrada, soma);
+  finaliza(b, entrada, soma);
+  const bypassBase = b.bypass;
+  b.bypass = (ligado) => {
+    const t = ctx.currentTime;
+    if (ligado && !b.ligado) {
+      const quando = Math.max(t, tDesliga + 1.1);    // o delay mais longo tem 1 s
+      fb.gain.cancelScheduledValues(t); molhado.gain.cancelScheduledValues(t);
+      fb.gain.setValueAtTime(fbv, quando); molhado.gain.setValueAtTime(mixv, quando);
+    } else if (!ligado && b.ligado) {
+      tDesliga = t;
+      fb.gain.cancelScheduledValues(t); molhado.gain.cancelScheduledValues(t);
+      fb.gain.setValueAtTime(0, t); molhado.gain.setValueAtTime(0, t);
+    }
+    bypassBase(ligado);
+  };
+  return b;
+}
+
+/** Afinador: ligado, a saída fica muda (mute) e o analisador lê a entrada. */
+function fazAfinador(ctx) {
+  const b = blocoBase(ctx);
+  const mudo = ctx.createGain(); mudo.gain.value = 0;
+  const an = ctx.createAnalyser(); an.fftSize = 4096;
+  b.entrada.connect(an);               // só escuta; não faz parte do caminho do som
+  b.analisador = an;
+  b.set = () => {};
+  return finaliza(b, mudo, mudo);
 }
 
 // ---------------------------------------------------------------------------
 
 const FABRICAS = {
-  overdrive: fazOverdrive, distortion: fazDistorcao, detune: fazDetune,
+  tuner: fazAfinador, overdrive: fazOverdrive, distortion: fazDistorcao, detune: fazDetune,
   chorus: fazChorus, delay: fazDelay,
 };
 

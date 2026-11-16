@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-# AURA Guitar Board — teste de interface e de áudio num Chromium de verdade.
+# VERGANI PEDALBOARD — teste de interface e de áudio num Chromium de verdade.
 # Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 # Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
 #
-# Uso: python3 -I Tests/guitarboard-ui-test.py [pasta do site] [pasta de saída]
+# Uso: python3 -I Tests/vergani-ui-test.py [pasta do site] [pasta de saída]
 # Precisa do Playwright com Chromium instalado.
 
 import http.server
@@ -17,7 +17,7 @@ import wave
 from playwright.sync_api import sync_playwright
 
 SITE = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else "site")
-OUT = os.path.abspath(sys.argv[2] if len(sys.argv) > 2 else "guitarboard-test")
+OUT = os.path.abspath(sys.argv[2] if len(sys.argv) > 2 else "vergani-test")
 os.makedirs(OUT, exist_ok=True)
 
 falhas = []
@@ -99,7 +99,7 @@ def main():
 
     srv = http.server.ThreadingHTTPServer(("127.0.0.1", 8732), Handler)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
-    url = "http://127.0.0.1:8732/guitarboard/index.html"
+    url = "http://127.0.0.1:8732/vergani/index.html"
 
     with sync_playwright() as pw:
         browser = pw.chromium.launch(args=[
@@ -122,9 +122,9 @@ def main():
         page.wait_for_timeout(500)
         check(page.is_visible("#inicio"), "tela inicial aparece")
         check(len(page.query_selector_all(".preset")) == 8, "os oito presets aparecem")
-        check(len(page.query_selector_all(".pedal")) == 5, "os cinco pedais aparecem")
+        check(len(page.query_selector_all(".pedal")) == 6, "os seis pedais aparecem (afinador + cinco)")
         nomes = page.eval_on_selector_all(".pedal h2", "els => els.map(e => e.textContent)")
-        check(nomes == ["OVERDRIVE", "DISTORTION", "DETUNE", "CHORUS", "DELAY"], f"ordem dos pedais: {nomes}")
+        check(nomes == ["AFINADOR", "OVERDRIVE", "DISTORTION", "DETUNE", "CHORUS", "DELAY"], f"ordem dos pedais: {nomes}")
         check(not falhas404, f"nenhum recurso 4xx: {falhas404[:3]}")
         check(not erros, f"sem erros no console: {erros[:2]}")
         page.screenshot(path=f"{OUT}/1-inicio.png")
@@ -215,6 +215,50 @@ def main():
         alvo = 220 * 2 ** (50 / 1200)
         print(f"   fundamental: {desloc:.2f} Hz (esperado {alvo:.2f} Hz)")
         check(abs(1200 * math.log2(desloc / alvo)) < 8, "a fundamental sobe ~50 cents com o detune a 100%")
+
+        print("True bypass: pedais desligados não alteram o sinal")
+        for pid in esperado:   # nenhum preset deixa o afinador ligado
+            page.evaluate("(id) => window.__pb.aplicaPreset(id)", pid)
+            page.wait_for_timeout(30)
+            check(page.evaluate("() => window.__pb.estado.pedais.tuner.on") is False, f"preset {pid}: afinador desligado")
+        dif = page.evaluate("""
+        async () => {
+          const render = async (ordem) => {
+            const c = new OfflineAudioContext(1, 24000, 48000);
+            await c.audioWorklet.addModule('gt-processor.js');
+            const r = montaCadeia(c, ordem);
+            const b = c.createBuffer(1, 24000, 48000), d = b.getChannelData(0);
+            for (let i = 0; i < d.length; i++) d[i] = 0.2 * Math.sin(2 * Math.PI * 220 * i / 48000) + 0.05 * Math.sin(2 * Math.PI * 1330 * i / 48000);
+            const s = c.createBufferSource(); s.buffer = b; s.connect(r.entrada); r.saida.connect(c.destination); s.start();
+            return (await c.startRendering()).getChannelData(0);
+          };
+          const comPedais = await render(ORDEM_PEDAIS), semPedais = await render([]);
+          let m = 0;
+          for (let i = 0; i < comPedais.length; i++) m = Math.max(m, Math.abs(comPedais[i] - semPedais[i]));
+          return m;
+        }
+        """)
+        print(f"   diferença máxima: {dif:.2e}")
+        check(dif < 1e-6, "com todos desligados a saída é idêntica à de uma cadeia sem pedais")
+
+        print("Afinador")
+        page.evaluate("(id) => window.__pb.aplicaPreset(id)", "limpo")
+        page.click('[data-pedal="tuner"] .foot')
+        page.wait_for_timeout(2600)
+        nota = page.inner_text(".afina .nota")
+        hzv = page.inner_text(".afina .hzv")
+        print(f"   nota: {nota}  ({hzv})")
+        check(nota == "A3", f"afinador lê A3 (220 Hz): {nota}")
+        mudo = page.evaluate(MEDE, 600)
+        print(f"   pico de saída com o afinador ligado: {mudo:.5f}")
+        check(mudo < 1e-4, "afinador ligado deixa a saída muda")
+        page.click('[data-pedal="tuner"] .foot')
+        page.wait_for_timeout(300)
+        check(page.evaluate(MEDE, 800) > 0.005, "afinador desligado devolve o som")
+        page.keyboard.press("t")
+        page.wait_for_timeout(200)
+        check(page.evaluate("() => window.__pb.estado.pedais.tuner.on") is True, "tecla T liga o afinador")
+        page.keyboard.press("t")
 
         print("Footswitch e knobs respondem")
         page.evaluate("(id) => window.__pb.aplicaPreset(id)", "crunch")

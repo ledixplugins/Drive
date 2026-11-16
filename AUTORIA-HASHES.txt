@@ -3,18 +3,18 @@ Autor e titular: Thiago Galvão
 Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 Leis 9.609/1998 e 9.610/1998 — a proteção independe de registro.
 
-Gerado em (UTC): 2026-11-16T18:59:52Z
-Commit do repositório: ac00f958d001c4884dec8ba058f728505b317190
-Arquivos: 50
+Gerado em (UTC): 2026-11-16T23:16:08Z
+Commit do repositório: 4f7ffcfd642a62f62a1f110c85fd6c07ffe22e38
+Arquivos: 52
 
 SHA-256 de cada arquivo:
 --------------------------------------------------------------------
 54ad91ccb6f4bccbf918add385a321a5bb0718fbee7f14b6360f3a168d0b5de3  .github/workflows/build.yml
-ed7c228484cf0d8308e825521b5889de570b979fbfd060644a99b5e418a018ad  .github/workflows/pages.yml
+6989f0d7d4b5b1b832ad59c981b2a28d4eae0741eb87f03a724dc9b94f33a029  .github/workflows/pages.yml
 4043d00f19a8b3cc5944c2c3de17ed3e36187133bab6ccafab1a54f71fde1cfd  AUTORIA.md
 96c2e5b96f23b3b4ddf8bb21e1073fabc980959892de78f1b845184d12fe3a76  CMakeLists.txt
 9355d790044f95fd15e9d59a26fdc442810f29d7ad146abb5c6d796c3c68d3c6  LICENSE
-935510efa4d6b5761c672d5ffc50fa76cef7177b35a19612489dbd443b0ee23c  README.md
+c10a03578cf018cbb4525d5da632e199d6ec7266e8507de46c1d36378dd79fe5  README.md
 5f2c0cd78e815a16f5167e69c7fcbde8748011af675cb6129f0c6a176457b87e  Resources/ir/cab_1x15.wav
 18b691c2ff4b1978f23fea94b94073961510839897a59c462cdf68688624b957  Resources/ir/cab_4x10.wav
 85a8bd639d1a8e8e9ee49a69257841c9f4df3cf3e336150a346bb5e4f2dc9642  Resources/ui/arcs_lit.png
@@ -38,11 +38,13 @@ b8ec06df2cf1d885d498597030221a7b129f0d42774b50b8a45ee485deaf1983  Source/Tuner.h
 e7aae62087ed89d8a3e74175dd4125a449cf65b2ad3c37fa25c1c9fc3b5c00b2  TERCEIROS.md
 6e1b9c5a82d150331e9a21a56cb3e98438490f916e915fbe3bb67cbdc2f97b4c  Tests/DspTest.cpp
 1cb97a87e4fc8e393ef702280cb38639a0f270b4419e4af6748b9faef1c716d6  Tests/pedalboard-ui-test.py
+b9acee2b138c6398884d47c47e9c1ace6c6fe3fc8e951de69a3ec772e0476a95  Tests/vergani-dsp-test.js
+deac30949b2717ec770fa21744862d567f07a4e4a6f3018e49371a6eb4e6825c  Tests/vergani-ui-test.py
 d1c2a509a2ba9c6b9f4a64ba6b3bb8ef80395e539638f1521376157023565daa  Tests/web-dsp-test.js
 7e3e41e2dbce769a293d4779b6f74e5a13cca42e117c7761793dd1dc0a6d6982  Tests/web-ui-test.py
 a5537db14b7262ec697372816e461ab69384bca35c81588cd1a1b4838e57d065  Tools/FootswitchRender/Main.cpp
 63102f994f228c5d8bd9ce4a79776d7d6af6687faf72e22d6e7852f11db99fe7  Tools/autoria-hashes.sh
-bd77cbcb96f1c20d2bf0d39aa4ebab6fd0437b6818dc0b2d3e62ed71f678b2a1  Tools/build-web.sh
+c9333717e2acbef8b8297a78776a96a3f36dcd072c3964dffd7f7bc565af19fc  Tools/build-web.sh
 ca7626bc0e261e70fa463ae8508a8df0ce7bab1dc0146ab2bee34ecd834fd0ed  Tools/build_ui_assets.py
 ffb95917793c105ab113fe9414b69c8c0d90c44963ac6aed67e8e864641e39c1  Tools/make_cab_irs.py
 a82db1dd7ee949c87cc30bcf6683559b023feb8fb9ea60aedcd97a7dae03c192  Tools/versiona-site.py
@@ -51,8 +53,8 @@ a82db1dd7ee949c87cc30bcf6683559b023feb8fb9ea60aedcd97a7dae03c192  Tools/versiona
 e0fb567efd0fc2b2abfed9e111c91c5658fb890d65d6c76532e08276d1432095  packaging/aura-bass.nsi
 28efaf02ca5ad2a0559d734217068014fe453a0b4cc7c30994a4eb49dccee6b0  web/app.js
 c31664704f2f7eacb64ca40963f3ffd670e6096e45ad7d9bac61eb925221a6fc  web/aura-processor.js
-9f5fe30817f6e3f1a3cc6608513f5dc4369a9af3ca0373643907223be5a0481e  web/icons/icon-192.png
-50d9345cfcbc6cf684a3b7a9c937778691432678244afafe93dbfd8b4a97547b  web/icons/icon-512.png
+7992519a69bcee98802586c1f8d4259e67d0aeb799b1e0ce5b8d19e6acde6244  web/icons/icon-192.png
+2072ef7d20cfb17fe7d5bbf0694a37c45fb6a4d107751c25e6cc6c5428feddde  web/icons/icon-512.png
 932d08cbc9d2a7382c477fe0958204cbdd9739f0e41bb8bb86b813ead6f1a565  web/index.html
 c1058c41b0d3c02e908fdef805400e3fc6827e728a2c993e328c53fccde1b0f1  web/layout.js
 44a9154fbff1429e371d7a8935f65083f984763061577fcb46e72bc4de37bc92  web/manifest.webmanifest
@@ -62,7 +64,7 @@ e960945871ee31fc5289a364b0bfa00850150cd3828ee602e790722bc487aeab  web/tuner.js
 --------------------------------------------------------------------
 
 RESUMO DA OBRA (SHA-256 da lista acima):
-c333ed095122c49d7853c7d6e55d16da3d8c8b66436527c9e208a1e310bb0035
+1885fbfc4dfecfdc6316ca10efe7771e7e80e1d9157204567fea4695ff7abf67
 
 Esse resumo identifica a obra inteira nesta data. Qualquer alteração em
 qualquer arquivo muda o resumo. Para ter prova de data independente,

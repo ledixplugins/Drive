@@ -1,10 +1,10 @@
-// AURA Guitar Board — testes do processamento de áudio (Node)
+// VERGANI PEDALBOARD — testes do processamento de áudio (Node)
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
-// Uso: node Tests/guitarboard-dsp-test.js
-const { DetuneCore } = require('../guitarboard/gt-processor.js');
-const { curvaOverdrive, curvaDistorcao, PICO_CURVA } = require('../guitarboard/engine.js');
-const { PRESETS, PEDAIS, PADROES, ORDEM_PEDAIS } = require('../guitarboard/presets.js');
+// Uso: node Tests/vergani-dsp-test.js
+const { DetuneCore } = require('../vergani/gt-processor.js');
+const { curvaOverdrive, curvaDistorcao, PICO_CURVA } = require('../vergani/engine.js');
+const { PRESETS, PEDAIS, PADROES, ORDEM_PEDAIS } = require('../vergani/presets.js');
 
 const SR = 48000, BLOCK = 128;
 let failures = 0;
@@ -92,7 +92,7 @@ for (const [nome, fn] of [['overdrive', curvaOverdrive], ['distorção', curvaDi
 
 console.log('Presets e pedais');
 check(PRESETS.length === 8, 'oito presets (teclas 1 a 8)');
-check(ORDEM_PEDAIS.join() === 'overdrive,distortion,detune,chorus,delay', 'ordem fixa dos pedais');
+check(ORDEM_PEDAIS.join() === 'tuner,overdrive,distortion,detune,chorus,delay', 'ordem fixa dos pedais');
 const ids = new Set(PRESETS.map((p) => p.id));
 check(ids.size === PRESETS.length, 'ids de preset únicos');
 for (const p of PRESETS) {

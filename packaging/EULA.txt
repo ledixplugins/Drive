@@ -1,0 +1,84 @@
+AURA BASS — CONTRATO DE LICENÇA DE USO
+
+Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
+
+ATENÇÃO: esta é uma minuta. Antes de vender o programa, ela precisa da
+revisão de um advogado.
+
+Ao instalar ou usar o AURA Bass ("o programa"), você concorda com os termos
+abaixo. Se não concordar, não instale e não use.
+
+1. O QUE VOCÊ RECEBE
+
+O autor concede a você uma licença pessoal, não exclusiva e intransferível
+para usar o programa. O programa é licenciado, não vendido: a propriedade
+intelectual continua sendo do autor.
+
+A licença permite a instalação em até 3 (três) aparelhos de seu uso pessoal.
+
+2. TESTE DE 15 DIAS
+
+A partir da primeira abertura, o programa funciona por 15 dias com todos os
+recursos liberados, sem custo e sem cadastro. Terminado esse prazo, é
+preciso uma chave de ativação para continuar usando.
+
+O programa guarda a data da primeira abertura no seu computador e verifica
+se o relógio do sistema foi alterado. Reinstalar não reinicia o teste.
+
+3. ATIVAÇÃO E INTERNET
+
+A ativação é feita com uma chave fornecida na compra e exige conexão com a
+internet uma única vez. Depois de ativada, a licença funciona por até 30
+dias sem internet; passado esse prazo, o programa pede uma revalidação.
+
+Na ativação são enviados ao servidor de licenças a chave e um identificador
+do aparelho, derivado do nome do computador e do nome de usuário. Nenhum
+áudio, nenhum arquivo e nenhum dado pessoal além disso é transmitido.
+
+4. O QUE NÃO É PERMITIDO
+
+a) copiar, distribuir, revender, alugar, emprestar ou sublicenciar o
+   programa ou a sua chave de ativação;
+b) alterar, descompilar, desmontar ou fazer engenharia reversa do programa,
+   salvo na medida em que a lei expressamente permitir;
+c) remover ou alterar os avisos de autoria presentes no programa;
+d) contornar, desativar ou interferir no controle de licença.
+
+5. GRAVAÇÕES E APRESENTAÇÕES
+
+O som produzido com o programa é seu. Você pode usá-lo livremente em
+gravações, apresentações ao vivo, transmissões e trabalhos comerciais, sem
+pagar nada além da licença e sem precisar dar crédito.
+
+6. GARANTIA
+
+O programa é fornecido "no estado em que se encontra". O autor não garante
+que ele seja livre de falhas nem que atenda a uma finalidade específica, e
+não responde por perdas de dados, de gravações ou de receita decorrentes do
+uso. Em nenhuma hipótese a responsabilidade do autor excederá o valor pago
+pela licença.
+
+7. DEVOLUÇÃO
+
+A compra pode ser cancelada em até 7 (sete) dias, com devolução integral do
+valor pago, conforme o artigo 49 do Código de Defesa do Consumidor. O teste
+de 15 dias existe justamente para que você avalie o programa antes de
+comprar.
+
+8. ENCERRAMENTO
+
+A licença termina automaticamente se qualquer termo deste contrato for
+descumprido. Nesse caso, você deve desinstalar o programa.
+
+9. COMPONENTES DE TERCEIROS
+
+O programa usa componentes de terceiros, relacionados no arquivo
+TERCEIROS.md do projeto, cada um sob a sua própria licença.
+
+10. LEI APLICÁVEL
+
+Este contrato é regido pelas leis da República Federativa do Brasil,
+especialmente pelas Leis nº 9.609/1998 e nº 9.610/1998. Fica eleito o foro
+do domicílio do consumidor para dirimir eventuais conflitos.
+
+Contato: https://github.com/thiagorgalvao-sketch/AURA/issues

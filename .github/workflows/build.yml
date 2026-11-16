@@ -48,23 +48,56 @@ jobs:
           sleep 2
           auval -v aufx Grdi Thgo
 
+      - name: Montar o instalador .pkg (app + VST3 + AU)
+        run: |
+          set -e
+          VERSION=$(grep -m1 "CMAKE_PROJECT_VERSION:" build/CMakeCache.txt | cut -d= -f2)
+          ART="build/AuraBass_artefacts/Release"
+          mkdir -p pkgroot/app/Applications \
+                   pkgroot/vst3/Library/Audio/Plug-Ins/VST3 \
+                   pkgroot/au/Library/Audio/Plug-Ins/Components pkgs
+          cp -R "$ART/Standalone/AURA Bass.app" pkgroot/app/Applications/
+          cp -R "$ART/VST3/AURA Bass.vst3" pkgroot/vst3/Library/Audio/Plug-Ins/VST3/
+          cp -R "$ART/AU/AURA Bass.component" pkgroot/au/Library/Audio/Plug-Ins/Components/
+          pkgbuild --root pkgroot/app  --identifier com.thiagogalvao.aurabass.app  --version "$VERSION" pkgs/app.pkg
+          pkgbuild --root pkgroot/vst3 --identifier com.thiagogalvao.aurabass.vst3 --version "$VERSION" pkgs/vst3.pkg
+          pkgbuild --root pkgroot/au   --identifier com.thiagogalvao.aurabass.au   --version "$VERSION" pkgs/au.pkg
+          cp packaging/EULA.txt pkgs/license.txt
+          cat > pkgs/dist.xml <<'XML'
+          <?xml version="1.0" encoding="utf-8"?>
+          <installer-gui-script minSpecVersion="1">
+            <title>AURA Bass</title>
+            <license file="license.txt"/>
+            <options customize="allow" require-scripts="false" hostArchitectures="x86_64,arm64"/>
+            <choices-outline><line choice="app"/><line choice="vst3"/><line choice="au"/></choices-outline>
+            <choice id="app"  title="Programa AURA Bass" description="Instala o programa na pasta Aplicativos, para tocar sem abrir uma DAW."><pkg-ref id="com.thiagogalvao.aurabass.app"/></choice>
+            <choice id="vst3" title="Plugin VST3" description="Para Reaper, Cubase, Studio One, Ableton e outras DAWs."><pkg-ref id="com.thiagogalvao.aurabass.vst3"/></choice>
+            <choice id="au"   title="Plugin Audio Unit (AU)" description="Para Logic, GarageBand e outras DAWs AU."><pkg-ref id="com.thiagogalvao.aurabass.au"/></choice>
+            <pkg-ref id="com.thiagogalvao.aurabass.app">app.pkg</pkg-ref>
+            <pkg-ref id="com.thiagogalvao.aurabass.vst3">vst3.pkg</pkg-ref>
+            <pkg-ref id="com.thiagogalvao.aurabass.au">au.pkg</pkg-ref>
+          </installer-gui-script>
+          XML
+          sed -i '' 's/^          //' pkgs/dist.xml
+          productbuild --distribution pkgs/dist.xml --package-path pkgs --resources pkgs dist/AURA-Bass-macOS.pkg
+          ls -la dist/
+
       - name: Enviar
         uses: actions/upload-artifact@v4
         with:
           name: AuraBass-Mac
-          path: dist/AuraBass-Mac.zip
+          path: |
+            dist/AuraBass-Mac.zip
+            dist/AURA-Bass-macOS.pkg
 
-      - name: Publicar no Release "latest" (link de download direto)
-        if: github.ref == 'refs/heads/main'
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - name: Guardar o número da versão
         run: |
-          VERSION=$(grep -m1 "CMAKE_PROJECT_VERSION:" build/CMakeCache.txt | cut -d= -f2)
-          gh release delete latest --yes --cleanup-tag 2>/dev/null || true
-          gh release create latest dist/AuraBass-Mac.zip \
-            --title "AURA Bass $VERSION" \
-            --notes "Versão $VERSION. Baixe AuraBass-Mac.zip, descompacte e rode no Terminal: bash (espaço) + arraste 'Instalar no Mac.command' + Enter. A versão instalada aparece no clique direito sobre o painel." \
-            --target "${{ github.sha }}"
+          grep -m1 "CMAKE_PROJECT_VERSION:" build/CMakeCache.txt | cut -d= -f2 > dist/versao.txt
+          cat dist/versao.txt
+
+      - name: Enviar a versão
+        uses: actions/upload-artifact@v4
+        with: { name: versao, path: dist/versao.txt }
 
   windows:
     name: Windows
@@ -81,10 +114,64 @@ jobs:
       - name: Testar o áudio
         run: build/AuraDSPTest_artefacts/Release/AuraDSPTest.exe
 
+      - name: Montar o instalador .exe
+        shell: bash
+        run: |
+          set -e
+          VERSION=$(grep -m1 "CMAKE_PROJECT_VERSION:" build/CMakeCache.txt | cut -d= -f2)
+          ART="build/AuraBass_artefacts/Release"
+          mkdir -p dist/win/VST3
+          cp -R "$ART/VST3/AURA Bass.vst3" "dist/win/VST3/"
+          cp "$ART/Standalone/AURA Bass.exe" "dist/win/"
+          cp packaging/EULA.txt dist/win/
+          "/c/Program Files (x86)/NSIS/makensis.exe" -DVERSAO="$VERSION" -DSRC="$(pwd -W)/dist/win" packaging/aura-bass.nsi
+          mv packaging/AURA-Bass-Windows.exe dist/ 2>/dev/null || mv AURA-Bass-Windows.exe dist/
+          ls -la dist/
+
       - name: Enviar
         uses: actions/upload-artifact@v4
         with:
           name: AuraBass-Windows
           path: |
+            dist/AURA-Bass-Windows.exe
             build/AuraBass_artefacts/Release/VST3
             build/AuraBass_artefacts/Release/Standalone
+
+  publicar:
+    name: Publicar instaladores
+    if: github.ref == 'refs/heads/main'
+    needs: [macos, windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: AuraBass-Mac, path: rel }
+      - uses: actions/download-artifact@v4
+        with: { name: AuraBass-Windows, path: win }
+      - uses: actions/download-artifact@v4
+        with: { name: versao, path: v }
+
+      - name: Criar ou atualizar a Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          VERSION=$(cat v/versao.txt | tr -d '[:space:]')
+          cp win/AURA-Bass-Windows.exe rel/ 2>/dev/null || cp win/dist/AURA-Bass-Windows.exe rel/
+          ls -la rel/
+          gh release delete latest --yes --cleanup-tag --repo "${{ github.repository }}" 2>/dev/null || true
+          gh release create latest \
+            "rel/AURA-Bass-Windows.exe" \
+            "rel/AURA-Bass-macOS.pkg" \
+            "rel/AuraBass-Mac.zip" \
+            --repo "${{ github.repository }}" \
+            --title "AURA Bass $VERSION" \
+            --target "${{ github.sha }}" \
+            --notes "Versão $VERSION — teste grátis de 15 dias, com todos os recursos.
+
+          **Windows:** baixe \`AURA-Bass-Windows.exe\` e execute. Instala o plugin VST3 e o programa.
+          **Mac:** baixe \`AURA-Bass-macOS.pkg\` e abra. Instala o programa, o VST3 e o AU.
+
+          Os instaladores ainda não são assinados: o sistema vai avisar que o desenvolvedor é desconhecido. No Mac, clique com o botão direito no arquivo e escolha Abrir. No Windows, clique em Mais informações e depois em Executar assim mesmo."
+

@@ -69,6 +69,10 @@ cp pedalboard/icons/icon-192.png pedalboard/icons/icon-512.png "$OUT/pedalboard/
 cp LICENSE "$OUT/pedalboard/LICENSE.txt"
 cp "$OUT/CREDITOS.txt" "$OUT/pedalboard/CREDITOS.txt"
 
+# ---- Planejador de Pedalboard (layout e cabos, em /boardplanner) ----------------------------
+mkdir -p "$OUT/boardplanner"
+cp boardplanner/index.html boardplanner/pedais-rivus.json "$OUT/boardplanner/"
+
 VERSAO=$(git rev-parse --short HEAD 2>/dev/null || date -u +%Y%m%d%H%M)
 python3 Tools/versiona-site.py "$OUT" "$VERSAO"
 

@@ -6,6 +6,7 @@ on:
     paths:
       - 'web/**'
       - 'pedalboard/**'
+      - 'boardplanner/**'
       - 'Resources/ui/**'
       - 'Resources/ir/**'
       - 'Resources/fonts/**'

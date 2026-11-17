@@ -47,6 +47,7 @@ const IMAGES = {
   background: 'assets/background.jpg',
   arcsLit: 'assets/arcs_lit.png',
   pointer: 'assets/pointer.png',
+  knob: 'assets/knob.png',
   ledDriveOn: 'assets/led_drive_on.png',
   ledTunerOn: 'assets/led_tuner_on.png',
   ledCabOn: 'assets/led_cab_on.png',
@@ -66,7 +67,7 @@ const STORAGE_KEY = 'aura-bass-state-v1';
 // Estado
 // ---------------------------------------------------------------------------
 const state = {
-  params: { level: 0, drive: 0, low: 0, mid: 0, high: 0, presence: 3, blend: 100 },
+  params: { level: 0, drive: 0, low: 0, mid: 0, high: 0, presence: 3, blend: 100, octave: 0, chorus: 0 },
   driveOn: true,
   cab: true,
   tuner: false,
@@ -735,6 +736,52 @@ function drawPanel() {
     }
   }
 
+  // Faixa de efeitos: rótulos, trilhos, arcos acesos, corpos e indicadores
+  if (!state.tuner) {
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (const k of L.efeitos) {
+      const def = L.params[k.paramId];
+      ctx.font = valueFont(15);
+      ctx.fillStyle = '#b9bfc6';
+      ctx.fillText(def.label, k.cx, L.efeitoRotuloY);
+
+      const norm = normOf(k.paramId);
+      const ini = rad(L.knobMinAngleDeg) - Math.PI / 2;
+      const fim = rad(L.knobMinAngleDeg + norm * (L.knobMaxAngleDeg - L.knobMinAngleDeg)) - Math.PI / 2;
+
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = 'rgba(0,0,0,.33)';
+      ctx.beginPath();
+      ctx.arc(k.cx, k.cy, L.efeitoArcoRaio, ini, rad(L.knobMaxAngleDeg) - Math.PI / 2);
+      ctx.stroke();
+      if (fim - ini > 0.01) {
+        ctx.strokeStyle = 'rgba(232,137,12,.92)';
+        ctx.beginPath();
+        ctx.arc(k.cx, k.cy, L.efeitoArcoRaio, ini, fim);
+        ctx.stroke();
+      }
+
+      if (images.knob) {
+        const r = L.efeitoRaio * 1.15;
+        ctx.drawImage(images.knob, k.cx - r, k.cy - r, r * 2, r * 2);
+      }
+      if (images.pointer) {
+        const r = L.efeitoRaio * 0.72;
+        ctx.save();
+        ctx.translate(k.cx, k.cy);
+        ctx.rotate(rad(L.knobMinAngleDeg + norm * (L.knobMaxAngleDeg - L.knobMinAngleDeg)));
+        ctx.drawImage(images.pointer, -r, -r, r * 2, r * 2);
+        ctx.restore();
+      }
+
+      ctx.font = valueFont(L.valueFontSize);
+      ctx.fillStyle = COLORS.value;
+      ctx.fillText(L.formatValue(k.paramId, state.params[k.paramId]), k.valueX, L.efeitoValorY);
+    }
+  }
+
   // Footswitches e LEDs
   if (state.pressed === 'drive') drawCentred(images.footswitchDown, L.driveSwitchX, L.driveSwitchY, L.driveSwitchDownHalf);
   if (state.pressed === 'tuner') drawCentred(images.tunerDown, L.tunerSwitchX, L.tunerSwitchY, L.driveSwitchDownHalf);
@@ -933,13 +980,18 @@ function knobAt(p) {
   for (const k of L.knobs) {
     if (Math.hypot(p.x - k.cx, p.y - k.cy) <= L.knobHitRadius) return k;
   }
+  for (const k of L.efeitos) {
+    if (Math.hypot(p.x - k.cx, p.y - k.cy) <= L.efeitoHitRaio) return k;
+  }
   return null;
 }
 
 function valueAt(p) {
   if (state.tuner) return null;
-  if (Math.abs(p.y - L.valueY) > 11) return null;
-  for (const k of L.knobs) if (Math.abs(p.x - k.valueX) <= 38) return k;
+  if (Math.abs(p.y - L.valueY) <= 11)
+    for (const k of L.knobs) if (Math.abs(p.x - k.valueX) <= 38) return k;
+  if (Math.abs(p.y - L.efeitoValorY) <= 11)
+    for (const k of L.efeitos) if (Math.abs(p.x - k.valueX) <= 34) return k;
   return null;
 }
 
@@ -1121,7 +1173,8 @@ function menuHeader(text) {
 }
 
 function applyPreset(preset) {
-  for (const id of Object.keys(state.params)) if (id in preset) state.params[id] = preset[id];
+  for (const id of Object.keys(state.params))
+    state.params[id] = id in preset ? preset[id] : L.params[id].def;
   state.driveOn = preset.driveOn;
   state.cab = preset.cab;
   applyCabMix();

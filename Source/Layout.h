@@ -11,7 +11,12 @@
 namespace AuraLayout
 {
     inline constexpr int width  = 726;
-    inline constexpr int height = 339;
+    inline constexpr int height = 443;
+
+    // A faixa de efeitos (OCTAVE, CHORUS e o medidor de entrada) foi inserida
+    // no meio da placa, logo acima dos footswitches: tudo o que estava abaixo
+    // desceu 104 unidades. Ver Tools/estende_painel.py.
+    inline constexpr float faixaEfeitosY = 265.0f, faixaEfeitosH = 104.0f;
 
     struct Knob { const char* paramId; float cx, cy; float valueX; };
     inline constexpr Knob knobs[7] = {
@@ -33,16 +38,16 @@ namespace AuraLayout
     inline constexpr float arcCentreDy = 1.5f, arcLitRadius = 46.0f, arcMaxDeg = 142.0f;
 
     // Footswitch do DRIVE (rótulo ENGAGE) + LED azul
-    inline constexpr float driveSwitchX = 655.5f, driveSwitchY = 298.0f;   // canto inferior direito
+    inline constexpr float driveSwitchX = 655.5f, driveSwitchY = 402.0f;   // canto inferior direito
     inline constexpr float driveSwitchDownHalf = 24.0f;   // sobreposição "pressionado"
-    inline constexpr float driveLedX = 616.0f, driveLedY = 298.0f, driveLedHalf = 11.0f;
+    inline constexpr float driveLedX = 616.0f, driveLedY = 402.0f, driveLedHalf = 11.0f;
     struct Rect { float x, y, w, h; };
-    inline constexpr Rect driveHit { 554.0f, 274.0f, 126.0f, 48.0f };
+    inline constexpr Rect driveHit { 554.0f, 378.0f, 126.0f, 48.0f };
 
     // Footswitch do afinador (TUNER) + LED verde, espelhado no canto inferior esquerdo
-    inline constexpr float tunerSwitchX = 70.5f, tunerSwitchY = 298.0f;
-    inline constexpr float tunerLedX = 110.0f, tunerLedY = 298.0f;
-    inline constexpr Rect tunerHit { 46.0f, 274.0f, 126.0f, 48.0f };
+    inline constexpr float tunerSwitchX = 70.5f, tunerSwitchY = 402.0f;
+    inline constexpr float tunerLedX = 110.0f, tunerLedY = 402.0f;
+    inline constexpr Rect tunerHit { 46.0f, 378.0f, 126.0f, 48.0f };
     // Visor do afinador (cobre os knobs enquanto o afinador está ligado)
     inline constexpr Rect tunerDisplay { 30.0f, 98.0f, 666.0f, 156.0f };
 
@@ -54,13 +59,25 @@ namespace AuraLayout
     inline constexpr float cabToggleX = 671.5f, cabToggleY = 175.0f;
     inline constexpr Rect cabHit { 648.0f, 108.0f, 48.0f, 94.0f };
 
-    // Medidor de entrada, na faixa livre entre os dois footswitches. Arrastar
-    // nele ajusta o trim; o ponto à direita acende quando o sinal estoura.
-    inline constexpr Rect meter { 196.0f, 288.0f, 210.0f, 15.0f };
-    inline constexpr Rect meterHit { 190.0f, 276.0f, 244.0f, 40.0f };
+    // Controles da faixa de efeitos: dois knobs menores que os de cima, para
+    // ficar claro que são uma segunda seção, e não mais um da fileira principal.
+    inline constexpr Knob efeitos[2] = {
+        { "octave", 146.0f, 318.0f, 146.0f },
+        { "chorus", 274.0f, 318.0f, 274.0f },
+    };
+    inline constexpr float efeitoRaio = 28.0f;        // raio desenhado do knob
+    inline constexpr float efeitoHitRaio = 30.0f;
+    inline constexpr float efeitoRotuloY = 276.0f;    // centro do rótulo, acima
+    inline constexpr float efeitoValorY = 360.0f;     // centro do valor, abaixo
+    inline constexpr float efeitoArcoRaio = 36.0f;
+
+    // Medidor de entrada, à direita dos dois controles. Arrastar nele ajusta o
+    // trim; o ponto à direita acende quando o sinal estoura.
+    inline constexpr Rect meter { 360.0f, 310.0f, 250.0f, 15.0f };
+    inline constexpr Rect meterHit { 352.0f, 298.0f, 290.0f, 42.0f };
     inline constexpr float meterMinDb = -42.0f;     // começo da escala
-    inline constexpr float meterClipX = 420.0f;     // centro do ponto de clip
-    inline constexpr float meterLabelY = 274.0f;    // linha do rótulo (IN / trim)
+    inline constexpr float meterClipX = 626.0f;     // centro do ponto de clip
+    inline constexpr float meterLabelY = 296.0f;    // linha do rótulo (IN / trim)
 
     // Sobreposições (meio lado em unidades)
     inline constexpr float ledHalf = 16.0f;

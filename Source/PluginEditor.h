@@ -15,7 +15,7 @@ struct AuraAssets
 {
     AuraAssets();
 
-    juce::Image background, pointer, ledDriveOn, ledCabOn, cabOff, footswitchDown, arcsLit, ledTunerOn, tunerDown;
+    juce::Image background, knobBody, pointer, ledDriveOn, ledCabOn, cabOff, footswitchDown, arcsLit, ledTunerOn, tunerDown;
     juce::Typeface::Ptr valueTypeface, titleTypeface;
     juce::Font valueFont { juce::FontOptions() };
 };
@@ -36,6 +36,10 @@ public:
 
     juce::Point<float> centre;                 // centro exato do knob, em coordenadas locais
     std::function<void()> onContextMenu;
+
+    // Os knobs da faixa de efeitos não têm arte no fundo: desenham o próprio
+    // corpo, a partir do mesmo sprite recortado da placa.
+    float raioCorpo = 0.0f;
 
 private:
     const AuraAssets& assets;
@@ -199,6 +203,9 @@ private:
     MenuButton menuButton;
 
     std::unique_ptr<InputMeter> meter;
+    std::vector<std::unique_ptr<PointerKnob>> efeitoKnobs;
+    std::vector<std::unique_ptr<juce::Label>> efeitoLabels;
+    std::vector<std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>> efeitoAttachments;
     std::unique_ptr<LicencaOverlay> licencaOverlay;
     int quadrosAteRevisarLicenca = 0;
     HotSpot driveSpot, cabSpot, tunerSpot;

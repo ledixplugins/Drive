@@ -45,6 +45,7 @@ namespace
 AuraAssets::AuraAssets()
 {
     background = load (BinaryData::background_jpg, BinaryData::background_jpgSize);
+    knobBody   = load (BinaryData::knob_png, BinaryData::knob_pngSize);
     pointer    = load (BinaryData::pointer_png, BinaryData::pointer_pngSize);
     ledDriveOn = load (BinaryData::led_drive_on_png, BinaryData::led_drive_on_pngSize);
     ledCabOn   = load (BinaryData::led_cab_on_png, BinaryData::led_cab_on_pngSize);
@@ -122,8 +123,20 @@ void PointerKnob::paint (Graphics& g)
     if (! p.isValid()) return;
 
     g.setImageResamplingQuality (Graphics::highResamplingQuality);
+
+    // Faixa de efeitos: o corpo do knob não está na placa, então vem do sprite.
+    if (raioCorpo > 0.0f && assets.knobBody.isValid())
+    {
+        const auto& b = assets.knobBody;
+        const float escala = (2.0f * raioCorpo * 1.15f) / (float) b.getWidth();   // o sprite inclui a sombra
+        g.drawImageTransformed (b, AffineTransform::translation (-(float) b.getWidth() * 0.5f,
+                                                                 -(float) b.getHeight() * 0.5f)
+                                       .scaled (escala)
+                                       .translated (centre));
+    }
     g.drawImageTransformed (p, AffineTransform::translation (-(float) p.getWidth() * 0.5f, -(float) p.getHeight() * 0.5f)
-                                   .scaled ((2.0f * L::pointerHalf) / (float) p.getWidth())
+                                   .scaled ((2.0f * (raioCorpo > 0.0f ? raioCorpo * 0.72f : L::pointerHalf))
+                                                / (float) p.getWidth())
                                    .rotated (angle)
                                    .translated (centre));
 }
@@ -371,6 +384,49 @@ AuraPanel::AuraPanel (AuraBassAudioProcessor& p) : processor (p)
         spot->onContextMenu = [this, param] { if (onParameterContextMenu) onParameterContextMenu (*param); };
     }
 
+    // Faixa de efeitos: OCTAVE e CHORUS, com corpo desenhado e valor embaixo
+    static const char* efeitoDicas[2] = {
+        "OCTAVE: quanto da oitava abaixo entra, gerada por divisor, como nos pedais de sub",
+        "CHORUS: quanto do chorus entra, com oscilação lenta, depois do pré e antes da caixa",
+    };
+    for (size_t i = 0; i < std::size (L::efeitos); ++i)
+    {
+        const auto& k = L::efeitos[i];
+        auto knob = std::make_unique<PointerKnob> (*assets);
+        knob->raioCorpo = L::efeitoRaio;
+        knob->setTitle (String (k.paramId).toUpperCase());
+        knob->setDescription ("AURA Bass " + String (k.paramId));
+        knob->setTooltip (String::fromUTF8 (efeitoDicas[i]) + String::fromUTF8 (knobHint));
+        addAndMakeVisible (*knob);
+        efeitoAttachments.push_back (std::make_unique<AudioProcessorValueTreeState::SliderAttachment> (
+            processor.apvts, k.paramId, *knob));
+
+        auto* param = processor.apvts.getParameter (k.paramId);
+        knob->setDoubleClickReturnValue (true, param->convertFrom0to1 (param->getDefaultValue()));
+        knob->textFromValueFunction = [param] (double v) { return param->getText (param->convertTo0to1 ((float) v), 0); };
+
+        auto label = std::make_unique<Label>();
+        label->setFont (assets->valueFont);
+        label->setJustificationType (Justification::centred);
+        label->setColour (Label::textColourId, valueColour);
+        label->setInterceptsMouseClicks (false, false);
+        addAndMakeVisible (*label);
+
+        auto* lp = label.get();
+        knob->onValueChange = [this, i, lp, param]
+        {
+            lp->setText (param->getText (param->convertTo0to1 ((float) efeitoKnobs[i]->getValue()), 0),
+                         dontSendNotification);
+            repaint (juce::Rectangle<int> ((int) (L::efeitos[i].cx - L::efeitoArcoRaio - 4),
+                                           (int) (L::efeitos[i].cy - L::efeitoArcoRaio - 4),
+                                           (int) (2 * L::efeitoArcoRaio + 8), (int) (2 * L::efeitoArcoRaio + 8)));
+        };
+        lp->setText (param->getText (param->convertTo0to1 ((float) knob->getValue()), 0), dontSendNotification);
+
+        efeitoKnobs.push_back (std::move (knob));
+        efeitoLabels.push_back (std::move (label));
+    }
+
     licencaOverlay = std::make_unique<LicencaOverlay> (processor);
     addChildComponent (*licencaOverlay);
 
@@ -492,6 +548,38 @@ void AuraPanel::paint (Graphics& g)
 {
     g.setImageResamplingQuality (Graphics::highResamplingQuality);
     g.drawImage (assets->background, getLocalBounds().toFloat());
+
+    // Faixa de efeitos: rótulos e arcos dos dois knobs novos (o corpo deles é
+    // desenhado pelo próprio knob, por cima disto).
+    {
+        static const char* rotulos[2] = { "OCTAVE", "CHORUS" };
+        g.setFont (Font (FontOptions (assets->valueTypeface).withHeight (15.0f)).withExtraKerningFactor (0.06f));
+        for (size_t i = 0; i < efeitoKnobs.size(); ++i)
+        {
+            const auto& k = L::efeitos[i];
+            g.setColour (Colour (0xffb9bfc6));
+            g.drawText (rotulos[i], (int) (k.cx - 60.0f), (int) (L::efeitoRotuloY - 9.0f), 120, 18,
+                        Justification::centred, false);
+
+            const float norm = (float) efeitoKnobs[i]->valueToProportionOfLength (efeitoKnobs[i]->getValue());
+            const float r = L::efeitoArcoRaio;
+            const float ini = degreesToRadians (L::knobMinAngleDeg);
+            const float fim = degreesToRadians (L::knobMinAngleDeg + norm * (L::knobMaxAngleDeg - L::knobMinAngleDeg));
+
+            Path trilho;
+            trilho.addCentredArc (k.cx, k.cy, r, r, 0.0f, ini, degreesToRadians (L::knobMaxAngleDeg), true);
+            g.setColour (Colour (0x55000000));
+            g.strokePath (trilho, PathStrokeType (3.0f, PathStrokeType::curved, PathStrokeType::rounded));
+
+            if (fim - ini > 0.01f)
+            {
+                Path aceso;
+                aceso.addCentredArc (k.cx, k.cy, r, r, 0.0f, ini, fim, true);
+                g.setColour (Colour (0xffe8890c).withAlpha (0.92f));
+                g.strokePath (aceso, PathStrokeType (3.0f, PathStrokeType::curved, PathStrokeType::rounded));
+            }
+        }
+    }
 
     // Arcos acesos até o valor: knobs em dB acendem a partir do centro (0 dB), o Blend a partir do início
     const auto clip = g.getClipBounds().toFloat();
@@ -1091,6 +1179,15 @@ void AuraPanel::resized()
         knobs[i]->setBounds (b);
         knobs[i]->centre = { k.cx - (float) b.getX(), k.cy - (float) b.getY() };
     }
+    for (size_t i = 0; i < efeitoKnobs.size(); ++i)
+    {
+        const auto& k = L::efeitos[i];
+        const float r = L::efeitoHitRaio;
+        efeitoKnobs[i]->setBounds (juce::Rectangle<float> (k.cx - r, k.cy - r, 2 * r, 2 * r).toNearestInt());
+        efeitoKnobs[i]->centre = { r, r };
+        efeitoLabels[i]->setBounds ((int) (k.cx - 44.0f), (int) (L::efeitoValorY - 9.0f), 88, 18);
+    }
+
     if (meter != nullptr) meter->setBounds (toInt (L::meterHit));
     if (licencaOverlay != nullptr) licencaOverlay->setBounds (getLocalBounds());
     driveSpot.setBounds (toInt (L::driveHit));

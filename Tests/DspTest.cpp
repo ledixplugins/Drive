@@ -134,6 +134,91 @@ int main()
         check (finite (out), "sem NaN/Inf");
     }
 
+    std::printf ("Oitava abaixo e chorus\n");
+    {
+        auto energiaEm = [] (const std::vector<float>& v, float f)
+        {
+            double re = 0, im = 0;
+            const size_t de = v.size() / 2;
+            for (size_t i = de; i < v.size(); ++i)
+            {
+                const double ph = 2.0 * juce::MathConstants<double>::pi * f * (double) i / 48000.0;
+                re += v[i] * std::cos (ph); im += v[i] * std::sin (ph);
+            }
+            return 2.0 * std::hypot (re, im) / (double) (v.size() - de);
+        };
+
+        // Zerados, nada muda: quem tem sessão salva continua ouvindo o mesmo
+        {
+            AuraBassAudioProcessor a, b2;
+            setParam (b2, ParamIDs::octave, 0.0f);
+            setParam (b2, ParamIDs::chorus, 0.0f);
+            const auto sa = runBlocks (a, 110.0f, 0.2f, blockSize, { blockSize }, 24000);
+            const auto sb = runBlocks (b2, 110.0f, 0.2f, blockSize, { blockSize }, 24000);
+            float maior = 0.0f;
+            for (size_t i = 0; i < sa.size(); ++i) maior = juce::jmax (maior, std::abs (sa[i] - sb[i]));
+            check (maior < 1.0e-7f, "com oitava e chorus em 0 a saída é idêntica à de antes");
+        }
+
+        // Oitava: aparece energia em 55 Hz a partir de uma nota de 110 Hz
+        {
+            AuraBassAudioProcessor p;
+            setParam (p, ParamIDs::drive, -15.0f);
+            setParam (p, ParamIDs::cab, 0.0f);
+            setParam (p, ParamIDs::blend, 0.0f);
+            setParam (p, ParamIDs::octave, 0.0f);
+            const auto sem = runBlocks (p, 110.0f, 0.2f, blockSize, { blockSize }, 48000);
+            setParam (p, ParamIDs::octave, 100.0f);
+            const auto com = runBlocks (p, 110.0f, 0.2f, blockSize, { blockSize }, 48000);
+
+            const double subSem = energiaEm (sem, 55.0f), subCom = energiaEm (com, 55.0f);
+            const double notaCom = energiaEm (com, 110.0f);
+            const double ganho = 20.0 * std::log10 ((subCom + 1e-12) / (subSem + 1e-12));
+            std::printf ("  55 Hz sobe %.1f dB; sub em relação à nota: %.1f dB\n",
+                         ganho, 20.0 * std::log10 ((subCom + 1e-12) / (notaCom + 1e-12)));
+            check (ganho > 25.0, "a oitava abaixo aparece uma oitava abaixo da nota");
+            check (subCom > 0.25 * notaCom, "a oitava tem peso suficiente para ser ouvida");
+            check (notaCom > 0.0, "a nota original continua lá");
+        }
+
+        // Oitava não inventa nota no silêncio
+        {
+            AuraBassAudioProcessor p;
+            setParam (p, ParamIDs::octave, 100.0f);
+            const auto quieto = runBlocks (p, 110.0f, 0.0f, blockSize, { blockSize }, 24000);
+            float pico = 0.0f;
+            for (float v : quieto) pico = juce::jmax (pico, std::abs (v));
+            check (pico < 1.0e-5f, "sem sinal a oitava fica calada");
+        }
+
+        // Chorus: a mistura muda o som e oscila com o tempo
+        {
+            AuraBassAudioProcessor p;
+            setParam (p, ParamIDs::drive, -15.0f);
+            setParam (p, ParamIDs::cab, 0.0f);
+            setParam (p, ParamIDs::blend, 0.0f);
+            setParam (p, ParamIDs::chorus, 0.0f);
+            const auto sem = runBlocks (p, 220.0f, 0.2f, blockSize, { blockSize }, 144000);
+            setParam (p, ParamIDs::chorus, 100.0f);
+            const auto com = runBlocks (p, 220.0f, 0.2f, blockSize, { blockSize }, 144000);
+
+            auto rmsEm = [] (const std::vector<float>& v, size_t de, size_t ate)
+            {
+                double s = 0;
+                for (size_t i = de; i < ate && i < v.size(); ++i) s += (double) v[i] * v[i];
+                return std::sqrt (s / (double) (ate - de));
+            };
+            const double a1 = rmsEm (com, 48000, 60000), a2 = rmsEm (com, 96000, 108000);
+            const double variacao = 20.0 * std::log10 ((juce::jmax (a1, a2) + 1e-12) / (juce::jmin (a1, a2) + 1e-12));
+            std::printf ("  chorus: variação de nível ao longo do ciclo %.1f dB\n", variacao);
+            check (variacao > 0.5, "o chorus varia com o tempo (é modulado)");
+
+            float dif = 0.0f;
+            for (size_t i = 100000; i < com.size(); ++i) dif = juce::jmax (dif, std::abs (com[i] - sem[i]));
+            check (dif > 0.01f, "o chorus muda o som quando ligado");
+        }
+    }
+
     std::printf ("Licença: teste de 15 dias, relógio e ativação\n");
     {
         using namespace AuraLicenca;
@@ -387,13 +472,25 @@ int main()
     std::printf ("Presets de fábrica\n");
     {
         AuraBassAudioProcessor p;
-        check (p.getNumPrograms() == 5, "5 presets");
+        check (p.getNumPrograms() == 11, "11 presets (5 de fábrica + 6 medidos do vídeo)");
         p.setCurrentProgram (3);
         const float d = p.apvts.getRawParameterValue (ParamIDs::drive)->load();
         std::printf ("  '%s' -> drive %.1f dB\n", p.getProgramName (3).toRawUTF8(), d);
         check (std::abs (d - 10.0f) < 0.05f, "preset aplica os valores");
         p.setCurrentProgram (1);
         check (p.apvts.getRawParameterValue (ParamIDs::driveOn)->load() < 0.5f, "Clean DI desliga o DRIVE");
+
+        // Os presets de oitava e chorus precisam mexer nos controles novos
+        p.setCurrentProgram (10);
+        const float cho = p.apvts.getRawParameterValue (ParamIDs::chorus)->load();
+        p.setCurrentProgram (9);
+        const float oct = p.apvts.getRawParameterValue (ParamIDs::octave)->load();
+        std::printf ("  '%s' -> oitava %.0f%% | chorus %.0f%%\n", p.getProgramName (9).toRawUTF8(), oct, cho);
+        check (oct > 99.0f && cho > 60.0f, "presets carregam oitava e chorus");
+        p.setCurrentProgram (0);
+        check (p.apvts.getRawParameterValue (ParamIDs::octave)->load() < 0.5f
+                   && p.apvts.getRawParameterValue (ParamIDs::chorus)->load() < 0.5f,
+               "preset sem efeito zera oitava e chorus");
     }
 
     std::printf ("Estado (IR e escala) salvo e restaurado\n");

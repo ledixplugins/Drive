@@ -25,17 +25,31 @@ namespace
     struct Preset
     {
         const char* name;
-        float level, drive, low, mid, high, presence, blend;
+        float level, drive, low, mid, high, presence, blend, octave, chorus;
         bool cab, driveOn;
     };
 
     // Presets de fábrica (o primeiro é o padrão)
     constexpr Preset presets[] = {
-        { "AURA (padrão)",   0.0f,   0.0f, 0.0f,  0.0f,  0.0f, 3.0f, 100.0f, true, true  },
-        { "Clean DI",        0.0f,   0.0f, 2.0f,  0.0f,  1.0f, 2.0f, 100.0f, true, false },
-        { "Grit leve",       0.0f,  -8.0f, 1.0f,  2.0f,  0.0f, 3.0f,  60.0f, true, true  },
-        { "Drive pesado",    0.0f,  10.0f, 3.0f,  4.0f, -1.0f, 4.0f,  85.0f, true, true  },
-        { "Slap brilhante",  0.0f, -12.0f, 4.0f, -5.0f,  6.0f, 6.0f,  35.0f, true, true  },
+        //  nome              level   drive   low    mid    high  presen.  blend   oitava chorus  cab  drive
+        { "AURA (padrão)",   0.0f,   0.0f, 0.0f,  0.0f,  0.0f,  3.0f, 100.0f,   0.0f,  0.0f, true, true  },
+        { "Clean DI",        0.0f,   0.0f, 2.0f,  0.0f,  1.0f,  2.0f, 100.0f,   0.0f,  0.0f, true, false },
+        { "Grit leve",       0.0f,  -8.0f, 1.0f,  2.0f,  0.0f,  3.0f,  60.0f,   0.0f,  0.0f, true, true  },
+        { "Drive pesado",    0.0f,  10.0f, 3.0f,  4.0f, -1.0f,  4.0f,  85.0f,   0.0f,  0.0f, true, true  },
+        { "Slap brilhante",  0.0f, -12.0f, 4.0f, -5.0f,  6.0f,  6.0f,  35.0f,   0.0f,  0.0f, true, true  },
+
+        // Os seis abaixo vieram da medição do vídeo de referência: para cada
+        // trecho comparei a média de longo prazo por banda com a saída do
+        // próprio AURA e deixei o otimizador achar os valores. O quanto de
+        // drive em termos absolutos não dá para recuperar de uma gravação já
+        // processada (não há sinal limpo no vídeo), então o que está afinado é
+        // a diferença entre os presets, com o drive ancorado em ±4 dB.
+        { "Só drive",        0.0f,   0.0f, 1.0f,  1.5f,  1.5f,  0.0f,  90.0f,   0.0f,  0.0f, true, true  },
+        { "Drive estágio 2", 0.0f,   5.0f,-1.0f,  3.0f, -4.5f,  0.0f, 100.0f,   0.0f,  0.0f, true, true  },
+        { "Oitava limpa",    0.0f,  -2.0f, 1.0f,  0.5f, -1.0f,  0.0f, 100.0f,  70.0f,  0.0f, true, true  },
+        { "Oitava suja",     0.0f,   3.0f, 0.0f,  5.0f, -2.0f,  0.0f,  95.0f,  85.0f,  0.0f, true, true  },
+        { "Sub grave",       0.0f,  -8.0f,-1.0f,-11.5f, -3.0f, -2.5f, 100.0f, 100.0f,  0.0f, true, true  },
+        { "Chorus",          0.0f,   2.0f, 0.0f,  0.0f, -2.5f,  0.0f, 100.0f,   0.0f, 65.0f, true, true  },
     };
     constexpr int numPresets = (int) (sizeof (presets) / sizeof (presets[0]));
 
@@ -59,6 +73,8 @@ AuraBassAudioProcessor::AuraBassAudioProcessor()
     licencaLiberada.store (licenca.liberado(), std::memory_order_relaxed);
 
     pTrim     = apvts.getRawParameterValue (ParamIDs::trim);
+    pOctave   = apvts.getRawParameterValue (ParamIDs::octave);
+    pChorus   = apvts.getRawParameterValue (ParamIDs::chorus);
     pLevel    = apvts.getRawParameterValue (ParamIDs::level);
     pDrive    = apvts.getRawParameterValue (ParamIDs::drive);
     pLow      = apvts.getRawParameterValue (ParamIDs::low);
@@ -102,6 +118,8 @@ void AuraBassAudioProcessor::setCurrentProgram (int index)
     set (ParamIDs::high, pr.high);
     set (ParamIDs::presence, pr.presence);
     set (ParamIDs::blend, pr.blend);
+    set (ParamIDs::octave, pr.octave);
+    set (ParamIDs::chorus, pr.chorus);
     set (ParamIDs::cab, pr.cab ? 1.0f : 0.0f);
     set (ParamIDs::driveOn, pr.driveOn ? 1.0f : 0.0f);
 }
@@ -232,6 +250,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout AuraBassAudioProcessor::crea
     // ativos, e a saída de cada interface, sem mexer no Drive.
     p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { ParamIDs::trim, 1 }, "Trim",
                      NormalisableRange<float> (-24.0f, 24.0f, 0.1f), 0.0f, dbAttr));
+    // Oitava e chorus: zerados por padrão, para quem já tem sessões salvas
+    // continuar ouvindo exatamente o que ouvia.
+    p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { ParamIDs::octave, 1 }, "Octave",
+                     NormalisableRange<float> (0.0f, 100.0f, 1.0f), 0.0f, pctAttr));
+    p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { ParamIDs::chorus, 1 }, "Chorus",
+                     NormalisableRange<float> (0.0f, 100.0f, 1.0f), 0.0f, pctAttr));
+
     p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { ParamIDs::level, 1 }, "Level",
                      NormalisableRange<float> (-15.0f, 15.0f, 0.1f), 0.0f, dbAttr));
     p.push_back (std::make_unique<AudioParameterFloat> (ParameterID { ParamIDs::drive, 1 }, "Drive",
@@ -352,6 +377,12 @@ void AuraBassAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlo
     cabMix.reset (currentSampleRate, 0.03);
     cabMix.setCurrentAndTargetValue (pCab->load() > 0.5f ? 1.0f : 0.0f);
     trimGain.reset (currentSampleRate, 0.03);
+    octaveMix.reset (currentSampleRate, 0.03);
+    chorusMix.reset (currentSampleRate, 0.03);
+    octaveMix.setCurrentAndTargetValue (pOctave != nullptr ? pOctave->load() * 0.01f : 0.0f);
+    chorusMix.setCurrentAndTargetValue (pChorus != nullptr ? pChorus->load() * 0.01f : 0.0f);
+    oitava.prepare (currentSampleRate);
+    chorus.prepare (currentSampleRate, juce::jmax (1, getTotalNumInputChannels()));
     trimGain.setCurrentAndTargetValue (dbToGain (pTrim != nullptr ? pTrim->load() : 0.0f));
     outputGain.reset (currentSampleRate, 0.05);
     outputGain.setCurrentAndTargetValue (dbToGain (pLevel->load()));
@@ -422,6 +453,9 @@ void AuraBassAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juc
     inputPeak.store (peak, std::memory_order_relaxed);
     if (peak >= 0.99f) inputClip.store (true, std::memory_order_relaxed);
 
+    octaveMix.setTargetValue (pOctave->load() * 0.01f);
+    chorusMix.setTargetValue (pChorus->load() * 0.01f);
+
     // Afinador: o detector recebe a entrada logo depois do trim
     const bool tunerOn = pTuner->load() > 0.5f;
     if (tunerOn)
@@ -465,6 +499,25 @@ void AuraBassAudioProcessor::processChunk (juce::AudioBuffer<float>& buffer, int
 
     // 1) Entrada
     inputHpf.process (ctx);
+
+    // 1b) Oitava abaixo, antes de tudo: é onde um pedal de oitava fica, e é o
+    //     que faz o sub também passar pelo drive quando o drive está alto.
+    if (! isIdle (octaveMix))
+    {
+        if (oitavaIdle) { oitava.reset(); oitavaIdle = false; }
+        for (int i = 0; i < numSamples; ++i)
+        {
+            const float m = octaveMix.getNextValue();
+            const float sub = oitava.processarAmostra (buffer.getSample (0, i));
+            for (int ch = 0; ch < numChannels; ++ch)
+                buffer.getWritePointer (ch)[i] += sub * m;
+        }
+    }
+    else
+    {
+        octaveMix.skip (numSamples);
+        oitavaIdle = true;
+    }
 
     // 2) Cópia limpa (atrasada pela latência do oversampling, para o Blend não dar phasing)
     for (int ch = 0; ch < numChannels; ++ch)
@@ -546,6 +599,18 @@ void AuraBassAudioProcessor::processChunk (juce::AudioBuffer<float>& buffer, int
 
     // 4) Tone stack (ganhos suavizados)
     processToneStack (block);
+
+    // 4b) Chorus, depois do pré e antes da caixa — onde ele fica num rack.
+    if (! isIdle (chorusMix))
+    {
+        if (chorusIdle) { chorus.reset(); chorusIdle = false; }
+        chorus.processar (buffer, numChannels, chorusMix);
+    }
+    else
+    {
+        chorusMix.skip (numSamples);
+        chorusIdle = true;
+    }
 
     // 5) CAB + Level. Com o CAB desligado a convolução não é processada.
     if (isIdle (cabMix))

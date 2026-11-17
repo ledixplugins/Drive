@@ -99,6 +99,66 @@ function designFir() {
 }
 
 // ---- Processamento ---------------------------------------------------------
+// Oitava abaixo por divisor, igual a AuraEfeitos::Oitava (Source/Efeitos.h).
+class Oitava {
+  constructor(sr) {
+    this.aTrack = Math.exp(-2 * Math.PI * 250 / sr);
+    this.aOut = Math.exp(-2 * Math.PI * 220 / sr);
+    this.aAtk = Math.exp(-1 / (0.004 * sr));
+    this.aRel = Math.exp(-1 / (0.090 * sr));
+    this.reset();
+  }
+  reset() {
+    this.lpTrack = 0; this.env = 0; this.lp1 = 0; this.lp2 = 0; this.dc = 0;
+    this.comp = 1; this.flip = 1;
+  }
+  amostra(x) {
+    this.lpTrack = this.aTrack * this.lpTrack + (1 - this.aTrack) * x;
+    const mag = x < 0 ? -x : x;
+    const a = mag > this.env ? this.aAtk : this.aRel;
+    this.env = a * this.env + (1 - a) * mag;
+    const h = Math.max(0.004, this.env * 0.12);
+    if (this.comp <= 0 && this.lpTrack > h) { this.comp = 1; this.flip = -this.flip; }
+    else if (this.comp > 0 && this.lpTrack < -h) { this.comp = -1; }
+    let sub = this.flip * this.env * 1.6;
+    this.lp1 = this.aOut * this.lp1 + (1 - this.aOut) * sub;
+    this.lp2 = this.aOut * this.lp2 + (1 - this.aOut) * this.lp1;
+    sub = this.lp2;
+    this.dc = 0.9995 * this.dc + 0.0005 * sub;
+    sub -= this.dc;
+    if (this.env < 0.001) sub = 0;
+    return Math.tanh(sub);
+  }
+}
+
+// Chorus por atraso modulado, igual a AuraEfeitos::Chorus.
+class ChorusLinha {
+  constructor(sr) {
+    this.sr = sr;
+    this.tamanho = 1 << Math.ceil(Math.log2(0.064 * sr + 4));
+    this.linha = new Float32Array(this.tamanho);
+    this.passo = 2 * Math.PI * 0.33 / sr;
+    this.baseAm = 12.0 * 0.001 * sr;
+    this.profAm = 3.5 * 0.001 * sr;
+    this.reset();
+  }
+  reset() { this.linha.fill(0); this.escrita = 0; this.fase = 0; }
+  amostra(x, mistura) {
+    const atraso = this.baseAm + this.profAm * (0.5 + 0.5 * Math.sin(this.fase));
+    this.fase += this.passo;
+    if (this.fase > 2 * Math.PI) this.fase -= 2 * Math.PI;
+    this.linha[this.escrita] = x;
+    const leitura = this.escrita - atraso;
+    const base = Math.floor(leitura);
+    const i0 = ((base % this.tamanho) + this.tamanho) % this.tamanho;
+    const i1 = (i0 + 1) % this.tamanho;
+    const f = leitura - base;
+    const atrasado = this.linha[i0] * (1 - f) + this.linha[i1] * f;
+    this.escrita = (this.escrita + 1) % this.tamanho;
+    return x + atrasado * mistura;
+  }
+}
+
 class AuraDsp {
   constructor(sr) {
     this.sr = sr;
@@ -131,6 +191,8 @@ class AuraDsp {
     this.decPhase = 0;
     this.tunerBuf = new Float32Array(256); this.tunerFill = 0;
     this.trimGain = 1; this.inPeak = 0; this.inClip = false;
+    this.oitava = new Oitava(sr); this.chorusLinha = new ChorusLinha(sr);
+    this.octMix = 0; this.choMix = 0;
     this.onTunerData = null;
   }
 
@@ -164,6 +226,8 @@ class AuraDsp {
     const driveTarget = dbToGain(p.drive + DRIVE_REF_DB);
     const blendTarget = p.driveOn ? p.blend / 100 : 0;
     const trimTarget = dbToGain(p.trim || 0);
+    const octTarget = (p.octave || 0) * 0.01;
+    const choTarget = (p.chorus || 0) * 0.01;
     const outTarget = dbToGain(p.level);
     const muteTarget = p.tuner ? 0 : 1;
     const k = this.kSmooth;
@@ -178,6 +242,10 @@ class AuraDsp {
       const mag = x < 0 ? -x : x;
       if (mag > this.inPeak) this.inPeak = mag;
       if (mag >= 0.99) this.inClip = true;
+
+      // Oitava abaixo, antes de tudo: é onde um pedal de oitava fica.
+      this.octMix += (octTarget - this.octMix) * k;
+      if (this.octMix > 1e-4 || octTarget > 0) x += this.oitava.amostra(x) * this.octMix;
 
       if (p.tuner) {
         const t = this.tunerLp[1].process(this.tunerLp[0].process(x));
@@ -237,6 +305,11 @@ class AuraDsp {
       }
 
       y = this.tone[3].process(this.tone[2].process(this.tone[1].process(this.tone[0].process(y))));
+
+      // Chorus, depois do pré — na web a caixa é um nó separado, depois daqui.
+      this.choMix += (choTarget - this.choMix) * k;
+      if (this.choMix > 1e-4 || choTarget > 0) y = this.chorusLinha.amostra(y, this.choMix);
+
       out[i] = y * this.outGain * this.muteGain;
     }
   }

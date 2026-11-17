@@ -63,6 +63,7 @@ juce_add_plugin(AuraBass
 # Imagens da interface (montadas por Tools/build_ui_assets.py a partir de Resources/mockup)
 juce_add_binary_data(AuraAssets SOURCES
     Resources/ui/background.jpg
+    Resources/ui/knob.png
     Resources/ui/pointer.png
     Resources/ui/led_drive_on.png
     Resources/ui/led_cab_on.png

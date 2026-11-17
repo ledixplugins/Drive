@@ -16,7 +16,8 @@ mkdir -p "$OUT/assets"
 cp web/index.html web/style.css web/app.js web/layout.js web/tuner.js web/aura-processor.js web/sw.js web/manifest.webmanifest "$OUT/"
 cp Resources/ui/background.jpg Resources/ui/arcs_lit.png Resources/ui/pointer.png \
    Resources/ui/led_drive_on.png Resources/ui/led_tuner_on.png Resources/ui/led_cab_on.png \
-   Resources/ui/cab_off.png Resources/ui/footswitch_down.png Resources/ui/tuner_down.png "$OUT/assets/"
+   Resources/ui/cab_off.png Resources/ui/footswitch_down.png Resources/ui/tuner_down.png \
+   Resources/ui/knob.png "$OUT/assets/"
 cp Resources/ir/cab_4x10.wav Resources/ir/cab_1x15.wav "$OUT/assets/"
 cp Resources/fonts/Roboto.ttf Resources/fonts/RussoOne-Regular.ttf "$OUT/assets/"
 cp Resources/fonts/OFL-Roboto.txt Resources/fonts/OFL-RussoOne.txt "$OUT/assets/"

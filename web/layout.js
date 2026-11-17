@@ -8,7 +8,12 @@
 (function (root) {
   const L = {
     width: 726,
-    height: 339,
+    height: 443,
+
+    // A faixa de efeitos foi inserida no meio da placa, logo acima dos
+    // footswitches: tudo o que estava abaixo desceu 104 unidades.
+    faixaEfeitosY: 265.0,
+    faixaEfeitosH: 104.0,
 
     knobs: [
       { paramId: 'level',    cx: 71.5,   cy: 172.5,  valueX: 74.5 },
@@ -31,18 +36,18 @@
     arcMaxDeg: 142.0,
 
     driveSwitchX: 655.5,
-    driveSwitchY: 298.0,
+    driveSwitchY: 402.0,
     driveSwitchDownHalf: 24.0,
     driveLedX: 616.0,
-    driveLedY: 298.0,
+    driveLedY: 402.0,
     driveLedHalf: 11.0,
-    driveHit: { x: 554.0, y: 274.0, w: 126.0, h: 48.0 },
+    driveHit: { x: 554.0, y: 378.0, w: 126.0, h: 48.0 },
 
     tunerSwitchX: 70.5,
-    tunerSwitchY: 298.0,
+    tunerSwitchY: 402.0,
     tunerLedX: 110.0,
-    tunerLedY: 298.0,
-    tunerHit: { x: 46.0, y: 274.0, w: 126.0, h: 48.0 },
+    tunerLedY: 402.0,
+    tunerHit: { x: 46.0, y: 378.0, w: 126.0, h: 48.0 },
     tunerDisplay: { x: 30.0, y: 98.0, w: 666.0, h: 156.0 },
 
     menuButton: { x: 662.0, y: 40.0, w: 26.0, h: 22.0 },
@@ -53,11 +58,21 @@
     cabToggleY: 175.0,
     cabHit: { x: 648.0, y: 108.0, w: 48.0, h: 94.0 },
 
-    meter: { x: 196.0, y: 288.0, w: 210.0, h: 15.0 },
-    meterHit: { x: 190.0, y: 276.0, w: 244.0, h: 40.0 },
+    efeitos: [
+      { paramId: 'octave', cx: 146.0, cy: 318.0, valueX: 146.0 },
+      { paramId: 'chorus', cx: 274.0, cy: 318.0, valueX: 274.0 },
+    ],
+    efeitoRaio: 28.0,
+    efeitoHitRaio: 30.0,
+    efeitoRotuloY: 276.0,
+    efeitoValorY: 360.0,
+    efeitoArcoRaio: 36.0,
+
+    meter: { x: 360.0, y: 310.0, w: 250.0, h: 15.0 },
+    meterHit: { x: 352.0, y: 298.0, w: 290.0, h: 42.0 },
     meterMinDb: -42.0,
-    meterClipX: 420.0,
-    meterLabelY: 274.0,
+    meterClipX: 626.0,
+    meterLabelY: 296.0,
 
     ledHalf: 16.0,
     toggleHalf: 25.0,
@@ -66,6 +81,8 @@
   // Faixas dos parâmetros (iguais às de createParameterLayout no plugin)
   L.params = {
     trim:     { min: -24, max: 24, step: 0.1, def: 0,   unit: 'dB', label: 'TRIM' },
+    octave:   { min: 0,   max: 100, step: 1,  def: 0,   unit: '%',  label: 'OCTAVE' },
+    chorus:   { min: 0,   max: 100, step: 1,  def: 0,   unit: '%',  label: 'CHORUS' },
     level:    { min: -15, max: 15, step: 0.1, def: 0,   unit: 'dB', label: 'LEVEL' },
     drive:    { min: -15, max: 15, step: 0.1, def: 0,   unit: 'dB', label: 'DRIVE' },
     low:      { min: -12, max: 12, step: 0.1, def: 0,   unit: 'dB', label: 'LOW' },
@@ -82,10 +99,18 @@
     { name: 'Grit leve',      level: 0, drive: -8,  low: 1, mid: 2,  high: 0,  presence: 3, blend: 60,  cab: true, driveOn: true },
     { name: 'Drive pesado',   level: 0, drive: 10,  low: 3, mid: 4,  high: -1, presence: 4, blend: 85,  cab: true, driveOn: true },
     { name: 'Slap brilhante', level: 0, drive: -12, low: 4, mid: -5, high: 6,  presence: 6, blend: 35,  cab: true, driveOn: true },
+
+    // Medidos a partir do vídeo de referência (ver Source/PluginProcessor.cpp)
+    { name: 'Só drive',        level: 0, drive: 0,  low: 1,  mid: 1.5,   high: 1.5,  presence: 0,    blend: 90,  octave: 0,   chorus: 0,  cab: true, driveOn: true },
+    { name: 'Drive estágio 2', level: 0, drive: 5,  low: -1, mid: 3,     high: -4.5, presence: 0,    blend: 100, octave: 0,   chorus: 0,  cab: true, driveOn: true },
+    { name: 'Oitava limpa',    level: 0, drive: -2, low: 1,  mid: 0.5,   high: -1,   presence: 0,    blend: 100, octave: 70,  chorus: 0,  cab: true, driveOn: true },
+    { name: 'Oitava suja',     level: 0, drive: 3,  low: 0,  mid: 5,     high: -2,   presence: 0,    blend: 95,  octave: 85,  chorus: 0,  cab: true, driveOn: true },
+    { name: 'Sub grave',       level: 0, drive: -8, low: -1, mid: -11.5, high: -3,   presence: -2.5, blend: 100, octave: 100, chorus: 0,  cab: true, driveOn: true },
+    { name: 'Chorus',          level: 0, drive: 2,  low: 0,  mid: 0,     high: -2.5, presence: 0,    blend: 100, octave: 0,   chorus: 65, cab: true, driveOn: true },
   ];
 
   L.formatValue = function (id, v) {
-    if (id === 'blend') return Math.round(v) + '%';
+    if (id === 'blend' || id === 'octave' || id === 'chorus') return Math.round(v) + '%';
     if (Math.abs(v) < 0.05) v = 0;
     return v.toFixed(1) + ' dB';
   };

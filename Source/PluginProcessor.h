@@ -6,6 +6,7 @@
 #pragma once
 
 #include "Licenca.h"
+#include "Efeitos.h"
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_dsp/juce_dsp.h>
@@ -14,6 +15,8 @@
 namespace ParamIDs
 {
     inline constexpr const char* trim     = "trim";
+    inline constexpr const char* octave   = "octave";
+    inline constexpr const char* chorus   = "chorus";
     inline constexpr const char* level    = "level";
     inline constexpr const char* drive    = "drive";
     inline constexpr const char* low      = "low";
@@ -160,6 +163,10 @@ private:
 
     juce::SmoothedValue<float> driveGain, blendMix, cabMix, outputGain, autoGain, tunerMute;
     juce::SmoothedValue<float> trimGain;
+    juce::SmoothedValue<float> octaveMix, chorusMix;
+    AuraEfeitos::Oitava oitava;
+    AuraEfeitos::Chorus chorus;
+    bool oitavaIdle = true, chorusIdle = true;
     std::atomic<float> inputPeak { 0.0f };
     std::atomic<bool>  inputClip { false };
     Tuner tuner;
@@ -169,6 +176,8 @@ private:
     bool drivePathIdle = false, cabIdle = false;
 
     std::atomic<float>* pTrim     = nullptr;
+    std::atomic<float>* pOctave   = nullptr;
+    std::atomic<float>* pChorus   = nullptr;
     std::atomic<float>* pLevel    = nullptr;
     std::atomic<float>* pDrive    = nullptr;
     std::atomic<float>* pLow      = nullptr;

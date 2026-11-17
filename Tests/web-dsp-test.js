@@ -130,7 +130,9 @@ console.log('Layout da web igual ao do plugin (Source/Layout.h)');
                    'arcCentreDy', 'arcLitRadius', 'arcMaxDeg', 'driveSwitchX', 'driveSwitchY', 'driveSwitchDownHalf',
                    'driveLedX', 'driveLedY', 'driveLedHalf', 'tunerSwitchX', 'tunerSwitchY', 'tunerLedX', 'tunerLedY',
                    'cabLedX', 'cabLedY', 'cabToggleX', 'cabToggleY', 'ledHalf', 'toggleHalf',
-                   'meterMinDb', 'meterClipX', 'meterLabelY'];
+                   'meterMinDb', 'meterClipX', 'meterLabelY',
+                   'faixaEfeitosY', 'faixaEfeitosH', 'efeitoRaio', 'efeitoHitRaio',
+                   'efeitoRotuloY', 'efeitoValorY', 'efeitoArcoRaio'];
   const bad = scalars.filter((k) => num(k) === null || Math.abs(num(k) - L[k]) > 1e-4);
   const size = h.match(/width\s*=\s*(\d+);[\s\S]*?height\s*=\s*(\d+);/);
   const sizeOk = size && +size[1] === L.width && +size[2] === L.height;
@@ -140,12 +142,14 @@ console.log('Layout da web igual ao do plugin (Source/Layout.h)');
     const r = L[k];
     return Math.abs(+m[1] - r.x) > 1e-4 || Math.abs(+m[2] - r.y) > 1e-4 || Math.abs(+m[3] - r.w) > 1e-4 || Math.abs(+m[4] - r.h) > 1e-4;
   });
+  // Os sete de cima e os dois da faixa de efeitos, na mesma ordem dos dois arquivos
   const knobs = [...h.matchAll(/\{\s*"(\w+)",\s*(-?[\d.]+)f,\s*(-?[\d.]+)f,\s*(-?[\d.]+)f\s*\}/g)];
-  const knobsOk = knobs.length === L.knobs.length && knobs.every((m, i) => {
-    const k = L.knobs[i];
+  const todos = [...L.knobs, ...L.efeitos];
+  const knobsOk = knobs.length === todos.length && knobs.every((m, i) => {
+    const k = todos[i];
     return m[1] === k.paramId && Math.abs(+m[2] - k.cx) < 1e-4 && Math.abs(+m[3] - k.cy) < 1e-4 && Math.abs(+m[4] - k.valueX) < 1e-4;
   });
-  console.log(`  ${scalars.length} medidas, ${rects.length ? 'divergências: ' + rects.join(',') : '5 retângulos'}, ${knobs.length} knobs`);
+  console.log(`  ${scalars.length} medidas, ${rects.length ? 'divergências: ' + rects.join(',') : '5 retângulos'}, ${knobs.length} knobs (7 + 2 de efeitos)`);
   check(sizeOk, 'tamanho do painel');
   check(bad.length === 0, 'medidas iguais' + (bad.length ? ': ' + bad.join(',') : ''));
   check(rects.length === 0, 'áreas clicáveis iguais');

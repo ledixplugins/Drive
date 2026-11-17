@@ -91,20 +91,28 @@ function aplicaVolume(tau) {
 // ---- Desenho --------------------------------------------------------------
 
 function knobSvg(frac) {
-  const a0 = -135, a1 = 135, c = 28, raio = 25;
+  const a0 = -135, a1 = 135, c = 28;
   const ang = a0 + (a1 - a0) * frac;
   const r = Math.PI / 180;
+  const pt = (graus, raio) => [c + raio * Math.sin(graus * r), c - raio * Math.cos(graus * r)];
+  // 11 pontos de escala; os que o ponteiro já passou acendem na cor do pedal
+  let marcas = '';
+  for (let i = 0; i <= 10; i++) {
+    const g = a0 + (a1 - a0) * (i / 10), acesa = i / 10 <= frac + 1e-6;
+    const [x1, y1] = pt(g, 24.2), [x2, y2] = pt(g, 27.2);
+    marcas += `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" `
+      + (acesa ? 'style="stroke:var(--luz)" stroke-width="1.7"' : 'stroke="rgba(255,255,255,.28)" stroke-width="1.2"')
+      + ' stroke-linecap="round"/>';
+  }
   const arco = (de, ate) => {
-    const x1 = c + raio * Math.sin(de * r), y1 = c - raio * Math.cos(de * r);
-    const x2 = c + raio * Math.sin(ate * r), y2 = c - raio * Math.cos(ate * r);
-    const big = Math.abs(ate - de) > 180 ? 1 : 0;
-    return `M ${x1.toFixed(2)} ${y1.toFixed(2)} A ${raio} ${raio} 0 ${big} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
+    const [x1, y1] = pt(de, 22.3), [x2, y2] = pt(ate, 22.3);
+    return `M ${x1.toFixed(2)} ${y1.toFixed(2)} A 22.3 22.3 0 ${Math.abs(ate - de) > 180 ? 1 : 0} 1 ${x2.toFixed(2)} ${y2.toFixed(2)}`;
   };
   return `<div class="k" aria-hidden="true">
-    <svg viewBox="0 0 56 56"><path d="${arco(a0, a1)}" fill="none" stroke="rgba(0,0,0,.7)" stroke-width="4" stroke-linecap="round"/>
-      <path d="${arco(a0, a1)}" fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1.4" stroke-linecap="round" transform="translate(0 .8)"/>
-      <path d="${arco(a0, Math.max(a0 + 0.01, ang))}" fill="none" style="stroke:var(--luz)" stroke-width="2.6" stroke-linecap="round"/></svg>
-    <i class="anel"></i><i class="tampa"></i><i class="pont" style="transform:rotate(${ang.toFixed(1)}deg)"></i></div>`;
+    <svg viewBox="0 0 56 56">${marcas}
+      <path d="${arco(a0, a1)}" fill="none" stroke="rgba(0,0,0,.55)" stroke-width="2" stroke-linecap="round"/>
+      <path d="${arco(a0, Math.max(a0 + 0.01, ang))}" fill="none" style="stroke:var(--luz)" stroke-width="1.6" stroke-linecap="round" opacity=".9"/></svg>
+    <i class="sombra"></i><i class="anel"></i><i class="tampa"></i><i class="pont" style="transform:rotate(${ang.toFixed(1)}deg)"></i></div>`;
 }
 
 function formata(k, v) {
@@ -148,7 +156,7 @@ function desenha() {
         <div class="rot">${k.rot}</div><div class="val">${formata(k, v)}</div></div>`;
     }).join('');
 
-    el.innerHTML = `<h2>${def.nome}</h2><div class="tipo">${def.sub}</div>
+    el.innerHTML = `<i class="jack e"></i><i class="jack d"></i><h2>${def.nome}</h2><div class="tipo">${def.sub}</div>
       <div class="knobs">${knobs}</div>
       ${pid === 'tuner' ? '<div class="afina"><div class="nota">--</div><div class="hzv">&nbsp;</div><div class="escala"><i class="agulha"></i></div></div>' : ''}
       <div class="rodapePedal"><i class="led"></i>

@@ -15,6 +15,7 @@
   --texto: #d3d7de;
   --apagado: #8a909b;
   --cromo: linear-gradient(135deg, #f4f6f9 0%, #9aa1ab 22%, #e3e6ea 45%, #5d636c 70%, #c9ced5 100%);
+  --feltro: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='3' seed='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .75  0 0 0 0 .78  0 0 0 0 .85  0 0 0 .5 -.14'/></filter><rect width='220' height='220' filter='url(%23g)'/></svg>");
   --metal: linear-gradient(160deg, #6f7681 0%, #cfd4db 28%, #8d949f 55%, #4d535c 100%);
   /* grão de aço escovado: ruído esticado na horizontal */
   --escovado: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='0.004 0.85' numOctaves='2' seed='7' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .2 0'/></filter><rect width='300' height='300' filter='url(%23f)'/></svg>");
@@ -22,10 +23,11 @@
 
 html, body {
   margin: 0; min-height: 100%;
-  background:
-    var(--escovado),
-    radial-gradient(120% 80% at 50% -10%, #20232a 0%, var(--fundo) 62%);
-  background-color: var(--fundo);
+  background-color: #0a0b0d;
+  background-image:
+    var(--feltro),
+    radial-gradient(ellipse 90% 70% at 50% 28%, #20232a 0%, #121418 55%, #08090b 100%);
+  background-attachment: fixed;
   color: var(--texto);
   font: 15px/1.4 'VpTexto', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   overscroll-behavior-y: none;
@@ -37,8 +39,7 @@ html, body {
   position: sticky; top: 0; z-index: 20;
   display: flex; align-items: center; gap: 12px;
   padding: max(10px, env(safe-area-inset-top)) 16px 10px;
-  background: var(--escovado), linear-gradient(180deg, #2b2e34 0%, #16181c 100%);
-  background-color: #1a1c20;
+  background: linear-gradient(180deg, #25282d 0%, #121316 100%);
   border-bottom: 1px solid #000;
   box-shadow: 0 1px 0 rgba(255,255,255,.12) inset, 0 6px 16px rgba(0,0,0,.5);
 }
@@ -109,14 +110,15 @@ html, body {
   border: 1px solid #000;
   box-shadow: 0 14px 28px rgba(0,0,0,.65), 0 2px 3px rgba(0,0,0,.6);
 }
+/* tampa pintada a pó: a cor do pedal escurece de cima para baixo, com grão fino */
 .pedal::before {
   content: ''; position: absolute; inset: 5px; z-index: -1; border-radius: 11px;
   background:
     var(--escovado),
-    linear-gradient(180deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 30%),
-    linear-gradient(165deg, var(--cor) -40%, #26282d 38%, #15161a 100%);
-  background-color: #1d1f23;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.22), inset 0 -2px 6px rgba(0,0,0,.65), inset 0 0 0 1px rgba(0,0,0,.8);
+    linear-gradient(180deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 26%),
+    linear-gradient(172deg, var(--cor) 0%, rgba(0,0,0,0) 135%);
+  background-color: #17181b;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 -3px 8px rgba(0,0,0,.6), inset 0 0 0 1px rgba(0,0,0,.85);
 }
 .pedal::after {                                        /* parafusos nos quatro cantos */
   content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
@@ -132,7 +134,7 @@ html, body {
   margin: 0 0 2px; font: 400 19px/1.1 'VpTitulo', system-ui, sans-serif; letter-spacing: .07em;
   text-transform: uppercase; color: #eceff3; text-shadow: 0 -1px 0 rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.12);
 }
-.pedal .tipo { font-size: 10px; color: var(--apagado); text-transform: uppercase; letter-spacing: .15em; }
+.pedal .tipo { font-size: 10px; color: rgba(255,255,255,.62); text-transform: uppercase; letter-spacing: .15em; }
 .pedal .tipo::after {                                   /* filete na cor do pedal */
   content: ''; display: block; height: 2px; width: 44px; margin-top: 7px; border-radius: 2px;
   background: linear-gradient(90deg, var(--luz), transparent); opacity: .9;
@@ -144,58 +146,87 @@ html, body {
 .knob .rot { margin-top: 3px; font-size: 10px; letter-spacing: .08em; color: #c9ced6; text-transform: uppercase; }
 .knob .val { font-size: 10.5px; color: #fff; font-variant-numeric: tabular-nums; }
 
-/* knob de metal: anel serrilhado, tampa cônica escovada e arco de nível */
+/* knob real: base com sombra, saia serrilhada, chanfro e tampa usinada; pontos de escala acendem */
 .k { position: relative; width: 56px; height: 56px; margin: 0 auto; }
-.k .anel {
-  position: absolute; left: 6px; top: 6px; width: 44px; height: 44px; border-radius: 50%;
-  background: repeating-conic-gradient(#17181b 0 3deg, #5d626a 3deg 6deg);
-  box-shadow: 0 6px 9px rgba(0,0,0,.6), 0 0 0 1px #000;
+.k svg { position: absolute; inset: 0; width: 56px; height: 56px; overflow: visible; }
+.k .sombra {
+  position: absolute; left: 9px; top: 14px; width: 38px; height: 38px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,0,0,.7) 40%, rgba(0,0,0,0) 72%); filter: blur(2px);
 }
-.k .tampa {
-  position: absolute; left: 9px; top: 9px; width: 38px; height: 38px; border-radius: 50%;
+.k .anel {                                              /* saia preta serrilhada */
+  position: absolute; left: 8px; top: 8px; width: 40px; height: 40px; border-radius: 50%;
+  background: repeating-conic-gradient(#08090a 0 2deg, #3d4147 2deg 4deg);
+  box-shadow: 0 0 0 1px #000, 0 2px 3px rgba(0,0,0,.7);
+}
+.k .anel::after {                                       /* luz vindo de cima */
+  content: ''; position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle at 50% 14%, rgba(255,255,255,.45), rgba(255,255,255,0) 52%),
+              linear-gradient(180deg, rgba(0,0,0,0) 45%, rgba(0,0,0,.5) 100%);
+}
+.k .tampa {                                             /* topo de metal usinado */
+  position: absolute; left: 13px; top: 13px; width: 30px; height: 30px; border-radius: 50%;
   background:
-    radial-gradient(circle at 50% 50%, #fff 0 1.5px, rgba(255,255,255,0) 3px),
-    radial-gradient(circle at 50% 28%, rgba(255,255,255,.35), rgba(255,255,255,0) 60%),
-    conic-gradient(from 0deg, #8c929b, #eef0f3, #7d838c, #f5f6f8, #6f757e, #e5e8ec, #8c929b);
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.55), inset 0 -3px 5px rgba(0,0,0,.35), inset 0 2px 2px rgba(255,255,255,.5);
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.9) 0 1px, rgba(255,255,255,0) 2.5px),
+    radial-gradient(ellipse 70% 45% at 40% 22%, rgba(255,255,255,.55), rgba(255,255,255,0) 70%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(0,0,0,.09) 0 .6px, rgba(255,255,255,.05) .6px 1.4px),
+    conic-gradient(from 20deg, #7e848d, #f1f3f6, #6a7079, #f7f8fa, #5f656e, #e9ecef, #7e848d);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.8), 0 0 0 2px rgba(255,255,255,.18), inset 0 -2px 4px rgba(0,0,0,.4), inset 0 1.5px 1px rgba(255,255,255,.7);
 }
 .k .pont { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
-.k .pont::before {
-  content: ''; position: absolute; left: -1.5px; top: -17px; width: 3px; height: 8px; border-radius: 2px;
-  background: #15171a; box-shadow: 0 0 0 .5px rgba(255,255,255,.35);
+.k .pont::before {                                      /* marca pintada */
+  content: ''; position: absolute; left: -1.25px; top: -14px; width: 2.5px; height: 10px; border-radius: 1.5px;
+  background: #101114; box-shadow: 0 0 0 .5px rgba(255,255,255,.4);
 }
-.k svg { position: absolute; inset: 0; width: 56px; height: 56px; overflow: visible; }
 
 .rodapePedal { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
-.led {                                                   /* LED com aro e vidro */
-  width: 13px; height: 13px; border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #3a3d42, #0e0f11 70%);
-  box-shadow: 0 0 0 2px #0a0b0c, 0 0 0 3px #4a4f57, 0 1px 3px 3px rgba(0,0,0,.35);
+.led {                                                   /* LED: vidro dentro de aro cromado */
+  position: relative; width: 12px; height: 12px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 28%, #4a4e55, #0b0c0d 72%);
+  box-shadow: 0 0 0 2px #050506, 0 0 0 3.5px #8f959e, 0 0 0 4.5px #2b2e33, 0 2px 4px 3px rgba(0,0,0,.45);
 }
 .pedal:not(.off) .led {
-  background: radial-gradient(circle at 35% 30%, #fff 0 8%, var(--luz) 40%, var(--cor) 100%);
-  box-shadow: 0 0 0 2px #0a0b0c, 0 0 0 3px #4a4f57, 0 0 12px 3px var(--luz);
+  background: radial-gradient(circle at 35% 28%, #fff 0 9%, var(--luz) 42%, var(--cor) 100%);
+  box-shadow: 0 0 0 2px #050506, 0 0 0 3.5px #8f959e, 0 0 0 4.5px #2b2e33, 0 0 14px 4px var(--luz);
 }
 
-/* footswitch hexagonal cromado, como no painel do AURA */
+/* footswitch de pedal: porca sextavada facetada + botão abaulado */
 .foot {
-  margin-left: auto; width: 54px; height: 54px; border: 0; padding: 0; cursor: pointer;
-  background: var(--cromo);
+  position: relative; margin-left: auto; width: 60px; height: 60px; border: 0; padding: 0; cursor: pointer;
+  background: none; filter: drop-shadow(0 5px 4px rgba(0,0,0,.65));
+}
+.foot::before {                                          /* porca */
+  content: ''; position: absolute; inset: 0;
   -webkit-clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0 50%);
           clip-path: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0 50%);
-  position: relative; filter: drop-shadow(0 4px 4px rgba(0,0,0,.6));
-}
-.foot::before {                                          /* botão central */
-  content: ''; position: absolute; left: 9px; top: 9px; width: 36px; height: 36px; border-radius: 50%;
   background:
-    radial-gradient(circle at 38% 30%, #ffffff 0%, #c4c9d0 30%, #7c828b 70%, #3f434a 100%);
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,.5), inset 0 -3px 4px rgba(0,0,0,.35), 0 2px 3px rgba(0,0,0,.5);
+    radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0 25px, rgba(0,0,0,.4) 26px, rgba(0,0,0,0) 29px),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,.35) 0 22px, rgba(255,255,255,0) 23px),
+    conic-gradient(from 30deg, #f1f3f6 0 60deg, #858b94 60deg 120deg, #d6dae0 120deg 180deg, #565c65 180deg 240deg, #c9ced5 240deg 300deg, #737982 300deg 360deg);
 }
-.foot:active::before, .pedal:not(.off) .foot::before {
-  background: radial-gradient(circle at 45% 40%, #aeb3bb 0%, #7b8189 55%, #3a3e44 100%);
-  box-shadow: inset 0 2px 5px rgba(0,0,0,.6), 0 1px 1px rgba(255,255,255,.25);
-  transform: translateY(1px);
+.foot::after {                                           /* botão abaulado com aro serrilhado */
+  content: ''; position: absolute; left: 11px; top: 10px; width: 38px; height: 38px; border-radius: 50%;
+  background:
+    radial-gradient(ellipse 60% 40% at 40% 24%, rgba(255,255,255,.95), rgba(255,255,255,0) 70%),
+    radial-gradient(circle at 50% 55%, #cfd3d9 0%, #9ba1aa 55%, #4b5058 100%);
+  box-shadow: 0 0 0 2px #1b1d21, 0 0 0 3px rgba(255,255,255,.28), 0 4px 4px 2px rgba(0,0,0,.55), inset 0 -3px 4px rgba(0,0,0,.35);
+  transition: transform .06s, box-shadow .06s;
 }
+.pedal:not(.off) .foot::after, .foot:active::after {      /* afundado = pedal ligado */
+  transform: translateY(2px);
+  background:
+    radial-gradient(ellipse 60% 40% at 42% 26%, rgba(255,255,255,.55), rgba(255,255,255,0) 70%),
+    radial-gradient(circle at 50% 55%, #aeb3bb 0%, #7b818a 55%, #373b41 100%);
+  box-shadow: 0 0 0 2px #1b1d21, 0 0 0 3px rgba(255,255,255,.2), 0 1px 1px 1px rgba(0,0,0,.5), inset 0 2px 5px rgba(0,0,0,.55);
+}
+
+/* entrada e saída de cabo nas laterais, como num pedal de verdade */
+.jack {
+  position: absolute; top: 46px; width: 9px; height: 24px; z-index: -1;
+  background: linear-gradient(90deg, #4c5158, #eceef1 42%, #6e747d 70%, #2d3036);
+  box-shadow: 0 2px 3px rgba(0,0,0,.6);
+}
+.jack.e { left: -7px; border-radius: 4px 0 0 4px; }
+.jack.d { right: -7px; border-radius: 0 4px 4px 0; transform: scaleX(-1); }
 
 /* ---- afinador ------------------------------------------------------------ */
 .afina {
@@ -283,4 +314,5 @@ html, body {
 @media (max-width: 420px) {
   #board { grid-template-columns: 1fr; gap: 16px; padding: 12px; }
   .pedal { padding: 20px 16px 16px; }
+  #board { padding: 12px 16px; }
 }

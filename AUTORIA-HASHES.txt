@@ -3,30 +3,32 @@ Autor e titular: Thiago Galvão
 Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 Leis 9.609/1998 e 9.610/1998 — a proteção independe de registro.
 
-Gerado em (UTC): 2026-11-17T02:18:15Z
-Commit do repositório: c65015b6e521a69255a37cf57095c3b17c9803bf
-Arquivos: 50
+Gerado em (UTC): 2026-11-17T02:18:52Z
+Commit do repositório: 72963f50fa84972ca6eb150022a32abc019f2ea4
+Arquivos: 55
 
 SHA-256 de cada arquivo:
 --------------------------------------------------------------------
 54ad91ccb6f4bccbf918add385a321a5bb0718fbee7f14b6360f3a168d0b5de3  .github/workflows/build.yml
-ed7c228484cf0d8308e825521b5889de570b979fbfd060644a99b5e418a018ad  .github/workflows/pages.yml
+6989f0d7d4b5b1b832ad59c981b2a28d4eae0741eb87f03a724dc9b94f33a029  .github/workflows/pages.yml
 4043d00f19a8b3cc5944c2c3de17ed3e36187133bab6ccafab1a54f71fde1cfd  AUTORIA.md
 be1d879ca2c79e50942c44fed41e17ea62005e386ff21a1aef94c1c1ddea35d1  CMakeLists.txt
 9355d790044f95fd15e9d59a26fdc442810f29d7ad146abb5c6d796c3c68d3c6  LICENSE
-935510efa4d6b5761c672d5ffc50fa76cef7177b35a19612489dbd443b0ee23c  README.md
+c10a03578cf018cbb4525d5da632e199d6ec7266e8507de46c1d36378dd79fe5  README.md
 5f2c0cd78e815a16f5167e69c7fcbde8748011af675cb6129f0c6a176457b87e  Resources/ir/cab_1x15.wav
 18b691c2ff4b1978f23fea94b94073961510839897a59c462cdf68688624b957  Resources/ir/cab_4x10.wav
 85a8bd639d1a8e8e9ee49a69257841c9f4df3cf3e336150a346bb5e4f2dc9642  Resources/ui/arcs_lit.png
 ae22566730ea699ba660dff0ced2fc6caaf947faced7f49cd33bc70415d856f0  Resources/ui/background.jpg
 b2aa6bf06cfcff869379226c29ff4b4664ede25c4448c0b694e5ec29af523ca0  Resources/ui/cab_off.png
 b393c9d575ebc2d7ad0664b534460ee32fc8e1f37ec3fb4ca4613af87f76087b  Resources/ui/footswitch_down.png
+d67fbc54e4bd3f97b3f8a0513dca4a164f1fb566091f40eef6f1906ebfa4f94e  Resources/ui/knob.png
 b04ecd6b957c75890593883fee8a778669d4b9c21cb2f116c044f6c338b70eb9  Resources/ui/led_cab_on.png
 49401c8f3084ca995763405fd682fec32f7b4be9e50069a653ead86b3f0b453b  Resources/ui/led_drive_on.png
 8033cb60942703003f1d7c34392847561a05647df1ba8f2a359884f7e9371896  Resources/ui/led_tuner_on.png
 1c6a9d9e556d214597c9ef0db3eff8f22c41a9f552fd3324317a07c870ad8dec  Resources/ui/pointer.png
 07a1e587e501af8f094da2b0b7fd06646890168a391998d0844d699226aaef43  Resources/ui/tuner_down.png
 93ec78f1d71597c05832290e3baaf4b93773f9b69096e0628d4e99e50f7f2231  Source/Autoria.h
+8f88aeda965504a84bd6b11dbe82f8b2ada92713837b47a707cf39830dbafef4  Source/Efeitos.h
 1a64759fcf4fa22fcae6d780e9e705e81832f52ac4d3e4507e164d94c5216a53  Source/Layout.h
 d736825a001bc196c6661609366f5c0a8331de72ead690fed111bec744e35ad1  Source/Licenca.cpp
 f9f9e190bd1c4c4f049fb74676c6b0bcf41c9cf2a27bc60400c4ab4b88de5489  Source/Licenca.h
@@ -38,12 +40,15 @@ b8ec06df2cf1d885d498597030221a7b129f0d42774b50b8a45ee485deaf1983  Source/Tuner.h
 e7aae62087ed89d8a3e74175dd4125a449cf65b2ad3c37fa25c1c9fc3b5c00b2  TERCEIROS.md
 f2608ae26e825c2a9ceccc0febb2caa5149c02c67330d6df76448e3c56ae73c7  Tests/DspTest.cpp
 1cb97a87e4fc8e393ef702280cb38639a0f270b4419e4af6748b9faef1c716d6  Tests/pedalboard-ui-test.py
+b9acee2b138c6398884d47c47e9c1ace6c6fe3fc8e951de69a3ec772e0476a95  Tests/vergani-dsp-test.js
+deac30949b2717ec770fa21744862d567f07a4e4a6f3018e49371a6eb4e6825c  Tests/vergani-ui-test.py
 6a80eb260fbf4a603bef57e2699f7beb4347a82bc3373d412e0f65f4f7859b77  Tests/web-dsp-test.js
 7e3e41e2dbce769a293d4779b6f74e5a13cca42e117c7761793dd1dc0a6d6982  Tests/web-ui-test.py
 a5537db14b7262ec697372816e461ab69384bca35c81588cd1a1b4838e57d065  Tools/FootswitchRender/Main.cpp
 63102f994f228c5d8bd9ce4a79776d7d6af6687faf72e22d6e7852f11db99fe7  Tools/autoria-hashes.sh
-0706ed305b28c22b8061f8f218dd9332be125f9369660796b68257c30d70c2c4  Tools/build-web.sh
+8c72ccd4e7e0e9e1f2c4243f9982a63efcac60933cf16016315825ad5d1af84b  Tools/build-web.sh
 ca7626bc0e261e70fa463ae8508a8df0ce7bab1dc0146ab2bee34ecd834fd0ed  Tools/build_ui_assets.py
+816049344c8b9a8660d24eedbdbf2db121f980b1e6b310e1e39158b1fef78422  Tools/estende_painel.py
 ffb95917793c105ab113fe9414b69c8c0d90c44963ac6aed67e8e864641e39c1  Tools/make_cab_irs.py
 a82db1dd7ee949c87cc30bcf6683559b023feb8fb9ea60aedcd97a7dae03c192  Tools/versiona-site.py
 356840de4d9ef497263d27ccf1bace375bd346fd04797153b993105d01c06b6c  packaging/EULA.txt
@@ -62,7 +67,7 @@ e960945871ee31fc5289a364b0bfa00850150cd3828ee602e790722bc487aeab  web/tuner.js
 --------------------------------------------------------------------
 
 RESUMO DA OBRA (SHA-256 da lista acima):
-258d83d747a311d31b3c9d5a8cc4d8bdd96c0faca09ceaf70a3c594d65b1309e
+87047a2f3e7a84c40aab5dbd3aa8f30b7ceedff24aeb05a038ab3ae3fbaa322e
 
 Esse resumo identifica a obra inteira nesta data. Qualquer alteração em
 qualquer arquivo muda o resumo. Para ter prova de data independente,

@@ -94,18 +94,15 @@
 
   // Presets de fábrica (iguais aos de Source/PluginProcessor.cpp)
   L.presets = [
-    { name: 'AURA (padrão)',  level: 0, drive: 0,   low: 0, mid: 0,  high: 0,  presence: 3, blend: 100, cab: true, driveOn: true },
-    { name: 'Clean DI',       level: 0, drive: 0,   low: 2, mid: 0,  high: 1,  presence: 2, blend: 100, cab: true, driveOn: false },
-    { name: 'Grit leve',      level: 0, drive: -8,  low: 1, mid: 2,  high: 0,  presence: 3, blend: 60,  cab: true, driveOn: true },
-    { name: 'Drive pesado',   level: 0, drive: 10,  low: 3, mid: 4,  high: -1, presence: 4, blend: 85,  cab: true, driveOn: true },
-    { name: 'Slap brilhante', level: 0, drive: -12, low: 4, mid: -5, high: 6,  presence: 6, blend: 35,  cab: true, driveOn: true },
+    { name: 'AURA (padrão)',   level: 0, drive: 0,  low: 0,  mid: 0,     high: 0,    presence: 3,    blend: 100, octave: 0,   chorus: 0,  cab: true, driveOn: true },
+    { name: 'Clean',           level: 0, drive: 0,  low: 2,  mid: 0,     high: 1,    presence: 2,    blend: 100, octave: 0,   chorus: 0,  cab: true, driveOn: false },
 
     // Medidos a partir do vídeo de referência (ver Source/PluginProcessor.cpp)
-    { name: 'Só drive',        level: 0, drive: 0,  low: 1,  mid: 1.5,   high: 1.5,  presence: 0,    blend: 90,  octave: 0,   chorus: 0,  cab: true, driveOn: true },
-    { name: 'Drive estágio 2', level: 0, drive: 5,  low: -1, mid: 3,     high: -4.5, presence: 0,    blend: 100, octave: 0,   chorus: 0,  cab: true, driveOn: true },
-    { name: 'Oitava limpa',    level: 0, drive: -2, low: 1,  mid: 0.5,   high: -1,   presence: 0,    blend: 100, octave: 70,  chorus: 0,  cab: true, driveOn: true },
-    { name: 'Oitava suja',     level: 0, drive: 3,  low: 0,  mid: 5,     high: -2,   presence: 0,    blend: 95,  octave: 85,  chorus: 0,  cab: true, driveOn: true },
-    { name: 'Sub grave',       level: 0, drive: -8, low: -1, mid: -11.5, high: -3,   presence: -2.5, blend: 100, octave: 100, chorus: 0,  cab: true, driveOn: true },
+    { name: 'Drive',           level: 0, drive: 0,  low: 1,  mid: 1.5,   high: 1.5,  presence: 0,    blend: 90,  octave: 0,   chorus: 0,  cab: true, driveOn: true },
+    { name: 'Drive (Stage 2)', level: 0, drive: 5,  low: -1, mid: 3,     high: -4.5, presence: 0,    blend: 100, octave: 0,   chorus: 0,  cab: true, driveOn: true },
+    { name: 'Octave (Clean)',  level: 0, drive: -2, low: 1,  mid: 0.5,   high: -1,   presence: 0,    blend: 100, octave: 70,  chorus: 0,  cab: true, driveOn: true },
+    { name: 'Octave (Wild)',   level: 0, drive: 3,  low: 0,  mid: 5,     high: -2,   presence: 0,    blend: 95,  octave: 85,  chorus: 0,  cab: true, driveOn: true },
+    { name: 'Sub Bass',        level: 0, drive: -8, low: -1, mid: -11.5, high: -3,   presence: -2.5, blend: 100, octave: 100, chorus: 0,  cab: true, driveOn: true },
     { name: 'Chorus',          level: 0, drive: 2,  low: 0,  mid: 0,     high: -2.5, presence: 0,    blend: 100, octave: 0,   chorus: 65, cab: true, driveOn: true },
   ];
 

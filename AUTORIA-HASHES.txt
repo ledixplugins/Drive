@@ -3,8 +3,8 @@ Autor e titular: Thiago Galvão
 Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 Leis 9.609/1998 e 9.610/1998 — a proteção independe de registro.
 
-Gerado em (UTC): 2026-11-17T02:18:52Z
-Commit do repositório: 72963f50fa84972ca6eb150022a32abc019f2ea4
+Gerado em (UTC): 2026-11-17T11:42:53Z
+Commit do repositório: 8097fa50d35aca683c25f7cc63e0cf35e98c8871
 Arquivos: 55
 
 SHA-256 de cada arquivo:
@@ -17,7 +17,7 @@ be1d879ca2c79e50942c44fed41e17ea62005e386ff21a1aef94c1c1ddea35d1  CMakeLists.txt
 c10a03578cf018cbb4525d5da632e199d6ec7266e8507de46c1d36378dd79fe5  README.md
 5f2c0cd78e815a16f5167e69c7fcbde8748011af675cb6129f0c6a176457b87e  Resources/ir/cab_1x15.wav
 18b691c2ff4b1978f23fea94b94073961510839897a59c462cdf68688624b957  Resources/ir/cab_4x10.wav
-85a8bd639d1a8e8e9ee49a69257841c9f4df3cf3e336150a346bb5e4f2dc9642  Resources/ui/arcs_lit.png
+241d08d27fe23f5b69e91422e84cd60cca73a4bbff49a503b3ec52b76d34221e  Resources/ui/arcs_lit.png
 ae22566730ea699ba660dff0ced2fc6caaf947faced7f49cd33bc70415d856f0  Resources/ui/background.jpg
 b2aa6bf06cfcff869379226c29ff4b4664ede25c4448c0b694e5ec29af523ca0  Resources/ui/cab_off.png
 b393c9d575ebc2d7ad0664b534460ee32fc8e1f37ec3fb4ca4613af87f76087b  Resources/ui/footswitch_down.png
@@ -34,21 +34,21 @@ d736825a001bc196c6661609366f5c0a8331de72ead690fed111bec744e35ad1  Source/Licenca
 f9f9e190bd1c4c4f049fb74676c6b0bcf41c9cf2a27bc60400c4ab4b88de5489  Source/Licenca.h
 eaf238d35cf8dff8a7e2f04f110d66dabf7f217e4225491266e1b73be3386ec0  Source/PluginEditor.cpp
 ef14de9cfb665ac5a50a88d7aeaefc2ffe8043ce3278ae1cdd0a315f778f0e7f  Source/PluginEditor.h
-2e5569bbe04da15d839ea2394f81bf5a64090bb0197b8427be6a52e8fb2654f7  Source/PluginProcessor.cpp
+306fe38919d49811c0be87467402e1aef5bb098702d97b3c138540dcae27918e  Source/PluginProcessor.cpp
 d1b6f3cdf56d093d71db4a734b723d0d3017ee2e632365d001cc789bc91c0e2b  Source/PluginProcessor.h
 b8ec06df2cf1d885d498597030221a7b129f0d42774b50b8a45ee485deaf1983  Source/Tuner.h
 e7aae62087ed89d8a3e74175dd4125a449cf65b2ad3c37fa25c1c9fc3b5c00b2  TERCEIROS.md
-f2608ae26e825c2a9ceccc0febb2caa5149c02c67330d6df76448e3c56ae73c7  Tests/DspTest.cpp
+ed8ee7ec0b0f3c9309dcce869e3a06c6f4aedb06a50f30701356c859a59ca430  Tests/DspTest.cpp
 1cb97a87e4fc8e393ef702280cb38639a0f270b4419e4af6748b9faef1c716d6  Tests/pedalboard-ui-test.py
 b9acee2b138c6398884d47c47e9c1ace6c6fe3fc8e951de69a3ec772e0476a95  Tests/vergani-dsp-test.js
 deac30949b2717ec770fa21744862d567f07a4e4a6f3018e49371a6eb4e6825c  Tests/vergani-ui-test.py
 6a80eb260fbf4a603bef57e2699f7beb4347a82bc3373d412e0f65f4f7859b77  Tests/web-dsp-test.js
-7e3e41e2dbce769a293d4779b6f74e5a13cca42e117c7761793dd1dc0a6d6982  Tests/web-ui-test.py
+16402ee8b864d2427a206f70723204cc8f2322d04df6d1d2740d2c8987f11976  Tests/web-ui-test.py
 a5537db14b7262ec697372816e461ab69384bca35c81588cd1a1b4838e57d065  Tools/FootswitchRender/Main.cpp
 63102f994f228c5d8bd9ce4a79776d7d6af6687faf72e22d6e7852f11db99fe7  Tools/autoria-hashes.sh
 8c72ccd4e7e0e9e1f2c4243f9982a63efcac60933cf16016315825ad5d1af84b  Tools/build-web.sh
 ca7626bc0e261e70fa463ae8508a8df0ce7bab1dc0146ab2bee34ecd834fd0ed  Tools/build_ui_assets.py
-816049344c8b9a8660d24eedbdbf2db121f980b1e6b310e1e39158b1fef78422  Tools/estende_painel.py
+1f22eef22c7bffca0958467581c8af8c70c65a3d2e8a4dcb120f0724e6b921bf  Tools/estende_painel.py
 ffb95917793c105ab113fe9414b69c8c0d90c44963ac6aed67e8e864641e39c1  Tools/make_cab_irs.py
 a82db1dd7ee949c87cc30bcf6683559b023feb8fb9ea60aedcd97a7dae03c192  Tools/versiona-site.py
 356840de4d9ef497263d27ccf1bace375bd346fd04797153b993105d01c06b6c  packaging/EULA.txt
@@ -59,7 +59,7 @@ f9e1496b08c575a05f6cc5aeb085a7b72d61d495f5fd722b31f4fca1d50248c3  web/aura-proce
 aec9a5ba9612515f0887017add39e74e6c47ca931393404172a3c5ac47499a92  web/icons/icon-192.png
 2dc143b20d0d75d017a5fbeccac19c4f6ff70e5553ab71ea8b2a43bf0e1f98bc  web/icons/icon-512.png
 932d08cbc9d2a7382c477fe0958204cbdd9739f0e41bb8bb86b813ead6f1a565  web/index.html
-744b96173b3f2de790fe9961c9c6453a27c22752b06114fc0dba241ae9ea48e5  web/layout.js
+f90e2245c317715edb5ba55231da450d943743491f3652af48a9e8f17691feae  web/layout.js
 44a9154fbff1429e371d7a8935f65083f984763061577fcb46e72bc4de37bc92  web/manifest.webmanifest
 7771c5be288bf693f3d58436ffcbba5de47d17031a92ad43faeb833b37e5e9c7  web/style.css
 56009d0da7c76bf877cbb714dbc41139631ce29c39992014a8dcbac5e8155698  web/sw.js
@@ -67,7 +67,7 @@ e960945871ee31fc5289a364b0bfa00850150cd3828ee602e790722bc487aeab  web/tuner.js
 --------------------------------------------------------------------
 
 RESUMO DA OBRA (SHA-256 da lista acima):
-87047a2f3e7a84c40aab5dbd3aa8f30b7ceedff24aeb05a038ab3ae3fbaa322e
+9303a6db4dab718239c50d27064f4e61039b0288f46fc528411694c7c01c5453
 
 Esse resumo identifica a obra inteira nesta data. Qualquer alteração em
 qualquer arquivo muda o resumo. Para ter prova de data independente,

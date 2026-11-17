@@ -223,7 +223,7 @@ def main():
         page.mouse.click(mx, my)
         page.wait_for_timeout(500)
         check(page.is_visible("#menu"), "menu abre")
-        check(page.locator("#menu button", has_text="Drive pesado").count() == 1, "presets no menu")
+        check(page.locator("#menu button", has_text="Drive (Stage 2)").count() == 1, "presets no menu")
         sels = page.eval_on_selector_all(
             "#menu select",
             "els => els.map(e => [...e.options].map(o => o.textContent))")
@@ -233,15 +233,15 @@ def main():
         check(len(sels) == 2, "menu traz entrada e saída de áudio")
         check(any(len(l) > 1 for l in sels), "os dispositivos do sistema aparecem na lista")
         page.screenshot(path=f"{OUT}/5-menu.png")
-        page.locator("#menu button", has_text="Drive pesado").click()
+        page.locator("#menu button", has_text="Drive (Stage 2)").click()
         page.wait_for_timeout(400)
         drive = page.evaluate("() => window.__aura.state.params.drive")
-        check(abs(drive - 10) < 0.05, f"preset aplicado (drive {drive:+.1f} dB)")
+        check(abs(drive - 5) < 0.05, f"preset aplicado (drive {drive:+.1f} dB)")
 
         print("Estado salvo no aparelho")
         page.reload(wait_until="networkidle")
         page.wait_for_timeout(800)
-        check(abs(page.evaluate("() => window.__aura.state.params.drive") - 10) < 0.05, "valores voltam após recarregar")
+        check(abs(page.evaluate("() => window.__aura.state.params.drive") - 5) < 0.05, "valores voltam após recarregar")
 
         print("Telas pequenas (celular em pé e deitado)")
         page.click("#startButton")           # religa o áudio depois do recarregamento

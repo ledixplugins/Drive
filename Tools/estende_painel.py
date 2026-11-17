@@ -20,6 +20,8 @@ from PIL import Image, ImageDraw, ImageFilter
 RAIZ = Path(__file__).resolve().parent.parent
 ORIGEM = RAIZ / "Resources/mockup/background_339.jpg"   # a placa original, guardada
 DESTINO = RAIZ / "Resources/ui/background.jpg"
+ORIGEM_ARCOS = RAIZ / "Resources/mockup/arcs_lit_339.png"   # os arcos acesos, antes da faixa
+DESTINO_ARCOS = RAIZ / "Resources/ui/arcs_lit.png"
 
 EXTRA_UN = int(sys.argv[1]) if len(sys.argv) > 1 else 104
 ESCALA = 2                      # a arte é 2x das unidades do layout
@@ -73,6 +75,24 @@ def main():
     nova.save(DESTINO, quality=92, optimize=True)
     print(f"{DESTINO.relative_to(RAIZ)}: {nova.size[0]}x{nova.size[1]} px "
           f"({nova.size[0] // ESCALA}x{nova.size[1] // ESCALA} unidades)")
+
+    # arcs_lit.png é desenhado esticado para caber o painel inteiro
+    # (g.drawImage(..., getLocalBounds())): se ficar menor que o painel, o
+    # estiramento desalinha e deforma os arcos acesos dos knobs. Como todo o
+    # conteúdo dele fica acima do corte (os sete knobs de cima e o CAB), basta
+    # inserir a mesma faixa em branco (transparente) no mesmo lugar.
+    if DESTINO_ARCOS.exists():
+        if not ORIGEM_ARCOS.exists():
+            ORIGEM_ARCOS.parent.mkdir(parents=True, exist_ok=True)
+            Image.open(DESTINO_ARCOS).save(ORIGEM_ARCOS)
+            print(f"arcos originais guardados em {ORIGEM_ARCOS.relative_to(RAIZ)}")
+        arcos = Image.open(ORIGEM_ARCOS).convert("RGBA")
+        novos_arcos = Image.new("RGBA", (arcos.width, arcos.height + extra), (0, 0, 0, 0))
+        novos_arcos.paste(arcos.crop((0, 0, arcos.width, min(corte, arcos.height))), (0, 0))
+        if arcos.height > corte:
+            novos_arcos.paste(arcos.crop((0, corte, arcos.width, arcos.height)), (0, corte + extra))
+        novos_arcos.save(DESTINO_ARCOS)
+        print(f"{DESTINO_ARCOS.relative_to(RAIZ)}: {novos_arcos.size[0]}x{novos_arcos.size[1]} px")
 
 
 if __name__ == "__main__":

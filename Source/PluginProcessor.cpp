@@ -33,10 +33,7 @@ namespace
     constexpr Preset presets[] = {
         //  nome              level   drive   low    mid    high  presen.  blend   oitava chorus  cab  drive
         { "AURA (padrão)",   0.0f,   0.0f, 0.0f,  0.0f,  0.0f,  3.0f, 100.0f,   0.0f,  0.0f, true, true  },
-        { "Clean DI",        0.0f,   0.0f, 2.0f,  0.0f,  1.0f,  2.0f, 100.0f,   0.0f,  0.0f, true, false },
-        { "Grit leve",       0.0f,  -8.0f, 1.0f,  2.0f,  0.0f,  3.0f,  60.0f,   0.0f,  0.0f, true, true  },
-        { "Drive pesado",    0.0f,  10.0f, 3.0f,  4.0f, -1.0f,  4.0f,  85.0f,   0.0f,  0.0f, true, true  },
-        { "Slap brilhante",  0.0f, -12.0f, 4.0f, -5.0f,  6.0f,  6.0f,  35.0f,   0.0f,  0.0f, true, true  },
+        { "Clean",           0.0f,   0.0f, 2.0f,  0.0f,  1.0f,  2.0f, 100.0f,   0.0f,  0.0f, true, false },
 
         // Os seis abaixo vieram da medição do vídeo de referência: para cada
         // trecho comparei a média de longo prazo por banda com a saída do
@@ -44,11 +41,11 @@ namespace
         // drive em termos absolutos não dá para recuperar de uma gravação já
         // processada (não há sinal limpo no vídeo), então o que está afinado é
         // a diferença entre os presets, com o drive ancorado em ±4 dB.
-        { "Só drive",        0.0f,   0.0f, 1.0f,  1.5f,  1.5f,  0.0f,  90.0f,   0.0f,  0.0f, true, true  },
-        { "Drive estágio 2", 0.0f,   5.0f,-1.0f,  3.0f, -4.5f,  0.0f, 100.0f,   0.0f,  0.0f, true, true  },
-        { "Oitava limpa",    0.0f,  -2.0f, 1.0f,  0.5f, -1.0f,  0.0f, 100.0f,  70.0f,  0.0f, true, true  },
-        { "Oitava suja",     0.0f,   3.0f, 0.0f,  5.0f, -2.0f,  0.0f,  95.0f,  85.0f,  0.0f, true, true  },
-        { "Sub grave",       0.0f,  -8.0f,-1.0f,-11.5f, -3.0f, -2.5f, 100.0f, 100.0f,  0.0f, true, true  },
+        { "Drive",           0.0f,   0.0f, 1.0f,  1.5f,  1.5f,  0.0f,  90.0f,   0.0f,  0.0f, true, true  },
+        { "Drive (Stage 2)", 0.0f,   5.0f,-1.0f,  3.0f, -4.5f,  0.0f, 100.0f,   0.0f,  0.0f, true, true  },
+        { "Octave (Clean)",  0.0f,  -2.0f, 1.0f,  0.5f, -1.0f,  0.0f, 100.0f,  70.0f,  0.0f, true, true  },
+        { "Octave (Wild)",   0.0f,   3.0f, 0.0f,  5.0f, -2.0f,  0.0f,  95.0f,  85.0f,  0.0f, true, true  },
+        { "Sub Bass",        0.0f,  -8.0f,-1.0f,-11.5f, -3.0f, -2.5f, 100.0f, 100.0f,  0.0f, true, true  },
         { "Chorus",          0.0f,   2.0f, 0.0f,  0.0f, -2.5f,  0.0f, 100.0f,   0.0f, 65.0f, true, true  },
     };
     constexpr int numPresets = (int) (sizeof (presets) / sizeof (presets[0]));

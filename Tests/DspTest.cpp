@@ -472,20 +472,20 @@ int main()
     std::printf ("Presets de fábrica\n");
     {
         AuraBassAudioProcessor p;
-        check (p.getNumPrograms() == 11, "11 presets (5 de fábrica + 6 medidos do vídeo)");
+        check (p.getNumPrograms() == 8, "8 presets (2 de fábrica + 6 medidos do vídeo)");
         p.setCurrentProgram (3);
         const float d = p.apvts.getRawParameterValue (ParamIDs::drive)->load();
         std::printf ("  '%s' -> drive %.1f dB\n", p.getProgramName (3).toRawUTF8(), d);
-        check (std::abs (d - 10.0f) < 0.05f, "preset aplica os valores");
+        check (std::abs (d - 5.0f) < 0.05f, "preset aplica os valores");
         p.setCurrentProgram (1);
-        check (p.apvts.getRawParameterValue (ParamIDs::driveOn)->load() < 0.5f, "Clean DI desliga o DRIVE");
+        check (p.apvts.getRawParameterValue (ParamIDs::driveOn)->load() < 0.5f, "Clean desliga o DRIVE");
 
         // Os presets de oitava e chorus precisam mexer nos controles novos
-        p.setCurrentProgram (10);
+        p.setCurrentProgram (7);
         const float cho = p.apvts.getRawParameterValue (ParamIDs::chorus)->load();
-        p.setCurrentProgram (9);
+        p.setCurrentProgram (6);
         const float oct = p.apvts.getRawParameterValue (ParamIDs::octave)->load();
-        std::printf ("  '%s' -> oitava %.0f%% | chorus %.0f%%\n", p.getProgramName (9).toRawUTF8(), oct, cho);
+        std::printf ("  '%s' -> oitava %.0f%% | chorus %.0f%%\n", p.getProgramName (6).toRawUTF8(), oct, cho);
         check (oct > 99.0f && cho > 60.0f, "presets carregam oitava e chorus");
         p.setCurrentProgram (0);
         check (p.apvts.getRawParameterValue (ParamIDs::octave)->load() < 0.5f
@@ -662,7 +662,7 @@ int main()
         a.getStateInformation (mb);
         b.setStateInformation (mb.getData(), (int) mb.getSize());
         check (b.getCurrentProgram() == 2, "preset restaurado");
-        check (std::abs (b.apvts.getRawParameterValue (ParamIDs::drive)->load() + 8.0f) < 0.05f, "valores do preset restaurados");
+        check (std::abs (b.apvts.getRawParameterValue (ParamIDs::drive)->load() - 0.0f) < 0.05f, "valores do preset restaurados");
     }
 
     std::printf ("Afinador: precisão da detecção\n");

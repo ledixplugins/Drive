@@ -101,7 +101,7 @@
     { name: 'Drive',           level: 0, drive: 0,  low: 1,  mid: 1.5,   high: 1.5,  presence: 0,    blend: 90,  octave: 0,   chorus: 0,  cab: true, driveOn: true },
     { name: 'Drive (Stage 2)', level: 0, drive: 5,  low: -1, mid: 3,     high: -4.5, presence: 0,    blend: 100, octave: 0,   chorus: 0,  cab: true, driveOn: true },
     { name: 'Octave (Clean)',  level: 0, drive: -2, low: 1,  mid: 0.5,   high: -1,   presence: 0,    blend: 100, octave: 70,  chorus: 0,  cab: true, driveOn: true },
-    { name: 'Octave (Wild)',   level: 0, drive: 3,  low: 0,  mid: 5,     high: -2,   presence: 0,    blend: 95,  octave: 85,  chorus: 0,  cab: true, driveOn: true },
+    { name: 'Octave (Wild)',   level: 0, drive: 15, low: -7, mid: -4.5,  high: -1,   presence: -3,   blend: 100, octave: 100, chorus: 0,  cab: true, driveOn: true },
     { name: 'Sub Bass',        level: 0, drive: -8, low: -1, mid: -11.5, high: -3,   presence: -2.5, blend: 100, octave: 100, chorus: 0,  cab: true, driveOn: true },
     { name: 'Chorus',          level: 0, drive: 2,  low: 0,  mid: 0,     high: -2.5, presence: 0,    blend: 100, octave: 0,   chorus: 65, cab: true, driveOn: true },
   ];

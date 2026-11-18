@@ -3,8 +3,8 @@ Autor e titular: Thiago Galvão
 Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 Leis 9.609/1998 e 9.610/1998 — a proteção independe de registro.
 
-Gerado em (UTC): 2026-11-17T11:42:53Z
-Commit do repositório: 8097fa50d35aca683c25f7cc63e0cf35e98c8871
+Gerado em (UTC): 2026-11-18T13:34:33Z
+Commit do repositório: b47a5c6fce0c76d4750ac5f2e609dd1d1ce29575
 Arquivos: 55
 
 SHA-256 de cada arquivo:
@@ -34,7 +34,7 @@ d736825a001bc196c6661609366f5c0a8331de72ead690fed111bec744e35ad1  Source/Licenca
 f9f9e190bd1c4c4f049fb74676c6b0bcf41c9cf2a27bc60400c4ab4b88de5489  Source/Licenca.h
 eaf238d35cf8dff8a7e2f04f110d66dabf7f217e4225491266e1b73be3386ec0  Source/PluginEditor.cpp
 ef14de9cfb665ac5a50a88d7aeaefc2ffe8043ce3278ae1cdd0a315f778f0e7f  Source/PluginEditor.h
-306fe38919d49811c0be87467402e1aef5bb098702d97b3c138540dcae27918e  Source/PluginProcessor.cpp
+7036b2400d27d94a306ee4ef773eb912f21411753e873b09d676ef3639c1bbae  Source/PluginProcessor.cpp
 d1b6f3cdf56d093d71db4a734b723d0d3017ee2e632365d001cc789bc91c0e2b  Source/PluginProcessor.h
 b8ec06df2cf1d885d498597030221a7b129f0d42774b50b8a45ee485deaf1983  Source/Tuner.h
 e7aae62087ed89d8a3e74175dd4125a449cf65b2ad3c37fa25c1c9fc3b5c00b2  TERCEIROS.md
@@ -59,7 +59,7 @@ f9e1496b08c575a05f6cc5aeb085a7b72d61d495f5fd722b31f4fca1d50248c3  web/aura-proce
 aec9a5ba9612515f0887017add39e74e6c47ca931393404172a3c5ac47499a92  web/icons/icon-192.png
 2dc143b20d0d75d017a5fbeccac19c4f6ff70e5553ab71ea8b2a43bf0e1f98bc  web/icons/icon-512.png
 932d08cbc9d2a7382c477fe0958204cbdd9739f0e41bb8bb86b813ead6f1a565  web/index.html
-f90e2245c317715edb5ba55231da450d943743491f3652af48a9e8f17691feae  web/layout.js
+9fb297fbd6a3b02aea0427615694407a7d15b1790d295456546bc33841f3832e  web/layout.js
 44a9154fbff1429e371d7a8935f65083f984763061577fcb46e72bc4de37bc92  web/manifest.webmanifest
 7771c5be288bf693f3d58436ffcbba5de47d17031a92ad43faeb833b37e5e9c7  web/style.css
 56009d0da7c76bf877cbb714dbc41139631ce29c39992014a8dcbac5e8155698  web/sw.js
@@ -67,7 +67,7 @@ e960945871ee31fc5289a364b0bfa00850150cd3828ee602e790722bc487aeab  web/tuner.js
 --------------------------------------------------------------------
 
 RESUMO DA OBRA (SHA-256 da lista acima):
-9303a6db4dab718239c50d27064f4e61039b0288f46fc528411694c7c01c5453
+fc96053d1e4a454134a46f6dd5898a3cc57f81ef981e017a52a8cc697c5005fd
 
 Esse resumo identifica a obra inteira nesta data. Qualquer alteração em
 qualquer arquivo muda o resumo. Para ter prova de data independente,

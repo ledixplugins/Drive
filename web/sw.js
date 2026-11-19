@@ -8,7 +8,7 @@ const CACHE = 'aura-bass-v1';
 const FILES = [
   './', 'index.html', 'style.css', 'app.js', 'layout.js', 'tuner.js', 'aura-processor.js',
   'manifest.webmanifest',
-  'assets/background.jpg', 'assets/arcs_lit.png', 'assets/pointer.png',
+  'assets/background.jpg', 'assets/arcs_lit.png', 'assets/pointer.png', 'assets/knob.png',
   'assets/led_drive_on.png', 'assets/led_tuner_on.png', 'assets/led_cab_on.png',
   'assets/cab_off.png', 'assets/footswitch_down.png', 'assets/tuner_down.png',
   'assets/cab_4x10.wav', 'assets/cab_1x15.wav',
@@ -36,6 +36,13 @@ self.addEventListener('fetch', (e) => {
           caches.open(CACHE).then((c) => c.put(e.request, res.clone()));
         return res;
       })
-      .catch(() => caches.match(e.request).then((hit) => hit || caches.match('index.html')))
+      .catch(() => caches.match(e.request, { ignoreSearch: true }).then((hit) => {
+        // Os arquivos ficam no cache sem "?v=...", mas o HTML pede com a
+        // versão — ignorar a query no match evita cair no index.html por
+        // engano (e quebrar um .js/.css virando HTML quando offline).
+        if (hit) return hit;
+        if (e.request.mode === 'navigate') return caches.match('index.html');
+        return Response.error();
+      }))
   );
 });

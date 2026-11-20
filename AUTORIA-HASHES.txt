@@ -3,18 +3,18 @@ Autor e titular: Thiago Galvão
 Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 Leis 9.609/1998 e 9.610/1998 — a proteção independe de registro.
 
-Gerado em (UTC): 2026-11-18T13:34:33Z
-Commit do repositório: b47a5c6fce0c76d4750ac5f2e609dd1d1ce29575
+Gerado em (UTC): 2026-11-20T23:01:42Z
+Commit do repositório: 4d181b5346d57067fc7a6f453075821369565e7e
 Arquivos: 55
 
 SHA-256 de cada arquivo:
 --------------------------------------------------------------------
 54ad91ccb6f4bccbf918add385a321a5bb0718fbee7f14b6360f3a168d0b5de3  .github/workflows/build.yml
 6989f0d7d4b5b1b832ad59c981b2a28d4eae0741eb87f03a724dc9b94f33a029  .github/workflows/pages.yml
-4043d00f19a8b3cc5944c2c3de17ed3e36187133bab6ccafab1a54f71fde1cfd  AUTORIA.md
+b11c4288433d7eda22dbc673fb819b9019765f4622fa18cfb38ffa3167874f2b  AUTORIA.md
 be1d879ca2c79e50942c44fed41e17ea62005e386ff21a1aef94c1c1ddea35d1  CMakeLists.txt
-9355d790044f95fd15e9d59a26fdc442810f29d7ad146abb5c6d796c3c68d3c6  LICENSE
-c10a03578cf018cbb4525d5da632e199d6ec7266e8507de46c1d36378dd79fe5  README.md
+a3efd2f62a8697372df1c15a3c8f5ea3499be94a8d1e062cd39d9e80897d792d  LICENSE
+735a870a38ae67aca504e2f38257609300ad16c470a07573e6a0d1a5a167ee88  README.md
 5f2c0cd78e815a16f5167e69c7fcbde8748011af675cb6129f0c6a176457b87e  Resources/ir/cab_1x15.wav
 18b691c2ff4b1978f23fea94b94073961510839897a59c462cdf68688624b957  Resources/ir/cab_4x10.wav
 241d08d27fe23f5b69e91422e84cd60cca73a4bbff49a503b3ec52b76d34221e  Resources/ui/arcs_lit.png
@@ -27,47 +27,47 @@ b04ecd6b957c75890593883fee8a778669d4b9c21cb2f116c044f6c338b70eb9  Resources/ui/l
 8033cb60942703003f1d7c34392847561a05647df1ba8f2a359884f7e9371896  Resources/ui/led_tuner_on.png
 1c6a9d9e556d214597c9ef0db3eff8f22c41a9f552fd3324317a07c870ad8dec  Resources/ui/pointer.png
 07a1e587e501af8f094da2b0b7fd06646890168a391998d0844d699226aaef43  Resources/ui/tuner_down.png
-93ec78f1d71597c05832290e3baaf4b93773f9b69096e0628d4e99e50f7f2231  Source/Autoria.h
-8f88aeda965504a84bd6b11dbe82f8b2ada92713837b47a707cf39830dbafef4  Source/Efeitos.h
-1a64759fcf4fa22fcae6d780e9e705e81832f52ac4d3e4507e164d94c5216a53  Source/Layout.h
-d736825a001bc196c6661609366f5c0a8331de72ead690fed111bec744e35ad1  Source/Licenca.cpp
-f9f9e190bd1c4c4f049fb74676c6b0bcf41c9cf2a27bc60400c4ab4b88de5489  Source/Licenca.h
-eaf238d35cf8dff8a7e2f04f110d66dabf7f217e4225491266e1b73be3386ec0  Source/PluginEditor.cpp
-ef14de9cfb665ac5a50a88d7aeaefc2ffe8043ce3278ae1cdd0a315f778f0e7f  Source/PluginEditor.h
-7036b2400d27d94a306ee4ef773eb912f21411753e873b09d676ef3639c1bbae  Source/PluginProcessor.cpp
-d1b6f3cdf56d093d71db4a734b723d0d3017ee2e632365d001cc789bc91c0e2b  Source/PluginProcessor.h
-b8ec06df2cf1d885d498597030221a7b129f0d42774b50b8a45ee485deaf1983  Source/Tuner.h
+05b8554dcd5e0772698e42a80c09ec02893db7d188c36886f614cd5fad025231  Source/Autoria.h
+5032cdf7a7e140344d6b7cf991c41cd83b7f5806e671c316ee6b24b8913fd260  Source/Efeitos.h
+e19c85e037c06c4201a43f8bf3913bd5a3cf73f5530cce346790670f56a53c46  Source/Layout.h
+33dc480a5d86335e761d060bdefa16ddb5f00612e57548a336312128a8077b3a  Source/Licenca.cpp
+3ec1c1bb01dd27539d6760699e8b081149d846c76fcae7200cdb467cab77c80a  Source/Licenca.h
+5aafb291dfdb65f903baf18815138e5d51c159474fe92a8d1360418df9b6f2ff  Source/PluginEditor.cpp
+94124a0128d865f1561c0f5a2dee52a0e37e590a6a11d9ec52e52aee44b8008a  Source/PluginEditor.h
+7d9d8c2274e23696d217d97b362861d85e4584e82fffff77eee9f29779ba239f  Source/PluginProcessor.cpp
+3655a7936e3b19d708f11e3830641f5b289683a6ccfefa754f82c4377760d883  Source/PluginProcessor.h
+9e03f567f2aa44e03538f920a60950300bc9706dfee3b0cf238f742ceb803d73  Source/Tuner.h
 e7aae62087ed89d8a3e74175dd4125a449cf65b2ad3c37fa25c1c9fc3b5c00b2  TERCEIROS.md
-ed8ee7ec0b0f3c9309dcce869e3a06c6f4aedb06a50f30701356c859a59ca430  Tests/DspTest.cpp
-1cb97a87e4fc8e393ef702280cb38639a0f270b4419e4af6748b9faef1c716d6  Tests/pedalboard-ui-test.py
-b9acee2b138c6398884d47c47e9c1ace6c6fe3fc8e951de69a3ec772e0476a95  Tests/vergani-dsp-test.js
-deac30949b2717ec770fa21744862d567f07a4e4a6f3018e49371a6eb4e6825c  Tests/vergani-ui-test.py
-6a80eb260fbf4a603bef57e2699f7beb4347a82bc3373d412e0f65f4f7859b77  Tests/web-dsp-test.js
-16402ee8b864d2427a206f70723204cc8f2322d04df6d1d2740d2c8987f11976  Tests/web-ui-test.py
-a5537db14b7262ec697372816e461ab69384bca35c81588cd1a1b4838e57d065  Tools/FootswitchRender/Main.cpp
-63102f994f228c5d8bd9ce4a79776d7d6af6687faf72e22d6e7852f11db99fe7  Tools/autoria-hashes.sh
-8c72ccd4e7e0e9e1f2c4243f9982a63efcac60933cf16016315825ad5d1af84b  Tools/build-web.sh
-ca7626bc0e261e70fa463ae8508a8df0ce7bab1dc0146ab2bee34ecd834fd0ed  Tools/build_ui_assets.py
-1f22eef22c7bffca0958467581c8af8c70c65a3d2e8a4dcb120f0724e6b921bf  Tools/estende_painel.py
-ffb95917793c105ab113fe9414b69c8c0d90c44963ac6aed67e8e864641e39c1  Tools/make_cab_irs.py
-a82db1dd7ee949c87cc30bcf6683559b023feb8fb9ea60aedcd97a7dae03c192  Tools/versiona-site.py
-356840de4d9ef497263d27ccf1bace375bd346fd04797153b993105d01c06b6c  packaging/EULA.txt
+7c79f52fd86f17478374c26519929ca5d999754b126a8adf620eec30e1b417b4  Tests/DspTest.cpp
+ed813d0f03eb92d9e197968657c67aaec69243d3c7c4782fc985d1abac8bce7d  Tests/pedalboard-ui-test.py
+8ee6300bd26c68d41be7897d00b2dfba8301ec465de016537ca7944bb0e3da1c  Tests/vergani-dsp-test.js
+642c588848468d9ff2a188127fe2cc8f4a007c17070810926c457e2c622827e2  Tests/vergani-ui-test.py
+db5adc4b9c694c8b1d01bb00de8d7dfb0207687e4940c22b378b94c209882f4c  Tests/web-dsp-test.js
+13d1e55cd05aa73e3ebc00dce9978f31888e73cf56fbcd4fa38dbeb9166c6989  Tests/web-ui-test.py
+7f1f2f4058fb8e29c6134ee45df9004bd66e75e482f4ba5dce76b3076c9f9526  Tools/FootswitchRender/Main.cpp
+317b3588f6b379bba2a540c58d62d1bf7c7af8b9597374d6ae39db5fb833bcf0  Tools/autoria-hashes.sh
+bf1b31ce9f875810f1f05010645304df46969d70f92cb28990cad5fc531b492c  Tools/build-web.sh
+9e8c59ce26c1c667d7107378409322de67718337e7f66bca982a9ce4d9692f38  Tools/build_ui_assets.py
+392e9ec7481e23b5dd449b524ce2f403f4d6ddc287ee3da7f880782925460cfd  Tools/estende_painel.py
+fff81a6b42fd782c9551f99905679274c6944ee56b89e8537f7423c698091920  Tools/make_cab_irs.py
+9761e16f2210a670f30aa21a01c2a8deebffad9e119c0f97bdcb46896c51aa79  Tools/versiona-site.py
+10195819ad860638dc27891a6821a1b870d6aa948895894ce5ae6e758f657c1b  packaging/EULA.txt
 27a66fe0410223512589d1b8f3735f97f1fcbb7de27d83f47694fe28167387c7  packaging/Instalar no Mac.command
-e0fb567efd0fc2b2abfed9e111c91c5658fb890d65d6c76532e08276d1432095  packaging/aura-bass.nsi
-19d4bc1f469e0481c86bc817fd79a8f763d5a47d52ab4627b42bbc0d5ba1ddb9  web/app.js
-f9e1496b08c575a05f6cc5aeb085a7b72d61d495f5fd722b31f4fca1d50248c3  web/aura-processor.js
+9f056c89d9275dc77c784c52e08a66d3c8c19e29b44f28e13fafd2584ee114a1  packaging/aura-bass.nsi
+49430708c15dd582f9509abb442a19cdeb65daf63b9e0cb20d31548a13782115  web/app.js
+562b13139df062da13a2934ec6c1dbcdc252155e9a64938a4ac360c028243d0c  web/aura-processor.js
 aec9a5ba9612515f0887017add39e74e6c47ca931393404172a3c5ac47499a92  web/icons/icon-192.png
 2dc143b20d0d75d017a5fbeccac19c4f6ff70e5553ab71ea8b2a43bf0e1f98bc  web/icons/icon-512.png
-932d08cbc9d2a7382c477fe0958204cbdd9739f0e41bb8bb86b813ead6f1a565  web/index.html
-9fb297fbd6a3b02aea0427615694407a7d15b1790d295456546bc33841f3832e  web/layout.js
+8aa445b5084f28f730ecc93c75250a100e2d2c7591cd58923666ac52ee4c0695  web/index.html
+8c7d0896af479b035648cd73cc17fbc2eca9fb144b00cf29ed9ed586a66c18d5  web/layout.js
 44a9154fbff1429e371d7a8935f65083f984763061577fcb46e72bc4de37bc92  web/manifest.webmanifest
-7771c5be288bf693f3d58436ffcbba5de47d17031a92ad43faeb833b37e5e9c7  web/style.css
-56009d0da7c76bf877cbb714dbc41139631ce29c39992014a8dcbac5e8155698  web/sw.js
-e960945871ee31fc5289a364b0bfa00850150cd3828ee602e790722bc487aeab  web/tuner.js
+e5b7030c3856faf5bad2bce5bdcedf92a4e036c8ae4759ccb2327c256dd7103d  web/style.css
+17ef27fc3b1e9857742b4505623ec67a51e87bdcb811f9a6f6ac1161169f2633  web/sw.js
+3a43abde5edacd61a310d461f1b45e316f4b5348d3c94e0b88cf05578ade92f0  web/tuner.js
 --------------------------------------------------------------------
 
 RESUMO DA OBRA (SHA-256 da lista acima):
-fc96053d1e4a454134a46f6dd5898a3cc57f81ef981e017a52a8cc697c5005fd
+1f1d9328999481f7605f4e151ecea2c9b297fbd19c0793198ae21ea540f87fef
 
 Esse resumo identifica a obra inteira nesta data. Qualquer alteração em
 qualquer arquivo muda o resumo. Para ter prova de data independente,

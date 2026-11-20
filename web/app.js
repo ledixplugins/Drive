@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
-// Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
+// Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
 // AURA Bass — app da versão web.
 // Desenha o mesmo painel do plugin num canvas (coordenadas de layout.js) e monta a cadeia
 // de áudio: microfone/interface -> AudioWorklet (drive, EQ, blend) -> CAB (convolução) -> saída.
@@ -15,10 +15,10 @@ const AUTORIA = [
   'AURA Bass — overdrive e pré de baixo',
   'Copyright (c) 2026 Thiago Galvão',
   'Todos os direitos reservados — Leis 9.609/1998 e 9.610/1998',
-  'github.com/thiagorgalvao-sketch/AURA',
+  'github.com/aurapluginsaudio/Drive',
 ];
 const AURA_PROV = 'AURA-PROV/1 obra=AURA-Bass autor=Thiago-Galvao ano=2026 '
-  + 'lei=9609/1998+9610/1998 origem=github.com/thiagorgalvao-sketch/AURA direitos=reservados';
+  + 'lei=9609/1998+9610/1998 origem=github.com/aurapluginsaudio/Drive direitos=reservados';
 try { window.AURA_PROV = AURA_PROV; } catch (e) { /* sem window */ }
 
 const L = window.AuraLayout;

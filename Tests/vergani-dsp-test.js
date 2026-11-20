@@ -1,6 +1,6 @@
 // VERGANI PEDALBOARD — testes do processamento de áudio (Node)
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
-// Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
+// Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
 // Uso: node Tests/vergani-dsp-test.js
 const { DetuneCore } = require('../vergani/gt-processor.js');
 const { curvaOverdrive, curvaDistorcao, PICO_CURVA } = require('../vergani/engine.js');

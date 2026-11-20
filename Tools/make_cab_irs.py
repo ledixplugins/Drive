@@ -3,7 +3,7 @@
 # Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 # Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 # cópia, redistribuição ou obra derivada apenas com autorização por escrito.
-# Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
+# Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
 """
 Gera as respostas de impulso (IR) embutidas do CAB a partir de um modelo de caixa de baixo:
 corte de subgrave e ressonância do gabinete, colorido dos médios, picos/vales de quebra do cone,

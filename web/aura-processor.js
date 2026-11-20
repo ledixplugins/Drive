@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
-// Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
+// Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
 // AURA Bass — motor de áudio da versão web (AudioWorklet).
 // Porta do processamento do plugin (Source/PluginProcessor.cpp):
 //   entrada -> HPF 18 Hz -> pré-ênfase -> [4x oversampling] Drive -> soft clip assimétrico

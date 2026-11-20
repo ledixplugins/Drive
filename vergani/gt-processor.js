@@ -1,6 +1,6 @@
 // VERGANI PEDALBOARD — processador de áudio do detune (Web Audio não tem pronto).
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
-// Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
+// Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
 //
 // Detune por linha de atraso: a posição de leitura anda numa velocidade
 // ligeiramente diferente da de escrita, o que muda a altura em "cents".

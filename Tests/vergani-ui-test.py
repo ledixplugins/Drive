@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # VERGANI PEDALBOARD — teste de interface e de áudio num Chromium de verdade.
 # Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
-# Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
+# Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
 #
 # Uso: python3 -I Tests/vergani-ui-test.py [pasta do site] [pasta de saída]
 # Precisa do Playwright com Chromium instalado.

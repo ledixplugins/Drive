@@ -1,6 +1,6 @@
 // WORSHIP BASS ESSENTIALS — montagem da cadeia de áudio.
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
-// Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
+// Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
 //
 // Cada pedal é um bloco com entrada, saída e um atalho de bypass, para trocar
 // de preset sem reconstruir o grafo (e sem estalo).

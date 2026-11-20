@@ -1,6 +1,6 @@
 ; AURA Bass — instalador para Windows
 ; Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
-; Licença: ver LICENSE  |  https://github.com/thiagorgalvao-sketch/AURA
+; Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
 ;
 ; Monta um .exe que instala o plugin VST3 e o programa autônomo.
 ; Uso: makensis -DSRC=<pasta com os arquivos> -DVERSAO=<x.y.z> aura-bass.nsi

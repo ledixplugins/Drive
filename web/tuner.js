@@ -1,9 +1,9 @@
-// AURA Bass — afinador da versão web
+// AURA Bass Preamp — afinador da versão web
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
 // Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
-// AURA Bass — afinador da versão web. Porta de Source/Tuner.h (método YIN).
+// AURA Bass Preamp — afinador da versão web. Porta de Source/Tuner.h (método YIN).
 // Recebe do AudioWorklet blocos já filtrados e decimados (~12 kHz).
 (function (root) {
   const WINDOW = 2048, MIN_HZ = 27, MAX_HZ = 650, A4 = 440;

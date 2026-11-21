@@ -1,4 +1,4 @@
-# AURA Bass — overdrive de baixo (JUCE)
+# AURA Bass Preamp — overdrive de baixo (JUCE)
 
 > Copyright © 2026 **Thiago Galvão**. Todos os direitos reservados.
 > Obra protegida pelas Leis nº 9.609/1998 e nº 9.610/1998 e pela Convenção de
@@ -88,16 +88,16 @@ Todos os parâmetros têm suavização (sem cliques), o Blend é alinhado com a 
 
 ## Licença e instaladores
 
-O AURA Bass tem **teste de 15 dias** com todos os recursos. Depois disso é
+O AURA Bass Preamp tem **teste de 15 dias** com todos os recursos. Depois disso é
 preciso uma chave de ativação; cada chave vale para até 3 aparelhos e funciona
 por 30 dias sem internet entre as confirmações. As regras estão em
 `Source/Licenca.cpp` e são cobertas por 27 testes.
 
 Os instaladores saem da própria Release:
 
-- **Windows:** `AURA-Bass-Windows.exe` (NSIS — `packaging/aura-bass.nsi`), com
+- **Windows:** `AURA-Bass-Preamp-Windows.exe` (NSIS — `packaging/aura-bass-preamp.nsi`), com
   o VST3 na pasta padrão e o programa autônomo com atalho no menu Iniciar;
-- **macOS:** `AURA-Bass-macOS.pkg`, com três escolhas: programa, VST3 e AU.
+- **macOS:** `AURA-Bass-Preamp-macOS.pkg`, com três escolhas: programa, VST3 e AU.
 
 Os dois mostram o contrato de `packaging/EULA.txt` — que é **minuta** e precisa
 de revisão de um advogado antes da venda. Nenhum dos dois é assinado: o sistema
@@ -118,7 +118,7 @@ do fim da faixa amarela, sem acender o ponto vermelho.
 
 ## No navegador (celular, tablet ou computador)
 
-O AURA Bass também roda direto no navegador, com o mesmo painel e o mesmo
+O AURA Bass Preamp também roda direto no navegador, com o mesmo painel e o mesmo
 processamento do plugin:
 
 **https://ledixplugins.github.io/Drive/**
@@ -251,18 +251,18 @@ cmake --build build --config Release
 
 O CMake baixa o JUCE 8.0.4 sozinho na primeira vez. Para usar uma cópia local: `-DJUCE_DIR=/caminho/JUCE`.
 
-Os plugins ficam em `build/AuraBass_artefacts/Release/`:
+Os plugins ficam em `build/AuraBassPreamp_artefacts/Release/`:
 
 | Formato | Para onde copiar |
 |---|---|
-| `VST3/AURA Bass.vst3` (Windows) | `C:\Program Files\Common Files\VST3\` |
-| `VST3/AURA Bass.vst3` (Mac) | `~/Library/Audio/Plug-Ins/VST3/` |
-| `AU/AURA Bass.component` (Mac) | `~/Library/Audio/Plug-Ins/Components/` |
+| `VST3/AURA Bass Preamp.vst3` (Windows) | `C:\Program Files\Common Files\VST3\` |
+| `VST3/AURA Bass Preamp.vst3` (Mac) | `~/Library/Audio/Plug-Ins/VST3/` |
+| `AU/AURA Bass Preamp.component` (Mac) | `~/Library/Audio/Plug-Ins/Components/` |
 | `Standalone/` | roda direto, sem DAW |
 
 **Sem compilador?** O projeto inclui `.github/workflows/build.yml`. Suba a pasta para um repositório no GitHub e a aba *Actions* compila Windows e Mac. Os binários aparecem como *artifacts* para baixar.
 
-No Mac, plugins não assinados podem ser bloqueados. Para uso pessoal: `xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/Components/"AURA Bass.component"`. Para distribuir, assine e notarize com uma conta Apple Developer.
+No Mac, plugins não assinados podem ser bloqueados. Para uso pessoal: `xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/Components/"AURA Bass Preamp.component"`. Para distribuir, assine e notarize com uma conta Apple Developer.
 
 ### AAX (Pro Tools)
 
@@ -274,7 +274,7 @@ A interface usa a arte de referência do painel: placa de metal escuro escovado,
 
 | Arquivo | Conteúdo |
 |---|---|
-| `background.jpg` | painel em 2x, sem os indicadores dos knobs e sem os valores, LEDs apagados, com o logotipo AURA BASS (Russo One, com desgaste) e o footswitch do DRIVE no canto inferior direito |
+| `background.jpg` | painel em 2x, sem os indicadores dos knobs e sem os valores, LEDs apagados, com o logotipo AURA BASS PREAMP (Russo One, com desgaste) e o footswitch do DRIVE no canto inferior direito |
 | `pointer.png` | indicador do knob, que gira conforme o valor |
 | `led_drive_on.png`, `led_cab_on.png` | LEDs acesos |
 | `cab_off.png` | chave do CAB na outra posição (alavanca espelhada) |
@@ -327,7 +327,7 @@ cada controle continuam iguais aos de `Source/PluginProcessor.cpp`.
 
 ## Aproximando o som da referência
 
-As constantes de som ficam no topo de `Source/PluginProcessor.cpp`. Com o Plugin Doctor (ou outro analisador), meça o plugin de referência e o AURA Bass com os mesmos ajustes e compare:
+As constantes de som ficam no topo de `Source/PluginProcessor.cpp`. Com o Plugin Doctor (ou outro analisador), meça o plugin de referência e o AURA Bass Preamp com os mesmos ajustes e compare:
 
 1. **Resposta de frequência com Drive no mínimo e EQ no meio:** ajuste a pré-ênfase, o `postLpf` e o filtro do cab até as curvas coincidirem.
 2. **Cada knob de EQ no máximo e no mínimo:** ajuste `lowFreq`, `midFreq`, `midQ`, `highFreq`, `presenceFreq` e as faixas em dB.

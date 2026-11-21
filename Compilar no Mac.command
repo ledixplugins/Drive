@@ -1,5 +1,5 @@
 #!/bin/bash
-# AURA Bass — compila e instala no Mac (Apple Silicon e Intel).
+# AURA Bass Preamp — compila e instala no Mac (Apple Silicon e Intel).
 # Dê dois cliques neste arquivo (ou botão direito > Abrir na primeira vez).
 
 set -e
@@ -7,7 +7,7 @@ cd "$(dirname "$0")"
 
 echo ""
 echo "=============================================="
-echo "  AURA Bass — compilação para Mac"
+echo "  AURA Bass Preamp — compilação para Mac"
 echo "=============================================="
 echo ""
 
@@ -41,22 +41,22 @@ echo "Compilando... (a primeira vez leva de 5 a 15 minutos)"
 "$CMAKE" -B build -DCMAKE_BUILD_TYPE=Release
 "$CMAKE" --build build --config Release --parallel "$(sysctl -n hw.ncpu)"
 
-ART="build/AuraBass_artefacts/Release"
+ART="build/AuraBassPreamp_artefacts/Release"
 
 # 4) Instalar
 VST3_DIR="$HOME/Library/Audio/Plug-Ins/VST3"
 AU_DIR="$HOME/Library/Audio/Plug-Ins/Components"
 mkdir -p "$VST3_DIR" "$AU_DIR"
 
-rm -rf "$VST3_DIR/AURA Bass.vst3" "$AU_DIR/AURA Bass.component"
+rm -rf "$VST3_DIR/AURA Bass Preamp.vst3" "$AU_DIR/AURA Bass Preamp.component"
 rm -rf "$VST3_DIR/Grit DI.vst3" "$AU_DIR/Grit DI.component" "$HOME/Applications/Grit DI.app"  # versão antiga
-cp -R "$ART/VST3/AURA Bass.vst3" "$VST3_DIR/"
-cp -R "$ART/AU/AURA Bass.component" "$AU_DIR/"
+cp -R "$ART/VST3/AURA Bass Preamp.vst3" "$VST3_DIR/"
+cp -R "$ART/AU/AURA Bass Preamp.component" "$AU_DIR/"
 mkdir -p "$HOME/Applications"
-rm -rf "$HOME/Applications/AURA Bass.app"
-cp -R "$ART/Standalone/AURA Bass.app" "$HOME/Applications/"
+rm -rf "$HOME/Applications/AURA Bass Preamp.app"
+cp -R "$ART/Standalone/AURA Bass Preamp.app" "$HOME/Applications/"
 
-xattr -dr com.apple.quarantine "$VST3_DIR/AURA Bass.vst3" "$AU_DIR/AURA Bass.component" "$HOME/Applications/AURA Bass.app" 2>/dev/null || true
+xattr -dr com.apple.quarantine "$VST3_DIR/AURA Bass Preamp.vst3" "$AU_DIR/AURA Bass Preamp.component" "$HOME/Applications/AURA Bass Preamp.app" 2>/dev/null || true
 
 # Faz o macOS reler a lista de Audio Units (Logic, GarageBand etc.)
 rm -rf "$HOME/Library/Caches/AudioUnitCache" 2>/dev/null || true
@@ -64,18 +64,18 @@ killall -9 AudioComponentRegistrar >/dev/null 2>&1 || true
 
 echo ""
 echo "Validando o Audio Unit..."
-if auval -v aufx Grdi Thgo >/tmp/aurabass-auval.log 2>&1; then
+if auval -v aufx Grdi Thgo >/tmp/aurabasspreamp-auval.log 2>&1; then
     echo "AU validado com sucesso."
 else
-    echo "Aviso: o auval não passou (detalhes em /tmp/aurabass-auval.log). VST3 e Standalone funcionam mesmo assim."
+    echo "Aviso: o auval não passou (detalhes em /tmp/aurabasspreamp-auval.log). VST3 e Standalone funcionam mesmo assim."
 fi
 
 echo ""
 echo "=============================================="
 echo "  Pronto!"
-echo "  VST3:        $VST3_DIR/AURA Bass.vst3"
-echo "  AU:          $AU_DIR/AURA Bass.component"
-echo "  Standalone:  $HOME/Applications/AURA Bass.app"
+echo "  VST3:        $VST3_DIR/AURA Bass Preamp.vst3"
+echo "  AU:          $AU_DIR/AURA Bass Preamp.component"
+echo "  Standalone:  $HOME/Applications/AURA Bass Preamp.app"
 echo ""
 echo "  Abra sua DAW e faça uma nova busca de plugins"
 echo "  (no Logic: Configurações > Plug-in Manager)."

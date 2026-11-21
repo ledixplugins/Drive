@@ -1,16 +1,17 @@
 # Autoria e proteção da obra
 
-> Este documento reúne o que protege o AURA Bass e como provar a autoria sem
+> Este documento reúne o que protege o AURA Bass Preamp e como provar a autoria sem
 > gastar nada. Não é parecer jurídico — para um caso concreto, procure um
 > advogado de propriedade intelectual.
 
 **Autor e titular:** Thiago Galvão
-**Obra:** AURA Bass — plugin de overdrive e pré-amplificador para baixo, com
+**Obra:** AURA Bass Preamp — plugin de overdrive e pré-amplificador para baixo, com
 afinador, simulação de alto-falante e versão para navegador
 **Criação iniciada em:** 23 de outubro de 2026
 **Repositório oficial:** <https://github.com/ledixplugins/Drive>
 **Endereço oficial da versão web:** <https://ledixplugins.github.io/Drive/>
 **Endereços anteriores (transferido em 20/11/2026):** <https://github.com/thiagorgalvao-sketch/AURA> e <https://thiagorgalvao-sketch.github.io/AURA/> (depois aurapluginsaudio/Drive, renomeada para ledixplugins/Drive); o histórico de commits foi mantido na transferência.
+**Nome anterior do produto:** AURA Bass (até 21/11/2026, quando passou a se chamar AURA Bass Preamp).
 
 ---
 
@@ -51,7 +52,7 @@ outro lugar. É isso que o resto deste documento resolve.
 Tanto o binário do plugin quanto o `app.js` da versão web carregam a cadeia:
 
 ```
-AURA-PROV/1 obra=AURA-Bass autor=Thiago-Galvao ano=2026
+AURA-PROV/1 obra=AURA-Bass-Preamp autor=Thiago-Galvao ano=2026
 lei=9609/1998+9610/1998 origem=github.com/ledixplugins/Drive
 direitos=reservados
 ```
@@ -62,7 +63,7 @@ aviso é, por si só, violação do art. 3 (d) da `LICENSE`. Para checar um bin�
 suspeito:
 
 ```bash
-strings AuraBass.vst3 | grep AURA-PROV      # macOS e Linux
+strings AuraBassPreamp.vst3 | grep AURA-PROV      # macOS e Linux
 # na versão web: procure AURA_PROV no app.js, ou digite no console do navegador:
 #   window.AURA_PROV
 ```
@@ -143,7 +144,7 @@ documental e custa zero.
 > Eu, **Thiago Galvão**, portador do CPF nº ____________________, residente em
 > ______________________________________________, **declaro**, para os devidos
 > fins e sob as penas da lei, que sou o **autor e único titular** dos direitos
-> sobre o programa de computador denominado **AURA Bass**, descrito como
+> sobre o programa de computador denominado **AURA Bass Preamp**, descrito como
 > plugin de overdrive e pré-amplificador para contrabaixo, com afinador,
 > simulação de alto-falante por resposta de impulso e versão executável em
 > navegador, nos formatos VST3, Audio Unit, aplicativo autônomo e aplicativo

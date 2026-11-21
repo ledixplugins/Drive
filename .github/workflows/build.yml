@@ -25,25 +25,25 @@ jobs:
 
       - name: Montar pacote
         run: |
-          ART="build/AuraBass_artefacts/Release"
-          PKG="dist/AuraBass-Mac"
+          ART="build/AuraBassPreamp_artefacts/Release"
+          PKG="dist/AuraBassPreamp-Mac"
           mkdir -p "$PKG"
-          cp -R "$ART/VST3/AURA Bass.vst3" "$PKG/"
-          cp -R "$ART/AU/AURA Bass.component" "$PKG/"
-          cp -R "$ART/Standalone/AURA Bass.app" "$PKG/"
+          cp -R "$ART/VST3/AURA Bass Preamp.vst3" "$PKG/"
+          cp -R "$ART/AU/AURA Bass Preamp.component" "$PKG/"
+          cp -R "$ART/Standalone/AURA Bass Preamp.app" "$PKG/"
           for b in "$PKG"/*.vst3 "$PKG"/*.component "$PKG"/*.app; do
             codesign --force --deep --sign - "$b"
           done
           cp "packaging/Instalar no Mac.command" "$PKG/"
           chmod +x "$PKG/Instalar no Mac.command"
-          lipo -info "$PKG/AURA Bass.component/Contents/MacOS/AURA Bass"
+          lipo -info "$PKG/AURA Bass Preamp.component/Contents/MacOS/AURA Bass Preamp"
           # ditto preserva permissões e assinaturas dos bundles
-          ditto -c -k --keepParent "$PKG" dist/AuraBass-Mac.zip
+          ditto -c -k --keepParent "$PKG" dist/AuraBassPreamp-Mac.zip
 
       - name: Validar AU
         run: |
           mkdir -p ~/Library/Audio/Plug-Ins/Components
-          cp -R "build/AuraBass_artefacts/Release/AU/AURA Bass.component" ~/Library/Audio/Plug-Ins/Components/
+          cp -R "build/AuraBassPreamp_artefacts/Release/AU/AURA Bass Preamp.component" ~/Library/Audio/Plug-Ins/Components/
           killall -9 AudioComponentRegistrar || true
           sleep 2
           auval -v aufx Grdi Thgo
@@ -52,42 +52,42 @@ jobs:
         run: |
           set -e
           VERSION=$(grep -m1 "CMAKE_PROJECT_VERSION:" build/CMakeCache.txt | cut -d= -f2)
-          ART="build/AuraBass_artefacts/Release"
+          ART="build/AuraBassPreamp_artefacts/Release"
           mkdir -p pkgroot/app/Applications \
                    pkgroot/vst3/Library/Audio/Plug-Ins/VST3 \
                    pkgroot/au/Library/Audio/Plug-Ins/Components pkgs
-          cp -R "$ART/Standalone/AURA Bass.app" pkgroot/app/Applications/
-          cp -R "$ART/VST3/AURA Bass.vst3" pkgroot/vst3/Library/Audio/Plug-Ins/VST3/
-          cp -R "$ART/AU/AURA Bass.component" pkgroot/au/Library/Audio/Plug-Ins/Components/
-          pkgbuild --root pkgroot/app  --identifier com.thiagogalvao.aurabass.app  --version "$VERSION" pkgs/app.pkg
-          pkgbuild --root pkgroot/vst3 --identifier com.thiagogalvao.aurabass.vst3 --version "$VERSION" pkgs/vst3.pkg
-          pkgbuild --root pkgroot/au   --identifier com.thiagogalvao.aurabass.au   --version "$VERSION" pkgs/au.pkg
+          cp -R "$ART/Standalone/AURA Bass Preamp.app" pkgroot/app/Applications/
+          cp -R "$ART/VST3/AURA Bass Preamp.vst3" pkgroot/vst3/Library/Audio/Plug-Ins/VST3/
+          cp -R "$ART/AU/AURA Bass Preamp.component" pkgroot/au/Library/Audio/Plug-Ins/Components/
+          pkgbuild --root pkgroot/app  --identifier com.thiagogalvao.aurabasspreamp.app  --version "$VERSION" pkgs/app.pkg
+          pkgbuild --root pkgroot/vst3 --identifier com.thiagogalvao.aurabasspreamp.vst3 --version "$VERSION" pkgs/vst3.pkg
+          pkgbuild --root pkgroot/au   --identifier com.thiagogalvao.aurabasspreamp.au   --version "$VERSION" pkgs/au.pkg
           cp packaging/EULA.txt pkgs/license.txt
           cat > pkgs/dist.xml <<'XML'
           <?xml version="1.0" encoding="utf-8"?>
           <installer-gui-script minSpecVersion="1">
-            <title>AURA Bass</title>
+            <title>AURA Bass Preamp</title>
             <license file="license.txt"/>
             <options customize="allow" require-scripts="false" hostArchitectures="x86_64,arm64"/>
             <choices-outline><line choice="app"/><line choice="vst3"/><line choice="au"/></choices-outline>
-            <choice id="app"  title="Programa AURA Bass" description="Instala o programa na pasta Aplicativos, para tocar sem abrir uma DAW."><pkg-ref id="com.thiagogalvao.aurabass.app"/></choice>
-            <choice id="vst3" title="Plugin VST3" description="Para Reaper, Cubase, Studio One, Ableton e outras DAWs."><pkg-ref id="com.thiagogalvao.aurabass.vst3"/></choice>
-            <choice id="au"   title="Plugin Audio Unit (AU)" description="Para Logic, GarageBand e outras DAWs AU."><pkg-ref id="com.thiagogalvao.aurabass.au"/></choice>
-            <pkg-ref id="com.thiagogalvao.aurabass.app">app.pkg</pkg-ref>
-            <pkg-ref id="com.thiagogalvao.aurabass.vst3">vst3.pkg</pkg-ref>
-            <pkg-ref id="com.thiagogalvao.aurabass.au">au.pkg</pkg-ref>
+            <choice id="app"  title="Programa AURA Bass Preamp" description="Instala o programa na pasta Aplicativos, para tocar sem abrir uma DAW."><pkg-ref id="com.thiagogalvao.aurabasspreamp.app"/></choice>
+            <choice id="vst3" title="Plugin VST3" description="Para Reaper, Cubase, Studio One, Ableton e outras DAWs."><pkg-ref id="com.thiagogalvao.aurabasspreamp.vst3"/></choice>
+            <choice id="au"   title="Plugin Audio Unit (AU)" description="Para Logic, GarageBand e outras DAWs AU."><pkg-ref id="com.thiagogalvao.aurabasspreamp.au"/></choice>
+            <pkg-ref id="com.thiagogalvao.aurabasspreamp.app">app.pkg</pkg-ref>
+            <pkg-ref id="com.thiagogalvao.aurabasspreamp.vst3">vst3.pkg</pkg-ref>
+            <pkg-ref id="com.thiagogalvao.aurabasspreamp.au">au.pkg</pkg-ref>
           </installer-gui-script>
           XML
-          productbuild --distribution pkgs/dist.xml --package-path pkgs --resources pkgs dist/AURA-Bass-macOS.pkg
+          productbuild --distribution pkgs/dist.xml --package-path pkgs --resources pkgs dist/AURA-Bass-Preamp-macOS.pkg
           ls -la dist/
 
       - name: Enviar
         uses: actions/upload-artifact@v4
         with:
-          name: AuraBass-Mac
+          name: AuraBassPreamp-Mac
           path: |
-            dist/AuraBass-Mac.zip
-            dist/AURA-Bass-macOS.pkg
+            dist/AuraBassPreamp-Mac.zip
+            dist/AURA-Bass-Preamp-macOS.pkg
 
       - name: Guardar o número da versão
         run: |
@@ -118,10 +118,10 @@ jobs:
         run: |
           set -e
           VERSION=$(grep -m1 "CMAKE_PROJECT_VERSION:" build/CMakeCache.txt | cut -d= -f2)
-          ART="build/AuraBass_artefacts/Release"
+          ART="build/AuraBassPreamp_artefacts/Release"
           mkdir -p dist/win/VST3
-          cp -R "$ART/VST3/AURA Bass.vst3" "dist/win/VST3/"
-          cp "$ART/Standalone/AURA Bass.exe" "dist/win/"
+          cp -R "$ART/VST3/AURA Bass Preamp.vst3" "dist/win/VST3/"
+          cp "$ART/Standalone/AURA Bass Preamp.exe" "dist/win/"
           cp packaging/EULA.txt dist/win/
           choco install nsis -y --no-progress --limit-output >/dev/null
           NSIS=""
@@ -130,18 +130,18 @@ jobs:
           done
           if [ -z "$NSIS" ]; then echo "makensis não encontrado"; ls "/c/Program Files (x86)" | head -40; exit 1; fi
           echo "usando $NSIS"
-          "$NSIS" -DVERSAO="$VERSION" -DSRC="$(pwd -W)/dist/win" packaging/aura-bass.nsi
-          mv packaging/AURA-Bass-Windows.exe dist/ 2>/dev/null || mv AURA-Bass-Windows.exe dist/
+          "$NSIS" -DVERSAO="$VERSION" -DSRC="$(pwd -W)/dist/win" packaging/aura-bass-preamp.nsi
+          mv packaging/AURA-Bass-Preamp-Windows.exe dist/ 2>/dev/null || mv AURA-Bass-Preamp-Windows.exe dist/
           ls -la dist/
 
       - name: Enviar
         uses: actions/upload-artifact@v4
         with:
-          name: AuraBass-Windows
+          name: AuraBassPreamp-Windows
           path: |
-            dist/AURA-Bass-Windows.exe
-            build/AuraBass_artefacts/Release/VST3
-            build/AuraBass_artefacts/Release/Standalone
+            dist/AURA-Bass-Preamp-Windows.exe
+            build/AuraBassPreamp_artefacts/Release/VST3
+            build/AuraBassPreamp_artefacts/Release/Standalone
 
   publicar:
     name: Publicar instaladores
@@ -152,9 +152,9 @@ jobs:
       contents: write
     steps:
       - uses: actions/download-artifact@v4
-        with: { name: AuraBass-Mac, path: rel }
+        with: { name: AuraBassPreamp-Mac, path: rel }
       - uses: actions/download-artifact@v4
-        with: { name: AuraBass-Windows, path: win }
+        with: { name: AuraBassPreamp-Windows, path: win }
       - uses: actions/download-artifact@v4
         with: { name: versao, path: v }
 
@@ -164,20 +164,20 @@ jobs:
         run: |
           set -e
           VERSION=$(cat v/versao.txt | tr -d '[:space:]')
-          cp win/AURA-Bass-Windows.exe rel/ 2>/dev/null || cp win/dist/AURA-Bass-Windows.exe rel/
+          cp win/AURA-Bass-Preamp-Windows.exe rel/ 2>/dev/null || cp win/dist/AURA-Bass-Preamp-Windows.exe rel/
           ls -la rel/
           gh release delete latest --yes --cleanup-tag --repo "${{ github.repository }}" 2>/dev/null || true
           gh release create latest \
-            "rel/AURA-Bass-Windows.exe" \
-            "rel/AURA-Bass-macOS.pkg" \
-            "rel/AuraBass-Mac.zip" \
+            "rel/AURA-Bass-Preamp-Windows.exe" \
+            "rel/AURA-Bass-Preamp-macOS.pkg" \
+            "rel/AuraBassPreamp-Mac.zip" \
             --repo "${{ github.repository }}" \
-            --title "AURA Bass $VERSION" \
+            --title "AURA Bass Preamp $VERSION" \
             --target "${{ github.sha }}" \
             --notes "Versão $VERSION — teste grátis de 15 dias, com todos os recursos.
 
-          **Windows:** baixe \`AURA-Bass-Windows.exe\` e execute. Instala o plugin VST3 e o programa.
-          **Mac:** baixe \`AURA-Bass-macOS.pkg\` e abra. Instala o programa, o VST3 e o AU.
+          **Windows:** baixe \`AURA-Bass-Preamp-Windows.exe\` e execute. Instala o plugin VST3 e o programa.
+          **Mac:** baixe \`AURA-Bass-Preamp-macOS.pkg\` e abra. Instala o programa, o VST3 e o AU.
 
           Os instaladores ainda não são assinados: o sistema vai avisar que o desenvolvedor é desconhecido. No Mac, clique com o botão direito no arquivo e escolha Abrir. No Windows, clique em Mais informações e depois em Executar assim mesmo."
 

@@ -1,4 +1,4 @@
-// AURA Bass — licença: teste de 15 dias e ativação por chave
+// AURA Bass Preamp — licença: teste de 15 dias e ativação por chave
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
@@ -96,9 +96,9 @@ namespace
         return File::getSpecialLocation (File::userApplicationDataDirectory)
                    .getChildFile (
                      #if JUCE_MAC
-                       "Application Support/AURA Bass"
+                       "Application Support/AURA Bass Preamp"
                      #else
-                       "AURA Bass"
+                       "AURA Bass Preamp"
                      #endif
                    );
     }
@@ -107,7 +107,7 @@ namespace
     {
         auto casa = File::getSpecialLocation (File::userHomeDirectory);
        #if JUCE_WINDOWS
-        return casa.getChildFile ("AppData/Local/AuraBass");
+        return casa.getChildFile ("AppData/Local/AuraBassPreamp");
        #else
         return casa.getChildFile (".config");
        #endif
@@ -134,7 +134,7 @@ Gerente::Gerente()
                  #if JUCE_WINDOWS
                    ".lic"
                  #else
-                   ".aura-bass-lic"
+                   ".aura-bass-preamp-lic"
                  #endif
                );
 

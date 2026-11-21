@@ -1,4 +1,4 @@
-// AURA Bass — testes da versão web
+// AURA Bass Preamp — testes da versão web
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.

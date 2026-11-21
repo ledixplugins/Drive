@@ -1,20 +1,20 @@
-AURA BASS — REGISTRO DE INTEGRIDADE DA OBRA
+AURA BASS PREAMP — REGISTRO DE INTEGRIDADE DA OBRA
 Autor e titular: Thiago Galvão
 Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 Leis 9.609/1998 e 9.610/1998 — a proteção independe de registro.
 
-Gerado em (UTC): 2026-11-21T10:15:41Z
-Commit do repositório: dd35285fd0937561c563a9836103b3159b85117a
+Gerado em (UTC): 2026-11-21T11:16:22Z
+Commit do repositório: d6d8f17a125727bde8e88f48b6dc98198376df78
 Arquivos: 55
 
 SHA-256 de cada arquivo:
 --------------------------------------------------------------------
-54ad91ccb6f4bccbf918add385a321a5bb0718fbee7f14b6360f3a168d0b5de3  .github/workflows/build.yml
+036968aae2a27813c1cc2ead3971813ee6773fa011179cb1da7234a859d0bb60  .github/workflows/build.yml
 6989f0d7d4b5b1b832ad59c981b2a28d4eae0741eb87f03a724dc9b94f33a029  .github/workflows/pages.yml
-cd9bd7f97360e7d30aa57b4ae744aa7d5bbfb5462b8a2d34f9620e228dc44697  AUTORIA.md
-be1d879ca2c79e50942c44fed41e17ea62005e386ff21a1aef94c1c1ddea35d1  CMakeLists.txt
-7fcb6e18a8c1038ba3b4566e0b21822d62491eee868923abe170f76300332dbc  LICENSE
-52b75c4f9d89e89c4d435e849c08c538477b28efce9600634d5b34fd91f89649  README.md
+ccd0dd2eaf9e9718421c944cc4ef26f024f37b63fc30be313c8792e8eaa6c7e4  AUTORIA.md
+3cabaadee09edd01c9c3b40109791b2bc501e85ef2ae998b0766b2c1ce3950b6  CMakeLists.txt
+0918e563e23e85ed77861f0fc8f6ef69d02b58529f03e888870419a79edd7216  LICENSE
+b7949b95ff5c7bc77c12b80b06b752f7981bf18587852843527b22043e2a0d33  README.md
 5f2c0cd78e815a16f5167e69c7fcbde8748011af675cb6129f0c6a176457b87e  Resources/ir/cab_1x15.wav
 18b691c2ff4b1978f23fea94b94073961510839897a59c462cdf68688624b957  Resources/ir/cab_4x10.wav
 241d08d27fe23f5b69e91422e84cd60cca73a4bbff49a503b3ec52b76d34221e  Resources/ui/arcs_lit.png
@@ -27,47 +27,47 @@ b04ecd6b957c75890593883fee8a778669d4b9c21cb2f116c044f6c338b70eb9  Resources/ui/l
 8033cb60942703003f1d7c34392847561a05647df1ba8f2a359884f7e9371896  Resources/ui/led_tuner_on.png
 1c6a9d9e556d214597c9ef0db3eff8f22c41a9f552fd3324317a07c870ad8dec  Resources/ui/pointer.png
 07a1e587e501af8f094da2b0b7fd06646890168a391998d0844d699226aaef43  Resources/ui/tuner_down.png
-eea027b0102d4d35a603b9cbbd4854eba617ef30128b078c69ab00a476f47794  Source/Autoria.h
-4f1ac5c06739d7389efcdeee4ffa4372f7b1845beda602b544b80383748d443f  Source/Efeitos.h
-844c53bb6c38052b3a958ed2797b3e4d6c4df8cd6ff3d8f05ab060265c132789  Source/Layout.h
-7ccbcbaa920c728e57d75d550809bc24bc3803f2924addbc9318f12819bcefa8  Source/Licenca.cpp
-1dc59bf3a54bb8cdcd068784016b4e09dbacb0033db9ee2844d32497746a513d  Source/Licenca.h
-ba0aace2b9c30a1b8b8e544fc0de44218e43fbb6e77f90c0cda56493f16df6bc  Source/PluginEditor.cpp
-96a1b03a2c0cc7b1a9ae1da153616c061d15bfe84429299adb54b8d6bce60716  Source/PluginEditor.h
-ee299bdc84047048d01d28cd61c778632acd7701cd0c1fbfd0e7283ce870380a  Source/PluginProcessor.cpp
-3d76ab698f9519ffa5670c91377658019febeedfbad2cef43641e2a1c0deeb17  Source/PluginProcessor.h
-53295b9cd552d1c28a287172a009b84a0807e2e2b80401ee8d790e6215e6427c  Source/Tuner.h
-e7aae62087ed89d8a3e74175dd4125a449cf65b2ad3c37fa25c1c9fc3b5c00b2  TERCEIROS.md
-f37ff081157190f9d8d5744250e57842af5d971196665ea5d067a72928feb056  Tests/DspTest.cpp
+06d9d4d52f7b087b426cade98cccacf25a379d26d35b5178e73fed8dce596461  Source/Autoria.h
+e43d7155893e1a4de912c6cb471730a6bd8313ed5ad5673cc6303089cc90a9b9  Source/Efeitos.h
+d6817ced69eee7d08d76243179a8e49c8136af2b3a3f6380e9f2b1cb0cc5514b  Source/Layout.h
+f6e1087c2fa160c8db43a8bede2d1454e1807479b7519b4ce49129a5244dff0e  Source/Licenca.cpp
+3e3e43ae2098e0c4c79c379ae5879fe7dbf764b63e97ca44e8d06bf5c0e0bd58  Source/Licenca.h
+6ffae2fce98a140cf8b7d65978440ada0555ce545013b79488c475ad406a6e6a  Source/PluginEditor.cpp
+8bc11d69fc37bd87d82d624916eb109f7115a87c3d435ee7460586c8e1b0a69c  Source/PluginEditor.h
+850fc93cfb578881ab1e72ff789ee6ebbfa6fbe5ee2346d6fc49c273a20424b2  Source/PluginProcessor.cpp
+8241a9af029b0ebac6ea89b22d46eb1ace32c8bb3dbbebc8f4d820e61e248a16  Source/PluginProcessor.h
+6f0e97912135fb1dd2c2c8ab33049324ce991bfbbe72a08f0040cd4dac83bd46  Source/Tuner.h
+5bfca0d49e4df14835110a5136ad5a9e49779976577c1ba98aae50a9bae0bc46  TERCEIROS.md
+e80eee5ed4096414923e308b9a2f9bebe524cb3100f6f006a656169760c4db84  Tests/DspTest.cpp
 d051942142c5348357d526c37ed33079945a9d8f6d32cbc92e1374ae976760bc  Tests/pedalboard-ui-test.py
 ac278c6a82fc6017911db3bf2d544fe492754ebe68046efd792a82ec51d25495  Tests/vergani-dsp-test.js
 8ee401eb4dc1af8dea3b0f4efbdc95128ab37d0b0f6d07bbe449e3339f3a9413  Tests/vergani-ui-test.py
-18078b9f8d21f2cb1a3c4c0448cfd2e94f8ceacebbc661afed97fed385b27ff7  Tests/web-dsp-test.js
-a504edab93753a5726d20706e5bf486b9ed85737e696131d997d112693845fc1  Tests/web-ui-test.py
-87f02d17d8e183e4499bbe75f56da2e0a3eca08e1dae8772a06084c5c8a54c8b  Tools/FootswitchRender/Main.cpp
-89f04d4071c05194bbe88c3e8eaedbf3955d4d983bc5856b153432e192adee56  Tools/autoria-hashes.sh
-18396b09045fbe0860a150434eba83a839d6926012aa627bafb100f33025a191  Tools/build-web.sh
-2a53db18844ba5d13337b433483212635745f256c4bfe0492ee117b72497b58a  Tools/build_ui_assets.py
-79d21df70df2797d9b91c76c7640ae156fddb660b01cba4036755a3871f93b2b  Tools/estende_painel.py
-ca5069d5b65b6a9b9119cc2310cf92a172fd059e0cfc4c7a6889289f8db17fa0  Tools/make_cab_irs.py
-4fce7790c3512d77ed6f078fef7a6ec57fd381d319502d89ee0d676fe08e9a69  Tools/versiona-site.py
-1904f692887dc1a528605c0aa2f09ad170ef7e47ebe10237d0115a8901d59323  packaging/EULA.txt
-27a66fe0410223512589d1b8f3735f97f1fcbb7de27d83f47694fe28167387c7  packaging/Instalar no Mac.command
-de42d24a3c95b5dd98c38f6f6d59357d9873d8ee059bc82c4786cddad164b500  packaging/aura-bass.nsi
-99eef7788febe9ebacf04b3c7a2a74165af7e97a3b5d3cb916c3f054e9948b8f  web/app.js
-ad9ba93465ad96868c3e61c7c4eb6e20359a628d1fdabc4f03eb9a7232432a6b  web/aura-processor.js
+ef8711b676fc16868346e680334b1d0324b8fcdc035da41f7fb4e6d3aec072c0  Tests/web-dsp-test.js
+c6abb0fd90b5b6579b20ccf57a1c5b5963f37f21c387a0ad73d998ae94151843  Tests/web-ui-test.py
+e947dd581952f550e2b2c046712a34fadf42b5b855e4ed3fd431c472078b62c2  Tools/FootswitchRender/Main.cpp
+9f4f17f175fc2bc83aa67286f9911a8abe8a76df16470d56b19257d5bca59ef8  Tools/autoria-hashes.sh
+34ac494205211b1325259bc099a1c988d4e7b1ac0a89938c0034e8d9b77b13ff  Tools/build-web.sh
+a0b38ad6fc48d2ce705e2cb666e798aad12f2b60ad4f584b68c04f4697afba87  Tools/build_ui_assets.py
+8028f2658a645a8ebe9255d4c0224ee6da8ccb353519d386c4e66b1a7991de87  Tools/estende_painel.py
+421bc098ca1900580309702f57c05c0b82c5c7b148ac1c61133a1ccdaca10f5a  Tools/make_cab_irs.py
+fb1ad543b54d042985acc89ecf1c2567173e3123b127e4bed1c2b66fbded310d  Tools/versiona-site.py
+e929e1970bd9520656b7d20bf3326078f8eab2e1397b2769f08ab47a60aa8d18  packaging/EULA.txt
+5a8dcedcc41f6841a09d3b61ad122541035e8b0b7ad01fda6dccb3fc42415209  packaging/Instalar no Mac.command
+97a6aeca75688a9496405dd6a32ff93d1b340b97dd211a1bd3ca97665e35bb79  packaging/aura-bass-preamp.nsi
+ce8c60573eb72eb9056a4e49861e3cf6ec82c1fa313fb50eacb30a71e9829122  web/app.js
+e4cb21c0a64ea132338c7d1538990e98d722e7ad503a087b32f6537335d77a38  web/aura-processor.js
 b27102530b56e210f5d02ed6bb37a5775421af6a772cf183c41a582dad55e6ae  web/icons/icon-192.png
 44640a5c715af95fcc80fb1ac62ace6fccff12a3b552aa5201ab7d8cf1670a48  web/icons/icon-512.png
-0df724df29efa6b15744ccbec8fd16c8a94a550c26417f4b19c597c3511c09d0  web/index.html
-bfe65055fcceecc469b8cc21c41bc987b88b3e70eeaf0a191b8c436150bc5e23  web/layout.js
-44a9154fbff1429e371d7a8935f65083f984763061577fcb46e72bc4de37bc92  web/manifest.webmanifest
-b236ed80d987f79315a8777be94768e9295cc1e9e4468823e864c11a7a402151  web/style.css
-cdbb4efae63b9998c4c286740ef7f7e2fbcdbcdeba3f49cb63138b022b71e12a  web/sw.js
-983bac95d3d4efcd99fe1c5e8ceb7c43f0efbfa9ad1480beab5ca45df8b462be  web/tuner.js
+cbb8703b06ae968a455a3a42a384701ecea044a16b37c8f676a6ebf68198f9c5  web/index.html
+73095bf8069497b02ea1a4557624a029da04fd2423afc4cdda2057c9e291305e  web/layout.js
+3b10c68645fc122867d5bd331b795208823917793488dd940a16587b8db6751c  web/manifest.webmanifest
+9389741c02ed2bf7e37b2d29bcfe682d8a80fc8db911a485ca90dcc84a906bf9  web/style.css
+4b145d36b6e3e364059a965eadaea5f4aab94acb7120085c10e87678f338d16b  web/sw.js
+c1229e073bac617d9f4b8b1864ac0d478324c1a26d32af585bf75c9c6c49b321  web/tuner.js
 --------------------------------------------------------------------
 
 RESUMO DA OBRA (SHA-256 da lista acima):
-d8b9be01248c8cf62a40c0799f742fa09af9faf74a2a5397eabc70670ab47c5f
+9d8bbf07b9e555400d0a9e483a9ce9a8821a50e0810017d8f210440ebbfe3e51
 
 Esse resumo identifica a obra inteira nesta data. Qualquer alteração em
 qualquer arquivo muda o resumo. Para ter prova de data independente,

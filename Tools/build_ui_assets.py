@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-# AURA Bass — gerador das imagens da interface
+# AURA Bass Preamp — gerador das imagens da interface
 # Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 # Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 # cópia, redistribuição ou obra derivada apenas com autorização por escrito.
 # Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
 """
-Monta as imagens da interface do AURA Bass a partir da arte de referência.
+Monta as imagens da interface do AURA Bass Preamp a partir da arte de referência.
 
 Entradas (Resources/mockup):
   layout.jpg          painel completo (2x), sem marca
@@ -15,7 +15,7 @@ Fontes (Resources/fonts): RussoOne-Regular.ttf, Roboto.ttf
 
 Saídas (Resources/ui), todas em 2x:
   background.jpg      painel sem os indicadores dos knobs e sem os valores, LEDs apagados,
-                      chave do CAB ligada, com o nome AURA BASS
+                      chave do CAB ligada, com o nome AURA BASS PREAMP
   pointer.png         indicador do knob (gira na interface), centrado no quadro
   led_drive_on.png    LED azul aceso (sobreposição)
   footswitch_down.png footswitch do DRIVE pressionado (sobreposição)
@@ -417,7 +417,7 @@ def main():
         ga[y0r - gy:y1r - gy, x0r - gx:x1r - gx] = 0.0
     img[gy:gy + gh, gx:gx + gw] = img[gy:gy + gh, gx:gx + gw] * (1 - ga) + gp[..., :3] * ga
 
-    # 5) Marca AURA BASS no estilo da referência
+    # 5) Marca AURA BASS PREAMP no estilo da referência
     russo = lambda s: ImageFont.truetype(os.path.join(FONTS, "RussoOne-Regular.ttf"), s)
     roboto = lambda s, wght=500: ImageFont.truetype(os.path.join(FONTS, "Roboto.ttf"), s)
     draw_microprint(img, plate, roboto)
@@ -434,7 +434,7 @@ def main():
         return layer
 
     # Logotipo grande (com desgaste)
-    composite(img, text_layer("AURA BASS", russo(77), 163, 380, spacing=1.5), (218, 219, 223), 0.97, True, 11)
+    composite(img, text_layer("AURA BASS PREAMP", russo(77), 163, 380, spacing=1.5), (218, 219, 223), 0.97, True, 11)
     # Rótulo do footswitch (à esquerda do LED)
     composite(img, text_layer("ENGAGE", roboto(19), 1274, 865, "rs", 1.8), (170, 172, 177), 1.0)
     composite(img, text_layer("TUNER", roboto(19), 326, 865, "ls", 1.8), (170, 172, 177), 1.0)

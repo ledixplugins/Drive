@@ -1,9 +1,9 @@
-// AURA Bass — processamento de áudio da versão web
+// AURA Bass Preamp — processamento de áudio da versão web
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
 // Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
-// AURA Bass — motor de áudio da versão web (AudioWorklet).
+// AURA Bass Preamp — motor de áudio da versão web (AudioWorklet).
 // Porta do processamento do plugin (Source/PluginProcessor.cpp):
 //   entrada -> HPF 18 Hz -> pré-ênfase -> [4x oversampling] Drive -> soft clip assimétrico
 //   -> remove DC + LPF 7 kHz -> compensação de volume -> Blend com o limpo alinhado
@@ -362,7 +362,7 @@ if (typeof registerProcessor !== 'undefined') {
       return true;
     }
   }
-  registerProcessor('aura-bass', AuraProcessor);
+  registerProcessor('aura-bass-preamp', AuraProcessor);
 }
 
 if (typeof module !== 'undefined') module.exports = { AuraDsp, levelCompensation, shape, LATENCY, Coefs };

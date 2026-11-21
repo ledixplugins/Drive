@@ -1,5 +1,5 @@
 #!/bin/bash
-# AURA Bass — montagem do site da versão web
+# AURA Bass Preamp — montagem do site da versão web
 # Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 # Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 # cópia, redistribuição ou obra derivada apenas com autorização por escrito.
@@ -44,7 +44,7 @@ cp web/icons/icon-192.png web/icons/icon-512.png "$OUT/assets/"
 
 cp LICENSE "$OUT/LICENSE.txt"
 cat > "$OUT/CREDITOS.txt" <<'TXT'
-AURA Bass — versão para navegador
+AURA Bass Preamp — versão para navegador
 Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 
 Obra protegida pelas Leis 9.609/1998 (Lei do Software) e 9.610/1998 (Direitos
@@ -55,7 +55,7 @@ com autorização por escrito do autor. Veja LICENSE.txt.
 Origem oficial: https://ledixplugins.github.io/Drive/
 Código: https://github.com/ledixplugins/Drive
 
-AURA-PROV/1 obra=AURA-Bass autor=Thiago-Galvao ano=2026
+AURA-PROV/1 obra=AURA-Bass-Preamp autor=Thiago-Galvao ano=2026
 lei=9609/1998+9610/1998 direitos=reservados
 
 Fontes Roboto e Russo One sob a SIL Open Font License (assets/OFL-*.txt).

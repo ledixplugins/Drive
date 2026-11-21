@@ -1,4 +1,4 @@
-// AURA Bass — licença: teste de 15 dias e ativação por chave
+// AURA Bass Preamp — licença: teste de 15 dias e ativação por chave
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
@@ -25,7 +25,7 @@ namespace AuraLicenca
     inline constexpr int    diasDeTolerancia = 30;   // uso offline depois de ativada
     inline constexpr double umDiaMs         = 24.0 * 60.0 * 60.0 * 1000.0;
     inline constexpr const char* servidor   = "https://api.lemonsqueezy.com/v1/licenses";
-    inline constexpr const char* semente    = "AURA-BASS-TRG-2026";
+    inline constexpr const char* semente    = "AURA-BASS-PREAMP-TRG-2026";
 
     /** O que fica guardado no disco. Tempos em milissegundos desde 1970. */
     struct Estado

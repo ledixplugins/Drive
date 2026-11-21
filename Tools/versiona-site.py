@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# AURA Bass — põe a versão nas URLs do site montado
+# AURA Bass Preamp — põe a versão nas URLs do site montado
 # Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 # Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
 #

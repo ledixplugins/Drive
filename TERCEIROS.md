@@ -1,6 +1,6 @@
 # Componentes de terceiros
 
-O AURA Bass Preamp é obra de Thiago Galvão (veja `LICENSE`). Ele usa os componentes
+O AURA Preamp Bass é obra de Thiago Galvão (veja `LICENSE`). Ele usa os componentes
 abaixo, cada um sob a sua própria licença. Essas licenças se aplicam somente
 a esses componentes — não às partes criadas pelo autor (DSP, interface,
 desenho do painel, respostas de impulso, afinador, versão web e documentação).

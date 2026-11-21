@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# AURA Bass Preamp — teste de interface da versão web
+# AURA Preamp Bass — teste de interface da versão web
 # Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 # Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 # cópia, redistribuição ou obra derivada apenas com autorização por escrito.

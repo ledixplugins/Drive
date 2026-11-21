@@ -1,6 +1,6 @@
 {
-  "name": "AURA Bass Preamp",
-  "short_name": "AURA Bass Preamp",
+  "name": "AURA Preamp Bass",
+  "short_name": "AURA Preamp Bass",
   "description": "Overdrive de baixo com afinador, direto no navegador. Copyright (c) 2026 Thiago Galvão — todos os direitos reservados.",
   "start_url": "./",
   "scope": "./",

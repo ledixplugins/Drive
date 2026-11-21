@@ -1,4 +1,4 @@
-// AURA Bass Preamp — processamento de áudio
+// AURA Preamp Bass — processamento de áudio
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
@@ -61,7 +61,7 @@ namespace
 }
 
 //==============================================================================
-AuraBassPreampAudioProcessor::AuraBassPreampAudioProcessor()
+AuraPreampBassAudioProcessor::AuraPreampBassAudioProcessor()
     : AudioProcessor (BusesProperties()
                           .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
                           .withOutput ("Output", juce::AudioChannelSet::stereo(), true)),
@@ -90,14 +90,14 @@ AuraBassPreampAudioProcessor::AuraBassPreampAudioProcessor()
 }
 
 //==============================================================================
-int AuraBassPreampAudioProcessor::getNumPrograms() { return numPresets; }
+int AuraPreampBassAudioProcessor::getNumPrograms() { return numPresets; }
 
-const juce::String AuraBassPreampAudioProcessor::getProgramName (int index)
+const juce::String AuraPreampBassAudioProcessor::getProgramName (int index)
 {
     return juce::isPositiveAndBelow (index, numPresets) ? juce::String::fromUTF8 (presets[index].name) : juce::String();
 }
 
-void AuraBassPreampAudioProcessor::setCurrentProgram (int index)
+void AuraPreampBassAudioProcessor::setCurrentProgram (int index)
 {
     if (! juce::isPositiveAndBelow (index, numPresets))
         return;
@@ -126,13 +126,13 @@ void AuraBassPreampAudioProcessor::setCurrentProgram (int index)
 }
 
 //==============================================================================
-juce::String AuraBassPreampAudioProcessor::getCabIR() const
+juce::String AuraPreampBassAudioProcessor::getCabIR() const
 {
     const juce::ScopedLock sl (cabIrLock);
     return cabIrSource;
 }
 
-juce::String AuraBassPreampAudioProcessor::getCabIRDisplayName() const
+juce::String AuraPreampBassAudioProcessor::getCabIRDisplayName() const
 {
     const auto src = getCabIR();
     if (src.startsWith ("file:"))
@@ -140,7 +140,7 @@ juce::String AuraBassPreampAudioProcessor::getCabIRDisplayName() const
     return builtinCabNames()[juce::jlimit (0, 1, src.getTrailingIntValue())];
 }
 
-void AuraBassPreampAudioProcessor::setCabIR (const juce::String& source)
+void AuraPreampBassAudioProcessor::setCabIR (const juce::String& source)
 {
     {
         const juce::ScopedLock sl (cabIrLock);
@@ -149,7 +149,7 @@ void AuraBassPreampAudioProcessor::setCabIR (const juce::String& source)
     applyCabIR();
 }
 
-void AuraBassPreampAudioProcessor::applyCabIR()
+void AuraPreampBassAudioProcessor::applyCabIR()
 {
     // Lê a IR (embutida ou arquivo), usa só o primeiro canal, limita a 1 s e ajusta o ganho para
     // 0 dB na região de 100-800 Hz: ligar o CAB não muda o volume, qualquer que seja a IR.
@@ -206,7 +206,7 @@ void AuraBassPreampAudioProcessor::applyCabIR()
 }
 
 //==============================================================================
-float AuraBassPreampAudioProcessor::levelCompensation (float driveDb) noexcept
+float AuraPreampBassAudioProcessor::levelCompensation (float driveDb) noexcept
 {
     // Mede o ganho RMS do caminho saturado com uma senoide de -12 dBFS (nível típico de baixo
     // na entrada) e devolve o inverso: com o DRIVE ligado o volume fica parecido com o limpo.
@@ -229,7 +229,7 @@ float AuraBassPreampAudioProcessor::levelCompensation (float driveDb) noexcept
     return (float) std::sqrt (sumIn / juce::jmax (1.0e-12, sumOut));
 }
 
-juce::AudioProcessorValueTreeState::ParameterLayout AuraBassPreampAudioProcessor::createParameterLayout()
+juce::AudioProcessorValueTreeState::ParameterLayout AuraPreampBassAudioProcessor::createParameterLayout()
 {
     using namespace juce;
     std::vector<std::unique_ptr<RangedAudioParameter>> p;
@@ -276,7 +276,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout AuraBassPreampAudioProcessor
     return { p.begin(), p.end() };
 }
 
-bool AuraBassPreampAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool AuraPreampBassAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
     const auto& in  = layouts.getMainInputChannelSet();
     const auto& out = layouts.getMainOutputChannelSet();
@@ -291,12 +291,12 @@ bool AuraBassPreampAudioProcessor::isBusesLayoutSupported (const BusesLayout& la
 //==============================================================================
 // Com o DRIVE desligado o Blend vai a 0% (só o sinal limpo, já alinhado), com
 // crossfade de 50 ms: sem cliques e sem mudar a latência. EQ, Cab e Level seguem ativos.
-float AuraBassPreampAudioProcessor::effectiveBlend() const noexcept
+float AuraPreampBassAudioProcessor::effectiveBlend() const noexcept
 {
     return pDriveOn->load() > 0.5f ? pBlend->load() / 100.0f : 0.0f;
 }
 
-float AuraBassPreampAudioProcessor::shape (float x) noexcept
+float AuraPreampBassAudioProcessor::shape (float x) noexcept
 {
     // Soft clip assimétrico: satura antes no semiciclo positivo, gerando
     // harmônicos pares (caráter "valvulado"). O DC resultante é removido depois.
@@ -304,7 +304,7 @@ float AuraBassPreampAudioProcessor::shape (float x) noexcept
     return std::tanh (x + clipBias) - offset;
 }
 
-void AuraBassPreampAudioProcessor::setupFixedFilters()
+void AuraPreampBassAudioProcessor::setupFixedFilters()
 {
     const auto sr = currentSampleRate;
     *inputHpf.state    = Coefs::makeHighPass (sr, inputHpfHz, 0.707f);
@@ -313,7 +313,7 @@ void AuraBassPreampAudioProcessor::setupFixedFilters()
     *postLpf.state     = Coefs::makeLowPass  (sr, juce::jmin (7000.0f, (float) sr * 0.45f), 0.707f);  // corta o "fizz" digital
 }
 
-void AuraBassPreampAudioProcessor::setToneCoefficients (float low, float mid, float high, float presence)
+void AuraPreampBassAudioProcessor::setToneCoefficients (float low, float mid, float high, float presence)
 {
     const auto sr = currentSampleRate;
     const float nyq = (float) sr * 0.45f;
@@ -323,7 +323,7 @@ void AuraBassPreampAudioProcessor::setToneCoefficients (float low, float mid, fl
     *presencePeak.state = Coefs::makePeakFilter (sr, juce::jmin (presenceFreq, nyq), presenceQ, dbToGain (presence));
 }
 
-void AuraBassPreampAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void AuraPreampBassAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     currentSampleRate = sampleRate > 0.0 ? sampleRate : 44100.0;
     maxBlockSize = juce::jmax (1, samplesPerBlock);
@@ -399,7 +399,7 @@ void AuraBassPreampAudioProcessor::prepareToPlay (double sampleRate, int samples
 }
 
 //==============================================================================
-void AuraBassPreampAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
+void AuraPreampBassAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
 {
     juce::ScopedNoDenormals noDenormals;
 
@@ -492,7 +492,7 @@ void AuraBassPreampAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
         buffer.copyFrom (ch, 0, buffer, 0, 0, numSamples);
 }
 
-void AuraBassPreampAudioProcessor::processChunk (juce::AudioBuffer<float>& buffer, int numChannels)
+void AuraPreampBassAudioProcessor::processChunk (juce::AudioBuffer<float>& buffer, int numChannels)
 {
     const int numSamples = buffer.getNumSamples();
     auto block = juce::dsp::AudioBlock<float> (buffer).getSubsetChannelBlock (0, (size_t) numChannels);
@@ -656,7 +656,7 @@ void AuraBassPreampAudioProcessor::processChunk (juce::AudioBuffer<float>& buffe
     }
 }
 
-void AuraBassPreampAudioProcessor::processToneStack (juce::dsp::AudioBlock<float>& block)
+void AuraPreampBassAudioProcessor::processToneStack (juce::dsp::AudioBlock<float>& block)
 {
     const int n = (int) block.getNumSamples();
     for (int pos = 0; pos < n; pos += toneSubBlock)
@@ -677,7 +677,7 @@ void AuraBassPreampAudioProcessor::processToneStack (juce::dsp::AudioBlock<float
 //==============================================================================
 // Bypass pela DAW: o sinal passa limpo, mas atrasado pela mesma latência, para continuar
 // alinhado com as outras faixas (a DAW compensa a latência do plugin mesmo em bypass).
-void AuraBassPreampAudioProcessor::processBlockBypassed (juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
+void AuraPreampBassAudioProcessor::processBlockBypassed (juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
 {
     juce::ScopedNoDenormals noDenormals;
 
@@ -705,7 +705,7 @@ void AuraBassPreampAudioProcessor::processBlockBypassed (juce::AudioBuffer<float
 }
 
 //==============================================================================
-void AuraBassPreampAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void AuraPreampBassAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     auto state = apvts.copyState();
     state.setProperty ("cabIR", getCabIR(), nullptr);
@@ -716,7 +716,7 @@ void AuraBassPreampAudioProcessor::getStateInformation (juce::MemoryBlock& destD
         copyXmlToBinary (*xml, destData);
 }
 
-void AuraBassPreampAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void AuraPreampBassAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     auto xml = getXmlFromBinary (data, sizeInBytes);
     if (xml == nullptr || ! xml->hasTagName (apvts.state.getType()))
@@ -736,18 +736,18 @@ void AuraBassPreampAudioProcessor::setStateInformation (const void* data, int si
     setCabIR (ir);
 }
 
-void AuraBassPreampAudioProcessor::revisarLicenca()
+void AuraPreampBassAudioProcessor::revisarLicenca()
 {
     licenca.recalcular();
     licencaLiberada.store (licenca.liberado(), std::memory_order_relaxed);
 }
 
-juce::AudioProcessorEditor* AuraBassPreampAudioProcessor::createEditor()
+juce::AudioProcessorEditor* AuraPreampBassAudioProcessor::createEditor()
 {
-    return new AuraBassPreampAudioProcessorEditor (*this);
+    return new AuraPreampBassAudioProcessorEditor (*this);
 }
 
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new AuraBassPreampAudioProcessor();
+    return new AuraPreampBassAudioProcessor();
 }

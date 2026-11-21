@@ -1,4 +1,4 @@
-// AURA Bass Preamp — registro de autoria
+// AURA Preamp Bass — registro de autoria
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
@@ -13,7 +13,7 @@
 
 namespace AuraAutoria
 {
-    inline constexpr const char* obra       = "AURA Bass Preamp — overdrive e pré de baixo";
+    inline constexpr const char* obra       = "AURA Preamp Bass — overdrive e pré de baixo";
     inline constexpr const char* autor      = "Thiago Galvão";
     inline constexpr const char* copyright  = "Copyright (c) 2026 Thiago Galvão";
     inline constexpr const char* direitos   = "Todos os direitos reservados — Leis 9.609/1998 e 9.610/1998";
@@ -22,7 +22,7 @@ namespace AuraAutoria
 
     // Marca de origem embutida no binário, para identificar cópias.
     inline constexpr const char* marca =
-        "AURA-PROV/1 obra=AURA-Bass-Preamp autor=Thiago-Galvao ano=2026 "
+        "AURA-PROV/1 obra=AURA-Preamp-Bass autor=Thiago-Galvao ano=2026 "
         "lei=9609/1998+9610/1998 origem=github.com/ledixplugins/Drive "
         "direitos=reservados";
 

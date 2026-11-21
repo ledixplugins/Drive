@@ -1,4 +1,4 @@
-// AURA Bass Preamp — interface do plugin
+// AURA Preamp Bass — interface do plugin
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
@@ -70,7 +70,7 @@ class LicencaOverlay : public juce::Component,
                        private juce::Timer
 {
 public:
-    explicit LicencaOverlay (AuraBassPreampAudioProcessor&);
+    explicit LicencaOverlay (AuraPreampBassAudioProcessor&);
     ~LicencaOverlay() override;
 
     void paint (juce::Graphics&) override;
@@ -87,7 +87,7 @@ private:
     void tentarAtivar();
     void tentarDesativar();
 
-    AuraBassPreampAudioProcessor& processor;
+    AuraPreampBassAudioProcessor& processor;
     juce::TextEditor campoChave;
     juce::TextButton botaoAcao;
     juce::TextButton botaoComprar;
@@ -103,7 +103,7 @@ private:
 class InputMeter : public juce::Component
 {
 public:
-    InputMeter (AuraBassPreampAudioProcessor&, juce::RangedAudioParameter* trimParam);
+    InputMeter (AuraPreampBassAudioProcessor&, juce::RangedAudioParameter* trimParam);
 
     void paint (juce::Graphics&) override;
     void mouseDown (const juce::MouseEvent&) override;
@@ -118,7 +118,7 @@ private:
     float trimDb() const;
     void setTrim (float db);
 
-    AuraBassPreampAudioProcessor& processor;
+    AuraPreampBassAudioProcessor& processor;
     juce::RangedAudioParameter* trim = nullptr;
 
     float nivel = -120.0f;     // pico suavizado, em dB
@@ -167,7 +167,7 @@ class AuraPanel : public juce::Component,
                   private juce::Timer
 {
 public:
-    explicit AuraPanel (AuraBassPreampAudioProcessor&);
+    explicit AuraPanel (AuraPreampBassAudioProcessor&);
     ~AuraPanel() override;
 
     void paint (juce::Graphics&) override;
@@ -193,7 +193,7 @@ private:
     void updateDriveDim();
     juce::Rectangle<float> cabIrArea() const;
 
-    AuraBassPreampAudioProcessor& processor;
+    AuraPreampBassAudioProcessor& processor;
     juce::SharedResourcePointer<AuraAssets> assets;
 
     std::vector<std::unique_ptr<PointerKnob>> knobs;
@@ -221,12 +221,12 @@ private:
 };
 
 //==============================================================================
-class AuraBassPreampAudioProcessorEditor : public juce::AudioProcessorEditor,
+class AuraPreampBassAudioProcessorEditor : public juce::AudioProcessorEditor,
                                      private juce::ComponentListener
 {
 public:
-    explicit AuraBassPreampAudioProcessorEditor (AuraBassPreampAudioProcessor&);
-    ~AuraBassPreampAudioProcessorEditor() override;
+    explicit AuraPreampBassAudioProcessorEditor (AuraPreampBassAudioProcessor&);
+    ~AuraPreampBassAudioProcessorEditor() override;
 
     void resized() override;
     void setScale (float scale);
@@ -240,9 +240,9 @@ private:
     void guardaJanela();
     juce::Component* janela = nullptr;
 
-    AuraBassPreampAudioProcessor& processor;
+    AuraPreampBassAudioProcessor& processor;
     AuraPanel panel;
     juce::TooltipWindow tooltips { this, 900 };
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AuraBassPreampAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AuraPreampBassAudioProcessorEditor)
 };

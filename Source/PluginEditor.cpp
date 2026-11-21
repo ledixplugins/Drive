@@ -1,4 +1,4 @@
-// AURA Bass Preamp — interface do plugin
+// AURA Preamp Bass — interface do plugin
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
@@ -315,14 +315,14 @@ void TunerDisplay::paint (Graphics& g)
 }
 
 //==============================================================================
-AuraPanel::AuraPanel (AuraBassPreampAudioProcessor& p) : processor (p)
+AuraPanel::AuraPanel (AuraPreampBassAudioProcessor& p) : processor (p)
 {
     for (size_t i = 0; i < std::size (L::knobs); ++i)
     {
         const auto& k = L::knobs[i];
         auto knob = std::make_unique<PointerKnob> (*assets);
         knob->setTitle (knobTitles[i]);
-        knob->setDescription ("AURA Bass Preamp " + String (knobTitles[i]));
+        knob->setDescription ("AURA Preamp Bass " + String (knobTitles[i]));
         addAndMakeVisible (*knob);
         knobAttachments.push_back (std::make_unique<AudioProcessorValueTreeState::SliderAttachment> (processor.apvts, k.paramId, *knob));
 
@@ -395,7 +395,7 @@ AuraPanel::AuraPanel (AuraBassPreampAudioProcessor& p) : processor (p)
         auto knob = std::make_unique<PointerKnob> (*assets);
         knob->raioCorpo = L::efeitoRaio;
         knob->setTitle (String (k.paramId).toUpperCase());
-        knob->setDescription ("AURA Bass Preamp " + String (k.paramId));
+        knob->setDescription ("AURA Preamp Bass " + String (k.paramId));
         knob->setTooltip (String::fromUTF8 (efeitoDicas[i]) + String::fromUTF8 (knobHint));
         addAndMakeVisible (*knob);
         efeitoAttachments.push_back (std::make_unique<AudioProcessorValueTreeState::SliderAttachment> (
@@ -682,7 +682,7 @@ void AuraPanel::showCabMenu()
     const auto current = processor.getCabIR();
     PopupMenu m;
     m.addSectionHeader ("Resposta de impulso do CAB");
-    const auto names = AuraBassPreampAudioProcessor::builtinCabNames();
+    const auto names = AuraPreampBassAudioProcessor::builtinCabNames();
     for (int i = 0; i < names.size(); ++i)
         m.addItem (1 + i, names[i] + " (embutida)", true, current == "builtin:" + String (i));
     m.addSeparator();
@@ -721,7 +721,7 @@ namespace
 }
 
 //==============================================================================
-LicencaOverlay::LicencaOverlay (AuraBassPreampAudioProcessor& p) : processor (p)
+LicencaOverlay::LicencaOverlay (AuraPreampBassAudioProcessor& p) : processor (p)
 {
     campoChave.setTextToShowWhenEmpty (String::fromUTF8 ("cole aqui a sua chave de ativação"),
                                        Colours::white.withAlpha (0.35f));
@@ -797,7 +797,7 @@ void LicencaOverlay::atualizar()
             break;
         case S::expirado:
         default:
-            mensagem = String::fromUTF8 ("O seu teste de 15 dias terminou. Para continuar usando o AURA Bass Preamp, "
+            mensagem = String::fromUTF8 ("O seu teste de 15 dias terminou. Para continuar usando o AURA Preamp Bass, "
                                          "cole a sua chave de ativação.");
             break;
     }
@@ -881,7 +881,7 @@ void LicencaOverlay::paint (Graphics& g)
 
     g.setColour (Colours::white);
     g.setFont (Font (FontOptions (26.0f * esc)).withExtraKerningFactor (0.18f));
-    g.drawText ("AURA BASS PREAMP", area.removeFromTop (34.0f * esc), Justification::centred, false);
+    g.drawText ("AURA PREAMP BASS", area.removeFromTop (34.0f * esc), Justification::centred, false);
 
     g.setColour (Colour (0xffe8890c));
     g.setFont (Font (FontOptions (11.0f * esc)).withExtraKerningFactor (0.3f));
@@ -924,7 +924,7 @@ void LicencaOverlay::resized()
 }
 
 //==============================================================================
-InputMeter::InputMeter (AuraBassPreampAudioProcessor& p, juce::RangedAudioParameter* trimParam)
+InputMeter::InputMeter (AuraPreampBassAudioProcessor& p, juce::RangedAudioParameter* trimParam)
     : processor (p), trim (trimParam)
 {
     setMouseCursor (juce::MouseCursor::UpDownResizeCursor);
@@ -1088,7 +1088,7 @@ void AuraPanel::chooseIrFile()
 void AuraPanel::showMainMenu (bool fromButton)
 {
     PopupMenu m;
-    m.addSectionHeader ("AURA Bass Preamp " + String (JucePlugin_VersionString));
+    m.addSectionHeader ("AURA Preamp Bass " + String (JucePlugin_VersionString));
 
     PopupMenu presets;
     for (int i = 0; i < processor.getNumPrograms(); ++i)
@@ -1196,7 +1196,7 @@ void AuraPanel::resized()
 }
 
 //==============================================================================
-AuraBassPreampAudioProcessorEditor::AuraBassPreampAudioProcessorEditor (AuraBassPreampAudioProcessor& p)
+AuraPreampBassAudioProcessorEditor::AuraPreampBassAudioProcessorEditor (AuraPreampBassAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p), panel (p)
 {
     addAndMakeVisible (panel);
@@ -1217,7 +1217,7 @@ AuraBassPreampAudioProcessorEditor::AuraBassPreampAudioProcessorEditor (AuraBass
                 juce::MessageBoxIconType::InfoIcon,
                 String::fromUTF8 ("Entrada de áudio ligada"),
                 String::fromUTF8 (
-                    "O AURA Bass Preamp vai processar o que chegar pela entrada de áudio.\n\n"
+                    "O AURA Preamp Bass vai processar o que chegar pela entrada de áudio.\n\n"
                     "Use fones de ouvido: com caixas de som, o som volta pela entrada e microfona.\n\n"
                     "Para escolher a interface, abra o menu do painel e use \"Entrada e saída de áudio\"."));
         }
@@ -1229,7 +1229,7 @@ AuraBassPreampAudioProcessorEditor::AuraBassPreampAudioProcessorEditor (AuraBass
     setScale (processor.getUiScale());
 }
 
-AuraBassPreampAudioProcessorEditor::~AuraBassPreampAudioProcessorEditor()
+AuraPreampBassAudioProcessorEditor::~AuraPreampBassAudioProcessorEditor()
 {
     if (janela != nullptr)
     {
@@ -1239,7 +1239,7 @@ AuraBassPreampAudioProcessorEditor::~AuraBassPreampAudioProcessorEditor()
     }
 }
 
-void AuraBassPreampAudioProcessorEditor::parentHierarchyChanged()
+void AuraPreampBassAudioProcessorEditor::parentHierarchyChanged()
 {
 #if JucePlugin_Build_Standalone
     auto* topo = getTopLevelComponent();
@@ -1260,12 +1260,12 @@ void AuraBassPreampAudioProcessorEditor::parentHierarchyChanged()
 #endif
 }
 
-void AuraBassPreampAudioProcessorEditor::componentMovedOrResized (Component&, bool, bool)
+void AuraPreampBassAudioProcessorEditor::componentMovedOrResized (Component&, bool, bool)
 {
     guardaJanela();
 }
 
-void AuraBassPreampAudioProcessorEditor::guardaJanela()
+void AuraPreampBassAudioProcessorEditor::guardaJanela()
 {
 #if JucePlugin_Build_Standalone
     if (auto* w = dynamic_cast<ResizableWindow*> (janela))
@@ -1275,7 +1275,7 @@ void AuraBassPreampAudioProcessorEditor::guardaJanela()
 #endif
 }
 
-void AuraBassPreampAudioProcessorEditor::showHostMenu (RangedAudioParameter& param)
+void AuraPreampBassAudioProcessorEditor::showHostMenu (RangedAudioParameter& param)
 {
     // Menu da DAW para o parâmetro (automação, MIDI learn etc.), quando a DAW oferece
     if (auto* host = getHostContext())
@@ -1288,7 +1288,7 @@ void AuraBassPreampAudioProcessorEditor::showHostMenu (RangedAudioParameter& par
     panel.showMainMenu (false);
 }
 
-void AuraBassPreampAudioProcessorEditor::setScale (float scale)
+void AuraPreampBassAudioProcessorEditor::setScale (float scale)
 {
     scale = jlimit (1.0f, 1.5f, scale);
     processor.setUiScale (scale);
@@ -1298,7 +1298,7 @@ void AuraBassPreampAudioProcessorEditor::setScale (float scale)
     panel.repaint();
 }
 
-void AuraBassPreampAudioProcessorEditor::resized()
+void AuraPreampBassAudioProcessorEditor::resized()
 {
     panel.setBounds (0, 0, L::width, L::height);
 }

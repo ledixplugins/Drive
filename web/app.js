@@ -1,9 +1,9 @@
-// AURA Bass Preamp — app da versão web
+// AURA Preamp Bass — app da versão web
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
 // Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
-// AURA Bass Preamp — app da versão web.
+// AURA Preamp Bass — app da versão web.
 // Desenha o mesmo painel do plugin num canvas (coordenadas de layout.js) e monta a cadeia
 // de áudio: microfone/interface -> AudioWorklet (drive, EQ, blend) -> CAB (convolução) -> saída.
 'use strict';
@@ -12,12 +12,12 @@
 // Remover ou alterar este aviso é vedado pela licença (ver LICENSE).
 const VERSAO_SITE = 'AURA_VERSAO';   // trocado na publicação por Tools/versiona-site.py
 const AUTORIA = [
-  'AURA Bass Preamp — overdrive e pré de baixo',
+  'AURA Preamp Bass — overdrive e pré de baixo',
   'Copyright (c) 2026 Thiago Galvão',
   'Todos os direitos reservados — Leis 9.609/1998 e 9.610/1998',
   'github.com/ledixplugins/Drive',
 ];
-const AURA_PROV = 'AURA-PROV/1 obra=AURA-Bass-Preamp autor=Thiago-Galvao ano=2026 '
+const AURA_PROV = 'AURA-PROV/1 obra=AURA-Preamp-Bass autor=Thiago-Galvao ano=2026 '
   + 'lei=9609/1998+9610/1998 origem=github.com/ledixplugins/Drive direitos=reservados';
 try { window.AURA_PROV = AURA_PROV; } catch (e) { /* sem window */ }
 
@@ -61,7 +61,7 @@ const BUILTIN_IRS = [
   { name: '1x15', url: 'assets/cab_1x15.wav' },
 ];
 
-const STORAGE_KEY = 'aura-bass-preamp-state-v1';
+const STORAGE_KEY = 'aura-preamp-bass-state-v1';
 
 // ---------------------------------------------------------------------------
 // Estado
@@ -497,7 +497,7 @@ async function iniciaAudio(deviceId) {
     await ctxAudio.audioWorklet.addModule('aura-processor.js');
 
     const source = ctxAudio.createMediaStreamSource(stream);
-    const worklet = new AudioWorkletNode(ctxAudio, 'aura-bass-preamp', { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [2] });
+    const worklet = new AudioWorkletNode(ctxAudio, 'aura-preamp-bass', { numberOfInputs: 1, numberOfOutputs: 1, outputChannelCount: [2] });
     const convolver = ctxAudio.createConvolver();
     convolver.normalize = false;
     const wetGain = ctxAudio.createGain();
@@ -1188,7 +1188,7 @@ async function openMenu(ev, section) {
   menuEl.innerHTML = '';
 
   if (section === 'cab' || !section) {
-    menuEl.appendChild(menuHeader(section === 'cab' ? 'Caixa (resposta de impulso)' : 'AURA Bass Preamp'));
+    menuEl.appendChild(menuHeader(section === 'cab' ? 'Caixa (resposta de impulso)' : 'AURA Preamp Bass'));
   }
 
   if (section === 'cab') {

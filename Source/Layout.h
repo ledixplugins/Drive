@@ -1,11 +1,11 @@
-// AURA Bass Preamp — medidas do painel
+// AURA Preamp Bass — medidas do painel
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
 // Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
 #pragma once
 
-// Geometria do painel do AURA Bass Preamp em unidades de interface (1 unidade = 1 px lógico).
+// Geometria do painel do AURA Preamp Bass em unidades de interface (1 unidade = 1 px lógico).
 // As imagens em Resources/ui são 2x. As coordenadas vêm da arte de referência
 // (Resources/mockup, recortada em Tools/build_ui_assets.py): unidade = (px - recorte) / 2.
 namespace AuraLayout

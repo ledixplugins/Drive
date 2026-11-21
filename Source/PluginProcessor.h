@@ -1,4 +1,4 @@
-// AURA Bass Preamp — processamento de áudio
+// AURA Preamp Bass — processamento de áudio
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
@@ -41,7 +41,7 @@ namespace Tone
 }
 
 //==============================================================================
-// AURA Bass Preamp — overdrive de baixo.
+// AURA Preamp Bass — overdrive de baixo.
 //
 // Fluxo do sinal:
 //   entrada -> HPF 18 Hz -> pré-ênfase (+médios) -> [4x oversampling]
@@ -53,11 +53,11 @@ namespace Tone
 // Regras de tempo real: processBlock não aloca memória, não trava e não lê arquivos.
 // Blocos maiores que o anunciado em prepareToPlay são processados em pedaços.
 //==============================================================================
-class AuraBassPreampAudioProcessor : public juce::AudioProcessor
+class AuraPreampBassAudioProcessor : public juce::AudioProcessor
 {
 public:
-    AuraBassPreampAudioProcessor();
-    ~AuraBassPreampAudioProcessor() override = default;
+    AuraPreampBassAudioProcessor();
+    ~AuraPreampBassAudioProcessor() override = default;
 
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override {}
@@ -189,5 +189,5 @@ private:
     std::atomic<float>* pDriveOn  = nullptr;
     std::atomic<float>* pTuner    = nullptr;
 
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AuraBassPreampAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AuraPreampBassAudioProcessor)
 };

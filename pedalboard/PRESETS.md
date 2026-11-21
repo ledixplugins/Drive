@@ -72,7 +72,7 @@ O Logic não roda no navegador, então cada plugin virou um bloco equivalente:
 | Console EQ | quatro bandas + passa-altas |
 | Compressor | compressor do Web Audio com os mesmos tempos |
 | Channel EQ | passa-altas + cinco bandas, com as frequências e ganhos da tabela |
-| Bass Amp Designer | pré-amp com saturação assimétrica (4× oversampling), tone stack e a resposta de impulso de caixa 4×10 do AURA Bass Preamp |
+| Bass Amp Designer | pré-amp com saturação assimétrica (4× oversampling), tone stack e a resposta de impulso de caixa 4×10 do AURA Preamp Bass |
 | Clip Distortion | corte duro com ponto deslocado pela simetria, tone e nível |
 | Pedalboard (FUZZ) | distorção com corte duro, tone e mistura |
 | Pitch Shifter −12 | divisor de oitava analógico (comparador com histerese + envelope), como nos pedais de sub |

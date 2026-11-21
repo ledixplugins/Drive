@@ -178,7 +178,7 @@ function desenha() {
 
   const pr = achaPreset(estado.preset);
   cadeiaEl.innerHTML = 'Cadeia: ' + pr.cadeia.map((c) => PEDAIS[c].nome).join(' → ')
-    + ' · <a href="../" style="color:inherit">AURA Bass Preamp</a>';
+    + ' · <a href="../" style="color:inherit">AURA Preamp Bass</a>';
 }
 
 // ---- Interação ------------------------------------------------------------

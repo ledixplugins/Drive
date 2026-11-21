@@ -1,5 +1,5 @@
 #!/bin/bash
-# AURA Bass Preamp — gerador do registro de integridade da obra
+# AURA Preamp Bass — gerador do registro de integridade da obra
 # Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 # Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 # cópia, redistribuição ou obra derivada apenas com autorização por escrito.
@@ -24,7 +24,7 @@ mapfile -t ARQUIVOS < <(git ls-files \
   '.github/workflows/*' 'packaging/*' | sort)
 
 {
-  echo "AURA BASS PREAMP — REGISTRO DE INTEGRIDADE DA OBRA"
+  echo "AURA PREAMP BASS — REGISTRO DE INTEGRIDADE DA OBRA"
   echo "Autor e titular: Thiago Galvão"
   echo "Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados."
   echo "Leis 9.609/1998 e 9.610/1998 — a proteção independe de registro."

@@ -1,4 +1,4 @@
-// AURA Bass Preamp — testes do processamento
+// AURA Preamp Bass — testes do processamento
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
@@ -17,7 +17,7 @@ namespace
     constexpr float inputHpfHz = 18.0f;   // igual ao do plugin
 
     // Senoide em blocos de tamanho variável; devolve o canal 0 (e o 1, se pedido)
-    std::vector<float> runBlocks (AuraBassPreampAudioProcessor& p, float freq, float amp, int prepareSize,
+    std::vector<float> runBlocks (AuraPreampBassAudioProcessor& p, float freq, float amp, int prepareSize,
                                   const std::vector<int>& sizes, int totalSamples, std::vector<float>* right = nullptr,
                                   int numChannels = 2)
     {
@@ -53,14 +53,14 @@ namespace
         return m;
     }
 
-    void setParam (AuraBassPreampAudioProcessor& p, const char* id, float value)
+    void setParam (AuraPreampBassAudioProcessor& p, const char* id, float value)
     {
         auto* param = p.apvts.getParameter (id);
         param->setValueNotifyingHost (param->convertTo0to1 (value));
     }
 
     // Processa 1 s de senoide e devolve a saída (descartando o primeiro 0,5 s)
-    std::vector<float> run (AuraBassPreampAudioProcessor& p, float freq, float amp, std::vector<float>* inputOut = nullptr)
+    std::vector<float> run (AuraPreampBassAudioProcessor& p, float freq, float amp, std::vector<float>* inputOut = nullptr)
     {
         p.prepareToPlay (sr, blockSize);
         const int total = (int) sr;
@@ -120,7 +120,7 @@ int main()
     std::printf ("Drive (dB) x nível/THD (senoide 100 Hz, -12 dBFS, cab desligado, EQ plano)\n");
     for (float drive : { -15.0f, -7.5f, 0.0f, 7.5f, 15.0f })
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         setParam (p, ParamIDs::cab, 0.0f);
         setParam (p, ParamIDs::presence, 0.0f);
         setParam (p, ParamIDs::drive, drive);
@@ -150,7 +150,7 @@ int main()
 
         // Zerados, nada muda: quem tem sessão salva continua ouvindo o mesmo
         {
-            AuraBassPreampAudioProcessor a, b2;
+            AuraPreampBassAudioProcessor a, b2;
             setParam (b2, ParamIDs::octave, 0.0f);
             setParam (b2, ParamIDs::chorus, 0.0f);
             const auto sa = runBlocks (a, 110.0f, 0.2f, blockSize, { blockSize }, 24000);
@@ -162,7 +162,7 @@ int main()
 
         // Oitava: aparece energia em 55 Hz a partir de uma nota de 110 Hz
         {
-            AuraBassPreampAudioProcessor p;
+            AuraPreampBassAudioProcessor p;
             setParam (p, ParamIDs::drive, -15.0f);
             setParam (p, ParamIDs::cab, 0.0f);
             setParam (p, ParamIDs::blend, 0.0f);
@@ -183,7 +183,7 @@ int main()
 
         // Oitava não inventa nota no silêncio
         {
-            AuraBassPreampAudioProcessor p;
+            AuraPreampBassAudioProcessor p;
             setParam (p, ParamIDs::octave, 100.0f);
             const auto quieto = runBlocks (p, 110.0f, 0.0f, blockSize, { blockSize }, 24000);
             float pico = 0.0f;
@@ -193,7 +193,7 @@ int main()
 
         // Chorus: a mistura muda o som e oscila com o tempo
         {
-            AuraBassPreampAudioProcessor p;
+            AuraPreampBassAudioProcessor p;
             setParam (p, ParamIDs::drive, -15.0f);
             setParam (p, ParamIDs::cab, 0.0f);
             setParam (p, ParamIDs::blend, 0.0f);
@@ -296,7 +296,7 @@ int main()
 
     std::printf ("Trim de entrada e medidor\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         setParam (p, ParamIDs::drive, -15.0f);
         setParam (p, ParamIDs::cab, 0.0f);
         setParam (p, ParamIDs::blend, 0.0f);     // só o caminho limpo, para medir ganho puro
@@ -331,7 +331,7 @@ int main()
 
     std::printf ("Blend 0%% = sinal limpo alinhado (sem phasing)\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         setParam (p, ParamIDs::cab, 0.0f);
         setParam (p, ParamIDs::presence, 0.0f);
         setParam (p, ParamIDs::blend, 0.0f);
@@ -356,7 +356,7 @@ int main()
 
     std::printf ("Cab ligado atenua agudos\n");
     {
-        AuraBassPreampAudioProcessor a, b;
+        AuraPreampBassAudioProcessor a, b;
         setParam (a, ParamIDs::cab, 0.0f); setParam (b, ParamIDs::cab, 1.0f);
         const double off = rms (run (a, 8000.0f, 0.1f), from), on = rms (run (b, 8000.0f, 0.1f), from);
         std::printf ("  8 kHz: sem cab %.1f dB, com cab %.1f dB\n",
@@ -366,7 +366,7 @@ int main()
 
     std::printf ("Botão DRIVE desligado = só EQ/Cab (sinal limpo alinhado)\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         setParam (p, ParamIDs::cab, 0.0f);
         setParam (p, ParamIDs::presence, 0.0f);
         setParam (p, ParamIDs::blend, 100.0f);
@@ -388,7 +388,7 @@ int main()
 
     std::printf ("Botão DRIVE desligado mantém o EQ ativo\n");
     {
-        AuraBassPreampAudioProcessor a, b;
+        AuraPreampBassAudioProcessor a, b;
         for (auto* p : { &a, &b }) { setParam (*p, ParamIDs::cab, 0.0f); setParam (*p, ParamIDs::presence, 0.0f); setParam (*p, ParamIDs::driveOn, 0.0f); }
         setParam (b, ParamIDs::low, 12.0f);
         const double flat = rms (run (a, 50.0f, 0.1f), from), boosted = rms (run (b, 50.0f, 0.1f), from);
@@ -398,7 +398,7 @@ int main()
 
     std::printf ("Troca de DRIVE no meio do som sem estalo\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         setParam (p, ParamIDs::cab, 0.0f);
         p.prepareToPlay (sr, blockSize);
         juce::AudioBuffer<float> buf (2, blockSize); juce::MidiBuffer midi;
@@ -428,7 +428,7 @@ int main()
     std::printf ("Compensação de volume: DRIVE ligado x desligado (senoide 100 Hz, -12 dBFS)\n");
     for (float drive : { -15.0f, 0.0f, 15.0f })
     {
-        AuraBassPreampAudioProcessor on, off;
+        AuraPreampBassAudioProcessor on, off;
         for (auto* p : { &on, &off })
         {
             setParam (*p, ParamIDs::cab, 0.0f);
@@ -445,7 +445,7 @@ int main()
 
     std::printf ("CAB por resposta de impulso\n");
     {
-        AuraBassPreampAudioProcessor a, b;
+        AuraPreampBassAudioProcessor a, b;
         for (auto* p : { &a, &b }) { setParam (*p, ParamIDs::presence, 0.0f); setParam (*p, ParamIDs::driveOn, 0.0f); }
         b.setCabIR ("builtin:1");
         const double low4 = rms (run (a, 100.0f, 0.1f), from), hi4 = rms (run (a, 5000.0f, 0.1f), from);
@@ -454,12 +454,12 @@ int main()
                      juce::Decibels::gainToDecibels (low4 / hi4), juce::Decibels::gainToDecibels (low15 / hi15));
         check (hi15 < hi4, "1x15 mais escura que 4x10");
         {
-            AuraBassPreampAudioProcessor c;
+            AuraPreampBassAudioProcessor c;
             setParam (c, ParamIDs::presence, 0.0f); setParam (c, ParamIDs::driveOn, 0.0f); setParam (c, ParamIDs::cab, 0.0f);
             for (float f : { 80.0f, 300.0f, 1000.0f })
             {
-                AuraBassPreampAudioProcessor on; setParam (on, ParamIDs::presence, 0.0f); setParam (on, ParamIDs::driveOn, 0.0f);
-                AuraBassPreampAudioProcessor off; setParam (off, ParamIDs::presence, 0.0f); setParam (off, ParamIDs::driveOn, 0.0f); setParam (off, ParamIDs::cab, 0.0f);
+                AuraPreampBassAudioProcessor on; setParam (on, ParamIDs::presence, 0.0f); setParam (on, ParamIDs::driveOn, 0.0f);
+                AuraPreampBassAudioProcessor off; setParam (off, ParamIDs::presence, 0.0f); setParam (off, ParamIDs::driveOn, 0.0f); setParam (off, ParamIDs::cab, 0.0f);
                 std::printf ("  CAB 4x10 ligado vs desligado em %4.0f Hz: %+.1f dB\n", f,
                              juce::Decibels::gainToDecibels (rms (run (on, f, 0.1f), from) / rms (run (off, f, 0.1f), from)));
             }
@@ -471,7 +471,7 @@ int main()
 
     std::printf ("Presets de fábrica\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         check (p.getNumPrograms() == 8, "8 presets (2 de fábrica + 6 medidos do vídeo)");
         p.setCurrentProgram (3);
         const float d = p.apvts.getRawParameterValue (ParamIDs::drive)->load();
@@ -495,7 +495,7 @@ int main()
 
     std::printf ("Estado (IR e escala) salvo e restaurado\n");
     {
-        AuraBassPreampAudioProcessor a, b;
+        AuraPreampBassAudioProcessor a, b;
         a.setCabIR ("builtin:1");
         a.setUiScale (1.25f);
         juce::MemoryBlock mb;
@@ -506,7 +506,7 @@ int main()
 
     std::printf ("Mono\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         juce::AudioProcessor::BusesLayout mono;
         mono.inputBuses.add (juce::AudioChannelSet::mono());
         mono.outputBuses.add (juce::AudioChannelSet::mono());
@@ -520,7 +520,7 @@ int main()
 
     std::printf ("Blocos maiores que o anunciado (prepare 256, blocos de 4096 e tamanhos irregulares)\n");
     {
-        AuraBassPreampAudioProcessor a, b;
+        AuraPreampBassAudioProcessor a, b;
         const auto ref = runBlocks (a, 110.0f, 0.25f, 256, { 256 }, 48000);
         const auto big = runBlocks (b, 110.0f, 0.25f, 256, { 4096, 37, 1000, 256, 3 }, 48000);
         double err = 0;
@@ -532,7 +532,7 @@ int main()
 
     std::printf ("Bypass da DAW mantém o alinhamento (atraso = latência)\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         p.prepareToPlay (sr, blockSize);
         const int lat = p.getLatencySamples();
         juce::AudioBuffer<float> buf (2, blockSize); juce::MidiBuffer midi;
@@ -555,14 +555,14 @@ int main()
 
     std::printf ("Cauda informada à DAW\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         std::printf ("  tail = %.3f s\n", p.getTailLengthSeconds());
         check (p.getTailLengthSeconds() > 0.02, "tail cobre a IR do CAB");
     }
 
     std::printf ("Silêncio na entrada = silêncio na saída\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         const auto out = runBlocks (p, 100.0f, 0.0f, blockSize, { blockSize }, 48000);
         double peak = 0; for (auto x : out) peak = std::max (peak, (double) std::abs (x));
         std::printf ("  pico na saída: %.2e\n", peak);
@@ -572,7 +572,7 @@ int main()
     std::printf ("Outras taxas de amostragem\n");
     for (double rate : { 44100.0, 96000.0, 192000.0 })
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         p.prepareToPlay (rate, 512);
         juce::AudioBuffer<float> buf (2, 512); juce::MidiBuffer midi;
         bool ok = true;
@@ -588,7 +588,7 @@ int main()
 
     std::printf ("Entrada mono, saída estéreo\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         juce::AudioProcessor::BusesLayout l;
         l.inputBuses.add (juce::AudioChannelSet::mono());
         l.outputBuses.add (juce::AudioChannelSet::stereo());
@@ -602,7 +602,7 @@ int main()
 
     std::printf ("Religar o DRIVE e o CAB depois de um tempo desligados, sem estalo\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         setParam (p, ParamIDs::driveOn, 0.0f);
         setParam (p, ParamIDs::cab, 0.0f);
         p.prepareToPlay (sr, blockSize);
@@ -631,7 +631,7 @@ int main()
 
     std::printf ("EQ girando rápido não gera degraus (zipper)\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         setParam (p, ParamIDs::cab, 0.0f);
         setParam (p, ParamIDs::driveOn, 0.0f);
         p.prepareToPlay (sr, blockSize);
@@ -656,7 +656,7 @@ int main()
 
     std::printf ("Preset atual salvo na sessão\n");
     {
-        AuraBassPreampAudioProcessor a, b;
+        AuraPreampBassAudioProcessor a, b;
         a.setCurrentProgram (2);
         juce::MemoryBlock mb;
         a.getStateInformation (mb);
@@ -725,7 +725,7 @@ int main()
 
     std::printf ("Afinador ligado: saída muda, detector recebe a entrada\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         setParam (p, ParamIDs::tuner, 1.0f);
         const auto out = runBlocks (p, 41.203f, 0.25f, blockSize, { blockSize }, 48000);
         double peak = 0; for (size_t i = 4800; i < out.size(); ++i) peak = std::max (peak, (double) std::abs (out[i]));
@@ -736,14 +736,14 @@ int main()
 
         juce::MemoryBlock mb;
         p.getStateInformation (mb);
-        AuraBassPreampAudioProcessor q;
+        AuraPreampBassAudioProcessor q;
         q.setStateInformation (mb.getData(), (int) mb.getSize());
         check (q.apvts.getRawParameterValue (ParamIDs::tuner)->load() < 0.5f, "sessão nunca reabre com o afinador ligado");
     }
 
     std::printf ("Ligar/desligar o afinador sem estalo\n");
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         p.prepareToPlay (sr, blockSize);
         juce::AudioBuffer<float> buf (2, blockSize); juce::MidiBuffer midi;
         std::vector<float> out;
@@ -768,7 +768,7 @@ int main()
     // Salva uma imagem da interface (útil para conferir o layout sem abrir um host)
     if (auto* outPath = std::getenv ("AURA_SNAPSHOT"))
     {
-        AuraBassPreampAudioProcessor p;
+        AuraPreampBassAudioProcessor p;
         if (auto* hzText = std::getenv ("AURA_SNAPSHOT_TUNER"))
         {
             // Afinador ligado, com uma nota tocando (frequência em Hz)

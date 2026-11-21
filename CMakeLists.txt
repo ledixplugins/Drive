@@ -6,8 +6,8 @@ cmake_minimum_required(VERSION 3.22)
 set(AURA_BUILD_NUMBER "0" CACHE STRING "Número do build (o CI passa o run_number)")
 math(EXPR AURA_VERSION_MINOR "1 + ${AURA_BUILD_NUMBER} / 256")
 math(EXPR AURA_VERSION_PATCH "${AURA_BUILD_NUMBER} % 256")
-project(AuraBassPreamp VERSION 1.${AURA_VERSION_MINOR}.${AURA_VERSION_PATCH})
-message(STATUS "AURA Bass Preamp ${PROJECT_VERSION}")
+project(AuraPreampBass VERSION 1.${AURA_VERSION_MINOR}.${AURA_VERSION_PATCH})
+message(STATUS "AURA Preamp Bass ${PROJECT_VERSION}")
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -40,12 +40,12 @@ if(APPLE)
     list(APPEND AURA_FORMATS AU)
 endif()
 
-juce_add_plugin(AuraBassPreamp
+juce_add_plugin(AuraPreampBass
     COMPANY_NAME                "Thiago Galvao"
-    BUNDLE_ID                   "com.thiagogalvao.aurabasspreamp"
+    BUNDLE_ID                   "com.thiagogalvao.aurapreampbass"
     PLUGIN_MANUFACTURER_CODE    Thgo
     PLUGIN_CODE                 Grdi
-    PRODUCT_NAME                "AURA Bass Preamp"
+    PRODUCT_NAME                "AURA Preamp Bass"
     FORMATS                     ${AURA_FORMATS}
     IS_SYNTH                    FALSE
     NEEDS_MIDI_INPUT            FALSE
@@ -58,7 +58,7 @@ juce_add_plugin(AuraBassPreamp
     # Sem isto, o macOS não entrega a entrada de áudio ao app autônomo: ele abre,
     # mas processa silêncio. A frase aparece na janela de permissão do sistema.
     MICROPHONE_PERMISSION_ENABLED TRUE
-    MICROPHONE_PERMISSION_TEXT  "O AURA Bass Preamp precisa da entrada de áudio para processar o som do seu instrumento.")
+    MICROPHONE_PERMISSION_TEXT  "O AURA Preamp Bass precisa da entrada de áudio para processar o som do seu instrumento.")
 
 # Imagens da interface (montadas por Tools/build_ui_assets.py a partir de Resources/mockup)
 juce_add_binary_data(AuraAssets SOURCES
@@ -77,18 +77,18 @@ juce_add_binary_data(AuraAssets SOURCES
     Resources/ir/cab_4x10.wav
     Resources/ir/cab_1x15.wav)
 
-target_sources(AuraBassPreamp PRIVATE
+target_sources(AuraPreampBass PRIVATE
     Source/PluginProcessor.cpp
     Source/PluginEditor.cpp
     Source/Licenca.cpp)
 
-target_compile_definitions(AuraBassPreamp PUBLIC
+target_compile_definitions(AuraPreampBass PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0
     JUCE_DISPLAY_SPLASH_SCREEN=0)
 
-target_link_libraries(AuraBassPreamp
+target_link_libraries(AuraPreampBass
     PRIVATE
         AuraAssets
         juce::juce_audio_utils
@@ -111,7 +111,7 @@ if(AURA_BUILD_TESTS)
         Source/PluginEditor.cpp
         Source/Licenca.cpp)
     target_compile_definitions(AuraDSPTest PRIVATE
-        JucePlugin_Name="AURA Bass Preamp"
+        JucePlugin_Name="AURA Preamp Bass"
         JucePlugin_VersionString="${PROJECT_VERSION}"
         JUCE_MODAL_LOOPS_PERMITTED=1
         JUCE_WEB_BROWSER=0

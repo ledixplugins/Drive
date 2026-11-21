@@ -1,6 +1,6 @@
 // VERGANI PEDALBOARD — presets e descrição dos pedais.
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
-// Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
+// Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
 //
 // Os presets são pontos de partida criados para este app (não vêm de nenhum
 // arquivo de terceiros). Ajuste de ouvido, com a guitarra que você usa.

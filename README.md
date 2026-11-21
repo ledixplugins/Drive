@@ -121,7 +121,7 @@ do fim da faixa amarela, sem acender o ponto vermelho.
 O AURA Bass também roda direto no navegador, com o mesmo painel e o mesmo
 processamento do plugin:
 
-**https://aurapluginsaudio.github.io/Drive/**
+**https://ledixplugins.github.io/Drive/**
 
 Abra o endereço, toque em **Ligar**, autorize o acesso ao áudio e **escolha a
 sua interface na lista**. O app não usa o microfone do aparelho por conta
@@ -157,7 +157,7 @@ ajustes ficam salvos no aparelho. Atalhos no computador: `E` liga o drive,
 
 ## WORSHIP BASS ESSENTIALS (no navegador)
 
-**https://aurapluginsaudio.github.io/Drive/pedalboard/**
+**https://ledixplugins.github.io/Drive/pedalboard/**
 
 Os oito presets do concerto do MainStage ("PRESET LOGIC : MAIN STAGE CORTES"),
 recriados como um pedalboard que roda no navegador: COLORINDO, CAIXA SUJA, FUZZ,
@@ -184,7 +184,7 @@ os knobs, o menu, o estado salvo e as telas pequenas.
 
 ## VERGANI PEDALBOARD (pedalboard de guitarra, no navegador)
 
-**https://aurapluginsaudio.github.io/Drive/vergani/**
+**https://ledixplugins.github.io/Drive/vergani/**
 
 Seis pedais virtuais, em ordem fixa: **afinador → overdrive → distorção →
 detune → chorus → delay**. Oito presets (LIMPO, CRUNCH, LEAD BLUES, ROCK, PESADO,

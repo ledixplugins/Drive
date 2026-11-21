@@ -8,9 +8,9 @@
 **Obra:** AURA Bass — plugin de overdrive e pré-amplificador para baixo, com
 afinador, simulação de alto-falante e versão para navegador
 **Criação iniciada em:** 23 de outubro de 2026
-**Repositório oficial:** <https://github.com/aurapluginsaudio/Drive>
-**Endereço oficial da versão web:** <https://aurapluginsaudio.github.io/Drive/>
-**Endereços anteriores (transferido em 20/11/2026):** <https://github.com/thiagorgalvao-sketch/AURA> e <https://thiagorgalvao-sketch.github.io/AURA/>; o histórico de commits foi mantido na transferência.
+**Repositório oficial:** <https://github.com/ledixplugins/Drive>
+**Endereço oficial da versão web:** <https://ledixplugins.github.io/Drive/>
+**Endereços anteriores (transferido em 20/11/2026):** <https://github.com/thiagorgalvao-sketch/AURA> e <https://thiagorgalvao-sketch.github.io/AURA/> (depois aurapluginsaudio/Drive, renomeada para ledixplugins/Drive); o histórico de commits foi mantido na transferência.
 
 ---
 
@@ -52,7 +52,7 @@ Tanto o binário do plugin quanto o `app.js` da versão web carregam a cadeia:
 
 ```
 AURA-PROV/1 obra=AURA-Bass autor=Thiago-Galvao ano=2026
-lei=9609/1998+9610/1998 origem=github.com/aurapluginsaudio/Drive
+lei=9609/1998+9610/1998 origem=github.com/ledixplugins/Drive
 direitos=reservados
 ```
 
@@ -124,7 +124,7 @@ Inria com apoio da UNESCO. Ele guarda o repositório com todo o histórico e
 devolve um identificador permanente (SWHID, padrão ISO/IEC 18670).
 
 1. Vá em <https://archive.softwareheritage.org/save/>
-2. Escolha `git` e informe `https://github.com/aurapluginsaudio/Drive`
+2. Escolha `git` e informe `https://github.com/ledixplugins/Drive`
 3. Envie. Não precisa de conta.
 
 Depois, o repositório fica consultável para sempre naquele endereço — uma
@@ -163,7 +163,7 @@ documental e custa zero.
 > `________________________________________________________________`
 >
 > O código-fonte encontra-se publicado, com histórico datado, em
-> <https://github.com/aurapluginsaudio/Drive>, sob licença de uso restrita,
+> <https://github.com/ledixplugins/Drive>, sob licença de uso restrita,
 > com todos os direitos reservados, nos termos do arquivo `LICENSE`.
 >
 > ____________________, ______ de ___________________ de 20____.

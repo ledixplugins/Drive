@@ -3,7 +3,7 @@
 # Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 # Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 # cópia, redistribuição ou obra derivada apenas com autorização por escrito.
-# Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
+# Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
 """
 Teste da versão web num navegador real (Chromium), com uma entrada de áudio falsa
 tocando um Mi grave de baixo (E1, 41,2 Hz).

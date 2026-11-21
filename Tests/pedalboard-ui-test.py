@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # WORSHIP BASS ESSENTIALS — teste de interface e de áudio num Chromium de verdade.
 # Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
-# Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
+# Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
 #
 # Uso: python3 Tests/pedalboard-ui-test.py [pasta do site] [pasta de saída]
 # Precisa do Playwright com Chromium instalado.

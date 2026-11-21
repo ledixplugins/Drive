@@ -81,4 +81,4 @@ Este contrato é regido pelas leis da República Federativa do Brasil,
 especialmente pelas Leis nº 9.609/1998 e nº 9.610/1998. Fica eleito o foro
 do domicílio do consumidor para dirimir eventuais conflitos.
 
-Contato: https://github.com/aurapluginsaudio/Drive/issues
+Contato: https://github.com/ledixplugins/Drive/issues

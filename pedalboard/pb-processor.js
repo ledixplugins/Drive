@@ -1,7 +1,7 @@
 // WORSHIP BASS ESSENTIALS — processadores de áudio que o Web Audio não tem prontos:
 // a oitava abaixo (divisor analógico) e o noise gate.
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
-// Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
+// Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
 
 'use strict';
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # AURA Bass — põe a versão nas URLs do site montado
 # Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
-# Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
+# Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
 #
 # O GitHub Pages manda o navegador guardar os arquivos por dez minutos. Sem
 # isto, quem já abriu o site continua com a cópia velha depois de uma

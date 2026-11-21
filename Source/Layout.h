@@ -2,7 +2,7 @@
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 // Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 // cópia, redistribuição ou obra derivada apenas com autorização por escrito.
-// Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
+// Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
 #pragma once
 
 // Geometria do painel do AURA Bass em unidades de interface (1 unidade = 1 px lógico).

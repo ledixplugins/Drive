@@ -3,7 +3,7 @@
 # Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 # Obra protegida pelas Leis 9.609/1998 e 9.610/1998. Uso pessoal permitido;
 # cópia, redistribuição ou obra derivada apenas com autorização por escrito.
-# Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
+# Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
 # Monta a pasta "site/" da versão web: página + imagens, IRs e fontes do projeto.
 # Uso: bash Tools/build-web.sh [pasta de saída]
 set -e
@@ -52,8 +52,8 @@ Autorais) e, no exterior, pela Convenção de Berna. Uso pessoal permitido;
 cópia, redistribuição, hospedagem em outro endereço ou obra derivada apenas
 com autorização por escrito do autor. Veja LICENSE.txt.
 
-Origem oficial: https://aurapluginsaudio.github.io/Drive/
-Código: https://github.com/aurapluginsaudio/Drive
+Origem oficial: https://ledixplugins.github.io/Drive/
+Código: https://github.com/ledixplugins/Drive
 
 AURA-PROV/1 obra=AURA-Bass autor=Thiago-Galvao ano=2026
 lei=9609/1998+9610/1998 direitos=reservados

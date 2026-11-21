@@ -1,6 +1,6 @@
 // WORSHIP BASS ESSENTIALS — interface e ligação com o motor de áudio.
 // Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
-// Licença: ver LICENSE  |  https://github.com/aurapluginsaudio/Drive
+// Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
 
 'use strict';
 
@@ -9,10 +9,10 @@ const AUTORIA = [
   'WORSHIP BASS ESSENTIALS',
   'Copyright (c) 2026 Thiago Galvão',
   'Todos os direitos reservados — Leis 9.609/1998 e 9.610/1998',
-  'github.com/aurapluginsaudio/Drive',
+  'github.com/ledixplugins/Drive',
 ];
 const AURA_PROV = 'AURA-PROV/1 obra=WORSHIP-BASS-ESSENTIALS autor=Thiago-Galvao ano=2026 '
-  + 'lei=9609/1998+9610/1998 origem=github.com/aurapluginsaudio/Drive direitos=reservados';
+  + 'lei=9609/1998+9610/1998 origem=github.com/ledixplugins/Drive direitos=reservados';
 try { window.AURA_PROV = AURA_PROV; } catch (e) { /* sem window */ }
 
 const CHAVE = 'wbe-pedalboard-v1';

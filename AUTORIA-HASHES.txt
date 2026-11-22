@@ -3,8 +3,8 @@ Autor e titular: Thiago Galvão
 Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 Leis 9.609/1998 e 9.610/1998 — a proteção independe de registro.
 
-Gerado em (UTC): 2026-11-21T12:34:07Z
-Commit do repositório: 9a464c799c28705871ec20c0d89726b1df056683
+Gerado em (UTC): 2026-11-22T21:40:38Z
+Commit do repositório: 2d6f9fed5b97f72b0feba1f5f189a9f473d24159
 Arquivos: 55
 
 SHA-256 de cada arquivo:
@@ -17,11 +17,11 @@ ddda4c92de9522025699d9b4b4ae106fc37c37f4e0e3a5f2c30db343de68e1a9  CMakeLists.txt
 2887a17b06b55cae8885d451a4c0b7d723a939e8cda57bf6d5fd8fa929996122  README.md
 5f2c0cd78e815a16f5167e69c7fcbde8748011af675cb6129f0c6a176457b87e  Resources/ir/cab_1x15.wav
 18b691c2ff4b1978f23fea94b94073961510839897a59c462cdf68688624b957  Resources/ir/cab_4x10.wav
-241d08d27fe23f5b69e91422e84cd60cca73a4bbff49a503b3ec52b76d34221e  Resources/ui/arcs_lit.png
-ae22566730ea699ba660dff0ced2fc6caaf947faced7f49cd33bc70415d856f0  Resources/ui/background.jpg
+b2c0e6e411715641dc04243519559b8926b94a34f2007d591e9be358a9fe3699  Resources/ui/arcs_lit.png
+79b353c19c93e5289081285ce6cf9a81cc14465a4aba6e2f1161f73450615851  Resources/ui/background.jpg
 b2aa6bf06cfcff869379226c29ff4b4664ede25c4448c0b694e5ec29af523ca0  Resources/ui/cab_off.png
 b393c9d575ebc2d7ad0664b534460ee32fc8e1f37ec3fb4ca4613af87f76087b  Resources/ui/footswitch_down.png
-d67fbc54e4bd3f97b3f8a0513dca4a164f1fb566091f40eef6f1906ebfa4f94e  Resources/ui/knob.png
+fb49d2724a45d59d26ac56d792d9cf2c8aa74f5f238b691ed136a7ee73fc615e  Resources/ui/knob.png
 b04ecd6b957c75890593883fee8a778669d4b9c21cb2f116c044f6c338b70eb9  Resources/ui/led_cab_on.png
 49401c8f3084ca995763405fd682fec32f7b4be9e50069a653ead86b3f0b453b  Resources/ui/led_drive_on.png
 8033cb60942703003f1d7c34392847561a05647df1ba8f2a359884f7e9371896  Resources/ui/led_tuner_on.png
@@ -56,8 +56,8 @@ c3a0c55d49d5108e65aa287bb8bb4171e367f1b16462334986e14a2880668c96  packaging/Inst
 f9b2e667408c1f3efc32f1cf8741a33e8c4b6cbeeb6f98406651701caa3e70b5  packaging/aura-preamp-bass.nsi
 d0654f81126a22074d0b0c693850f32e31d270adfc4c1a6093ac4048c1fcb72e  web/app.js
 b26d6c420b6ca2ab0201de122a683bfedb843f82120e5f70da068a66dcf2d557  web/aura-processor.js
-b27102530b56e210f5d02ed6bb37a5775421af6a772cf183c41a582dad55e6ae  web/icons/icon-192.png
-44640a5c715af95fcc80fb1ac62ace6fccff12a3b552aa5201ab7d8cf1670a48  web/icons/icon-512.png
+4180c8f9d0ac026391f81db76eb1052874811132e33f54997dd6b2b8780e3690  web/icons/icon-192.png
+9f3166c147025a644c083c9f78d22ceda8986fddac85d4ed1a7ab30ac59942dd  web/icons/icon-512.png
 868ca49aee458b0ed6cfdfbd60360bd083d3b887e9c80a61dccb93ea3dd060b3  web/index.html
 770b8be7d33ff6953468f6e32019b099043d338a8d00768f93336538e6fa378a  web/layout.js
 7f7884d0bec4240e0df3b2c89a8765dae309179917c9f3bfb41cd827f6a4a4b9  web/manifest.webmanifest
@@ -67,7 +67,7 @@ a0326b7cb6e3885cf252a04186a141253ecd62e0b0c516208d9af1410b0173be  web/sw.js
 --------------------------------------------------------------------
 
 RESUMO DA OBRA (SHA-256 da lista acima):
-4aaa195107c73f156b0fcceb2f725bafa635e67fdf0c058a8770a20c288024b9
+c1926810e81ba0ad43dadfcabadb3c639c8cc404ce222ebb2d537b2c7766ecd9
 
 Esse resumo identifica a obra inteira nesta data. Qualquer alteração em
 qualquer arquivo muda o resumo. Para ter prova de data independente,

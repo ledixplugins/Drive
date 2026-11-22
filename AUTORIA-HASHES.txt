@@ -3,8 +3,8 @@ Autor e titular: Thiago Galvão
 Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 Leis 9.609/1998 e 9.610/1998 — a proteção independe de registro.
 
-Gerado em (UTC): 2026-11-22T23:50:19Z
-Commit do repositório: 8d7961c4e3bf333f91677d89c45090806de4e298
+Gerado em (UTC): 2026-11-22T23:54:00Z
+Commit do repositório: b57597725f19577603bc874d4308fc6171a0fc6c
 Arquivos: 55
 
 SHA-256 de cada arquivo:
@@ -30,8 +30,8 @@ b04ecd6b957c75890593883fee8a778669d4b9c21cb2f116c044f6c338b70eb9  Resources/ui/l
 ec3b1273da7c0cfc5761e01d8da214f583be5e8b0ae90f403718bfeaa5516c99  Source/Autoria.h
 855b67a1c086d1e47196e8a51d4e914186ab1c668ca69feaf78df0311434c8cb  Source/Efeitos.h
 feed357633ec951154634eba91c486f04a54ebe9c3564998a89b935954bee513  Source/Layout.h
-d83396b49acbc1be3a15babc734a1b53aac8901a71014b3cdb10f99d0379505e  Source/Licenca.cpp
-de3c9624c605ee63006c6f7993a2478ef5d236ff635eac4b087d19a8c60a6fdf  Source/Licenca.h
+3269f1632c5846d6ebfa58ea58af3f43a6f6c25fa0f8b8c6f3b5141adfecc08f  Source/Licenca.cpp
+972bd5c95768f714702b22d730fca8efbc41072a21990207886db3f7fee54b1a  Source/Licenca.h
 f766da2dcce2e597b50ac1407a94c175c9d47f34c9385ae097f53ffd93638f0a  Source/PluginEditor.cpp
 1e120b3803b7127bd4d41383336ab6b7a092a60f09bcc9346eaca51ae0733d89  Source/PluginEditor.h
 f1d401dbd364eef5d6363d1435e80eada0620c457fbc625da94468330615feea  Source/PluginProcessor.cpp
@@ -67,7 +67,7 @@ a0326b7cb6e3885cf252a04186a141253ecd62e0b0c516208d9af1410b0173be  web/sw.js
 --------------------------------------------------------------------
 
 RESUMO DA OBRA (SHA-256 da lista acima):
-e1743a5b83f027de0d7482d6cba4d5f7669f27d16d38f22b2e071396ff53acbd
+390e4880b17d235146c7931f396095372e2b5bc7b3db74b438011a0c940935d3
 
 Esse resumo identifica a obra inteira nesta data. Qualquer alteração em
 qualquer arquivo muda o resumo. Para ter prova de data independente,

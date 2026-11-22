@@ -257,10 +257,9 @@ Gerente::Resposta Gerente::iniciarTeste (const String& emailDigitado)
     StringPairArray campos;
     campos.set ("email", email);
     campos.set ("device", idAparelho);
-    campos.set ("product", produto);
 
     int http = 0;
-    const auto r = chamar (servidorTeste, "/trial", campos, http);
+    const auto r = chamar (servidorTeste, caminhoTeste, campos, http);
 
     if (http == 0)
         return { false, String::fromUTF8 ("Sem conexão com o servidor. O primeiro acesso precisa de internet para registrar o teste.") };

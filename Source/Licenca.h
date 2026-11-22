@@ -27,8 +27,10 @@ namespace AuraLicenca
     inline constexpr int    diasDeTolerancia = 30;   // uso offline depois de ativada
     inline constexpr double umDiaMs         = 24.0 * 60.0 * 60.0 * 1000.0;
     inline constexpr const char* servidor   = "https://api.lemonsqueezy.com/v1/licenses";
+    // Mesmo Worker/banco do AURA Synth Bass (aura-trial), numa rota própria: o
+    // produto fica fixo no código do servidor, não é algo que o app possa escolher.
     inline constexpr const char* servidorTeste = "https://aura-trial.ledixplugins.workers.dev";
-    inline constexpr const char* produto    = "preamp-bass";
+    inline constexpr const char* caminhoTeste  = "/trial/preamp-bass";
     inline constexpr const char* semente    = "AURA-PREAMP-BASS-TRG-2026";
 
     /** O que fica guardado no disco. Tempos em milissegundos desde 1970. */

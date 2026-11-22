@@ -20,6 +20,16 @@ Estado mesclar (const Estado& a, const Estado& b)
     else                          r.t0 = jmax (a.t0, b.t0);
 
     r.seen = jmax (a.seen, b.seen);             // e a maior data já vista
+
+    // O e-mail e o "já usou o teste" vêm de quem tiver e-mail; a validação mais
+    // recente (r, acima) já decide isso na prática, mas cobre o caso de um dos
+    // dois arquivos ainda não ter sido escrito com o e-mail.
+    if (r.email.isEmpty())
+    {
+        r.email = a.email.isNotEmpty() ? a.email : b.email;
+        r.reutilizado = a.email.isNotEmpty() ? a.reutilizado : b.reutilizado;
+    }
+
     return r;
 }
 
@@ -32,6 +42,10 @@ Status avaliar (const Estado& e, double agora)
     if (e.temChave())
         return (agora - e.val) <= diasDeTolerancia * umDiaMs ? Status::licenciada
                                                              : Status::revalidar;
+
+    // O teste só começa depois que a pessoa informa o e-mail.
+    if (! e.temEmail())
+        return Status::precisaEmail;
 
     return diasRestantes (e, agora) > 0 ? Status::teste : Status::expirado;
 }
@@ -51,6 +65,7 @@ String textoDoStatus (Status s, int dias)
 {
     switch (s)
     {
+        case Status::precisaEmail: return String::fromUTF8 ("Informe seu e-mail para iniciar o teste grátis");
         case Status::teste:      return dias == 1 ? String::fromUTF8 ("Teste: último dia")
                                                   : String::fromUTF8 ("Teste: ") + String (dias) + String::fromUTF8 (" dias restantes");
         case Status::expirado:   return String::fromUTF8 ("O teste de 15 dias terminou");
@@ -70,6 +85,8 @@ var paraVar (const Estado& e)
     o->setProperty ("key", e.chave);
     o->setProperty ("inst", e.instancia);
     o->setProperty ("name", e.aparelho);
+    o->setProperty ("email", e.email);
+    o->setProperty ("reused", e.reutilizado);
     return var (o);
 }
 
@@ -84,6 +101,8 @@ Estado deVar (const var& v)
         e.chave     = o->getProperty ("key").toString();
         e.instancia = o->getProperty ("inst").toString();
         e.aparelho  = o->getProperty ("name").toString();
+        e.email     = o->getProperty ("email").toString();
+        e.reutilizado = (bool) o->getProperty ("reused");
     }
     return e;
 }
@@ -165,7 +184,7 @@ void Gerente::atualizar()
     carregar();
 
     const double agoraMs = agora();
-    if (estado.t0 <= 0.0) estado.t0 = agoraMs;      // primeira abertura
+    // t0 só é marcada quando o teste é iniciado com e-mail (iniciarTeste), não aqui.
     if (agoraMs > estado.seen) estado.seen = agoraMs;
     gravar();
 
@@ -187,7 +206,7 @@ String Gerente::chaveMascarada() const
 }
 
 //==============================================================================
-var Gerente::chamar (const String& caminho, const StringPairArray& campos, int& httpStatus)
+var Gerente::chamar (const String& baseUrl, const String& caminho, const StringPairArray& campos, int& httpStatus)
 {
     httpStatus = 0;
 
@@ -198,7 +217,7 @@ var Gerente::chamar (const String& caminho, const StringPairArray& campos, int& 
         corpo << URL::addEscapeChars (k, true) << "=" << URL::addEscapeChars (campos[k], true);
     }
 
-    URL u = URL (String (servidor) + caminho).withPOSTData (corpo);
+    URL u = URL (baseUrl + caminho).withPOSTData (corpo);
 
     StringPairArray cabecalhos;
     auto opcoes = URL::InputStreamOptions (URL::ParameterHandling::inPostData)
@@ -214,6 +233,60 @@ var Gerente::chamar (const String& caminho, const StringPairArray& campos, int& 
     return JSON::parse (entrada->readEntireStreamAsString());
 }
 
+namespace
+{
+    // Mesma validação simples do site/app: só a forma do endereço, sem confirmar
+    // a caixa de entrada de verdade (decisão do Thiago: sem e-mail de confirmação).
+    bool pareceEmailValido (const String& email)
+    {
+        if (email.isEmpty() || email.containsChar (' ') || email.length() > 254) return false;
+        const auto arroba = email.indexOfChar ('@');
+        if (arroba <= 0 || arroba != email.lastIndexOfChar ('@')) return false;
+        const auto dominio = email.substring (arroba + 1);
+        const auto ponto = dominio.lastIndexOfChar ('.');
+        return ponto > 0 && dominio.substring (ponto + 1).length() >= 2;
+    }
+}
+
+Gerente::Resposta Gerente::iniciarTeste (const String& emailDigitado)
+{
+    const auto email = emailDigitado.trim().toLowerCase();
+    if (! pareceEmailValido (email))
+        return { false, String::fromUTF8 ("Digite um e-mail válido.") };
+
+    StringPairArray campos;
+    campos.set ("email", email);
+    campos.set ("device", idAparelho);
+    campos.set ("product", produto);
+
+    int http = 0;
+    const auto r = chamar (servidorTeste, "/trial", campos, http);
+
+    if (http == 0)
+        return { false, String::fromUTF8 ("Sem conexão com o servidor. O primeiro acesso precisa de internet para registrar o teste.") };
+
+    if (auto* o = r.getDynamicObject())
+    {
+        if ((bool) o->getProperty ("ok") && o->hasProperty ("started_at"))
+        {
+            const double iniciadoEm = (double) o->getProperty ("started_at");
+            estado.email = email;
+            estado.t0 = estado.t0 > 0.0 ? jmin (estado.t0, iniciadoEm) : iniciadoEm;
+            estado.reutilizado = ! (bool) o->getProperty ("new");
+            const double agoraMs = agora();
+            if (agoraMs > estado.seen) estado.seen = agoraMs;
+            gravar();
+            atualizar();
+            return { true, {} };
+        }
+
+        const auto erro = o->getProperty ("error").toString();
+        if (erro.isNotEmpty()) return { false, erro };
+    }
+
+    return { false, String::fromUTF8 ("Não foi possível iniciar o teste agora. Tente de novo.") };
+}
+
 Gerente::Resposta Gerente::ativar (const String& chave)
 {
     const auto limpa = chave.trim();
@@ -225,7 +298,7 @@ Gerente::Resposta Gerente::ativar (const String& chave)
     campos.set ("instance_name", nomeAparelho + " (" + idAparelho.substring (0, 8) + ")");
 
     int http = 0;
-    const auto r = chamar ("/activate", campos, http);
+    const auto r = chamar (servidor, "/activate", campos, http);
 
     if (http == 0)
         return { false, String::fromUTF8 ("Sem internet. Conecte-se e tente de novo.") };
@@ -263,7 +336,7 @@ Gerente::Resposta Gerente::desativar()
     campos.set ("instance_id", estado.instancia);
 
     int http = 0;
-    const auto r = chamar ("/deactivate", campos, http);
+    const auto r = chamar (servidor, "/deactivate", campos, http);
 
     const bool desativou = http == 404      // a instância já não existe no servidor
                         || (r.getDynamicObject() != nullptr
@@ -290,7 +363,7 @@ Gerente::Resposta Gerente::revalidar()
     campos.set ("instance_id", estado.instancia);
 
     int http = 0;
-    const auto r = chamar ("/validate", campos, http);
+    const auto r = chamar (servidor, "/validate", campos, http);
     if (http == 0) return { false, String::fromUTF8 ("Sem internet.") };
 
     if (auto* o = r.getDynamicObject())

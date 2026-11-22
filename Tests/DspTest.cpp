@@ -16,6 +16,29 @@ namespace
     constexpr int blockSize = 512;
     constexpr float inputHpfHz = 18.0f;   // igual ao do plugin
 
+    // Estes testes são sobre o DSP, não sobre o teste grátis por e-mail: destrava
+    // o processador como se o e-mail já tivesse sido informado hoje, sem rede.
+    // (A lógica do e-mail em si é testada à parte, mais abaixo.)
+    int contadorDestrava = 0;
+    void destravar (AuraPreampBassAudioProcessor& p)
+    {
+        using namespace AuraLicenca;
+        Estado e; e.t0 = (double) juce::Time::currentTimeMillis(); e.seen = e.t0;
+        e.email = "teste-dsp@aura.local";
+        auto base = juce::File::getSpecialLocation (juce::File::tempDirectory)
+                        .getChildFile ("aura-lic-dsp-" + juce::String (contadorDestrava++));
+        base.deleteRecursively();
+        p.licenca.arquivo1 = base.getChildFile ("a/lic.json");
+        p.licenca.arquivo2 = base.getChildFile ("b/.lic");
+        p.licenca.arquivo1.getParentDirectory().createDirectory();
+        p.licenca.arquivo2.getParentDirectory().createDirectory();
+        const auto texto = juce::JSON::toString (paraVar (e), true);
+        p.licenca.arquivo1.replaceWithText (texto);
+        p.licenca.arquivo2.replaceWithText (texto);
+        p.licenca.atualizar();
+        p.revisarLicenca();
+    }
+
     // Senoide em blocos de tamanho variável; devolve o canal 0 (e o 1, se pedido)
     std::vector<float> runBlocks (AuraPreampBassAudioProcessor& p, float freq, float amp, int prepareSize,
                                   const std::vector<int>& sizes, int totalSamples, std::vector<float>* right = nullptr,
@@ -121,6 +144,7 @@ int main()
     for (float drive : { -15.0f, -7.5f, 0.0f, 7.5f, 15.0f })
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         setParam (p, ParamIDs::cab, 0.0f);
         setParam (p, ParamIDs::presence, 0.0f);
         setParam (p, ParamIDs::drive, drive);
@@ -151,6 +175,8 @@ int main()
         // Zerados, nada muda: quem tem sessão salva continua ouvindo o mesmo
         {
             AuraPreampBassAudioProcessor a, b2;
+            destravar (a);
+            destravar (b2);
             setParam (b2, ParamIDs::octave, 0.0f);
             setParam (b2, ParamIDs::chorus, 0.0f);
             const auto sa = runBlocks (a, 110.0f, 0.2f, blockSize, { blockSize }, 24000);
@@ -163,6 +189,7 @@ int main()
         // Oitava: aparece energia em 55 Hz a partir de uma nota de 110 Hz
         {
             AuraPreampBassAudioProcessor p;
+            destravar (p);
             setParam (p, ParamIDs::drive, -15.0f);
             setParam (p, ParamIDs::cab, 0.0f);
             setParam (p, ParamIDs::blend, 0.0f);
@@ -184,6 +211,7 @@ int main()
         // Oitava não inventa nota no silêncio
         {
             AuraPreampBassAudioProcessor p;
+            destravar (p);
             setParam (p, ParamIDs::octave, 100.0f);
             const auto quieto = runBlocks (p, 110.0f, 0.0f, blockSize, { blockSize }, 24000);
             float pico = 0.0f;
@@ -194,6 +222,7 @@ int main()
         // Chorus: a mistura muda o som e oscila com o tempo
         {
             AuraPreampBassAudioProcessor p;
+            destravar (p);
             setParam (p, ParamIDs::drive, -15.0f);
             setParam (p, ParamIDs::cab, 0.0f);
             setParam (p, ParamIDs::blend, 0.0f);
@@ -225,27 +254,29 @@ int main()
         const double dia = umDiaMs;
         const double hoje = 1.7e12;                      // um instante qualquer
 
-        Estado novo;                                     // nunca aberto
-        check (avaliar (novo, hoje) == Status::teste, "sem histórico, começa em teste");
-        check (diasRestantes (novo, hoje) == 15, "teste começa com 15 dias");
+        Estado novo;                                     // nunca aberto, sem e-mail
+        check (avaliar (novo, hoje) == Status::precisaEmail, "sem e-mail, pede e-mail antes do teste");
+        check (! liberado (avaliar (novo, hoje)), "sem e-mail não libera o processamento");
+        check (diasRestantes (novo, hoje) == 15, "teste começaria com 15 dias assim que o e-mail entrar");
 
-        Estado e; e.t0 = hoje; e.seen = hoje;
+        Estado e; e.t0 = hoje; e.seen = hoje; e.email = "a@b.com";
+        check (avaliar (e, hoje) == Status::teste, "com e-mail e t0, começa em teste");
         check (diasRestantes (e, hoje + 1 * dia) == 14, "passou um dia, restam 14");
         check (diasRestantes (e, hoje + 14.9 * dia) == 1, "no último dia ainda resta 1");
         check (avaliar (e, hoje + 15.0 * dia) == Status::expirado, "no 15º dia o teste acaba");
         check (! liberado (avaliar (e, hoje + 15.0 * dia)), "expirado não libera o processamento");
         check (liberado (avaliar (e, hoje + 14.0 * dia)), "dentro do teste libera");
 
-        // Atrasar o relógio não devolve dias nem destrava nada
-        Estado usado; usado.t0 = hoje; usado.seen = hoje + 20 * dia;
+        // Atrasar o relógio não devolve dias nem destrava nada (independe de ter e-mail)
+        Estado usado; usado.t0 = hoje; usado.seen = hoje + 20 * dia; usado.email = "a@b.com";
         check (avaliar (usado, hoje + 1 * dia) == Status::relogio, "relógio atrasado bloqueia");
         check (diasRestantes (usado, hoje + 1 * dia) == 0, "relógio atrasado não devolve dias");
 
         // Adiantar o relógio só gasta o teste mais rápido
-        Estado frente; frente.t0 = hoje; frente.seen = hoje;
+        Estado frente; frente.t0 = hoje; frente.seen = hoje; frente.email = "a@b.com";
         check (avaliar (frente, hoje + 400 * dia) == Status::expirado, "adiantar o relógio não estende o teste");
 
-        // Chave ativa: vale offline por 30 dias, depois pede revalidação
+        // Chave ativa: vale offline por 30 dias, depois pede revalidação (não depende de e-mail)
         Estado lic; lic.t0 = hoje; lic.seen = hoje; lic.chave = "ABC-123"; lic.instancia = "i1"; lic.val = hoje;
         check (avaliar (lic, hoje + 29 * dia) == Status::licenciada, "licença vale offline por 30 dias");
         check (liberado (avaliar (lic, hoje + 29 * dia)), "licença em dia libera o processamento");
@@ -253,12 +284,13 @@ int main()
         check (! liberado (avaliar (lic, hoje + 31 * dia)), "revalidação pendente não libera");
         check (avaliar (lic, hoje + 400 * dia) == Status::revalidar, "licença nunca volta a ser teste");
 
-        // Mesclar os dois arquivos: vale a abertura mais antiga
+        // Mesclar os dois arquivos: vale a abertura mais antiga e o e-mail já registrado
         Estado a1; a1.t0 = hoje + 5 * dia; a1.seen = hoje + 6 * dia;
-        Estado a2; a2.t0 = hoje;           a2.seen = hoje + 2 * dia;
+        Estado a2; a2.t0 = hoje;           a2.seen = hoje + 2 * dia; a2.email = "a@b.com";
         const auto m = mesclar (a1, a2);
         check (m.t0 == hoje, "mesclar mantém a primeira abertura mais antiga");
         check (m.seen == hoje + 6 * dia, "mesclar mantém a maior data vista");
+        check (m.email == "a@b.com", "mesclar preserva o e-mail do arquivo que o tiver");
         check (mesclar (Estado{}, a2).t0 == hoje, "arquivo apagado não reinicia o teste");
 
         Estado comChave; comChave.chave = "K"; comChave.instancia = "i"; comChave.val = hoje + 9 * dia;
@@ -273,8 +305,19 @@ int main()
         double relogio = hoje;
         g.agora = [&relogio] { return relogio; };
         g.atualizar();
-        check (g.status() == Status::teste && g.diasRestantes() == 15, "primeira abertura: 15 dias");
+        check (g.status() == Status::precisaEmail, "primeira abertura: ainda sem e-mail, teste não começou");
+        check (! g.liberado(), "sem e-mail o plugin não processa");
         check (g.arquivo1.existsAsFile() && g.arquivo2.existsAsFile(), "grava o estado nos dois lugares");
+
+        // Simula o retorno do servidor de teste grátis (sem rede de verdade neste teste):
+        // o próprio arquivo de estado é o que `iniciarTeste` acabaria gravando.
+        g.arquivo1.deleteFile(); g.arquivo2.deleteFile();
+        { Estado comEmail; comEmail.t0 = hoje; comEmail.seen = hoje; comEmail.email = "a@b.com";
+          const auto texto = juce::JSON::toString (paraVar (comEmail), true);
+          g.arquivo1.getParentDirectory().createDirectory(); g.arquivo1.replaceWithText (texto);
+          g.arquivo2.getParentDirectory().createDirectory(); g.arquivo2.replaceWithText (texto); }
+        g.atualizar();
+        check (g.status() == Status::teste && g.diasRestantes() == 15, "depois do e-mail: 15 dias de teste");
 
         relogio = hoje + 10 * dia;
         g.atualizar();
@@ -297,6 +340,7 @@ int main()
     std::printf ("Trim de entrada e medidor\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         setParam (p, ParamIDs::drive, -15.0f);
         setParam (p, ParamIDs::cab, 0.0f);
         setParam (p, ParamIDs::blend, 0.0f);     // só o caminho limpo, para medir ganho puro
@@ -332,6 +376,7 @@ int main()
     std::printf ("Blend 0%% = sinal limpo alinhado (sem phasing)\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         setParam (p, ParamIDs::cab, 0.0f);
         setParam (p, ParamIDs::presence, 0.0f);
         setParam (p, ParamIDs::blend, 0.0f);
@@ -357,6 +402,8 @@ int main()
     std::printf ("Cab ligado atenua agudos\n");
     {
         AuraPreampBassAudioProcessor a, b;
+        destravar (a);
+        destravar (b);
         setParam (a, ParamIDs::cab, 0.0f); setParam (b, ParamIDs::cab, 1.0f);
         const double off = rms (run (a, 8000.0f, 0.1f), from), on = rms (run (b, 8000.0f, 0.1f), from);
         std::printf ("  8 kHz: sem cab %.1f dB, com cab %.1f dB\n",
@@ -367,6 +414,7 @@ int main()
     std::printf ("Botão DRIVE desligado = só EQ/Cab (sinal limpo alinhado)\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         setParam (p, ParamIDs::cab, 0.0f);
         setParam (p, ParamIDs::presence, 0.0f);
         setParam (p, ParamIDs::blend, 100.0f);
@@ -389,6 +437,8 @@ int main()
     std::printf ("Botão DRIVE desligado mantém o EQ ativo\n");
     {
         AuraPreampBassAudioProcessor a, b;
+        destravar (a);
+        destravar (b);
         for (auto* p : { &a, &b }) { setParam (*p, ParamIDs::cab, 0.0f); setParam (*p, ParamIDs::presence, 0.0f); setParam (*p, ParamIDs::driveOn, 0.0f); }
         setParam (b, ParamIDs::low, 12.0f);
         const double flat = rms (run (a, 50.0f, 0.1f), from), boosted = rms (run (b, 50.0f, 0.1f), from);
@@ -399,6 +449,7 @@ int main()
     std::printf ("Troca de DRIVE no meio do som sem estalo\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         setParam (p, ParamIDs::cab, 0.0f);
         p.prepareToPlay (sr, blockSize);
         juce::AudioBuffer<float> buf (2, blockSize); juce::MidiBuffer midi;
@@ -429,6 +480,8 @@ int main()
     for (float drive : { -15.0f, 0.0f, 15.0f })
     {
         AuraPreampBassAudioProcessor on, off;
+        destravar (on);
+        destravar (off);
         for (auto* p : { &on, &off })
         {
             setParam (*p, ParamIDs::cab, 0.0f);
@@ -446,6 +499,8 @@ int main()
     std::printf ("CAB por resposta de impulso\n");
     {
         AuraPreampBassAudioProcessor a, b;
+        destravar (a);
+        destravar (b);
         for (auto* p : { &a, &b }) { setParam (*p, ParamIDs::presence, 0.0f); setParam (*p, ParamIDs::driveOn, 0.0f); }
         b.setCabIR ("builtin:1");
         const double low4 = rms (run (a, 100.0f, 0.1f), from), hi4 = rms (run (a, 5000.0f, 0.1f), from);
@@ -455,11 +510,14 @@ int main()
         check (hi15 < hi4, "1x15 mais escura que 4x10");
         {
             AuraPreampBassAudioProcessor c;
+            destravar (c);
             setParam (c, ParamIDs::presence, 0.0f); setParam (c, ParamIDs::driveOn, 0.0f); setParam (c, ParamIDs::cab, 0.0f);
             for (float f : { 80.0f, 300.0f, 1000.0f })
             {
                 AuraPreampBassAudioProcessor on; setParam (on, ParamIDs::presence, 0.0f); setParam (on, ParamIDs::driveOn, 0.0f);
+                destravar (on);
                 AuraPreampBassAudioProcessor off; setParam (off, ParamIDs::presence, 0.0f); setParam (off, ParamIDs::driveOn, 0.0f); setParam (off, ParamIDs::cab, 0.0f);
+                destravar (off);
                 std::printf ("  CAB 4x10 ligado vs desligado em %4.0f Hz: %+.1f dB\n", f,
                              juce::Decibels::gainToDecibels (rms (run (on, f, 0.1f), from) / rms (run (off, f, 0.1f), from)));
             }
@@ -472,6 +530,7 @@ int main()
     std::printf ("Presets de fábrica\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         check (p.getNumPrograms() == 8, "8 presets (2 de fábrica + 6 medidos do vídeo)");
         p.setCurrentProgram (3);
         const float d = p.apvts.getRawParameterValue (ParamIDs::drive)->load();
@@ -496,6 +555,8 @@ int main()
     std::printf ("Estado (IR e escala) salvo e restaurado\n");
     {
         AuraPreampBassAudioProcessor a, b;
+        destravar (a);
+        destravar (b);
         a.setCabIR ("builtin:1");
         a.setUiScale (1.25f);
         juce::MemoryBlock mb;
@@ -507,6 +568,7 @@ int main()
     std::printf ("Mono\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         juce::AudioProcessor::BusesLayout mono;
         mono.inputBuses.add (juce::AudioChannelSet::mono());
         mono.outputBuses.add (juce::AudioChannelSet::mono());
@@ -521,6 +583,8 @@ int main()
     std::printf ("Blocos maiores que o anunciado (prepare 256, blocos de 4096 e tamanhos irregulares)\n");
     {
         AuraPreampBassAudioProcessor a, b;
+        destravar (a);
+        destravar (b);
         const auto ref = runBlocks (a, 110.0f, 0.25f, 256, { 256 }, 48000);
         const auto big = runBlocks (b, 110.0f, 0.25f, 256, { 4096, 37, 1000, 256, 3 }, 48000);
         double err = 0;
@@ -533,6 +597,7 @@ int main()
     std::printf ("Bypass da DAW mantém o alinhamento (atraso = latência)\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         p.prepareToPlay (sr, blockSize);
         const int lat = p.getLatencySamples();
         juce::AudioBuffer<float> buf (2, blockSize); juce::MidiBuffer midi;
@@ -556,6 +621,7 @@ int main()
     std::printf ("Cauda informada à DAW\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         std::printf ("  tail = %.3f s\n", p.getTailLengthSeconds());
         check (p.getTailLengthSeconds() > 0.02, "tail cobre a IR do CAB");
     }
@@ -563,6 +629,7 @@ int main()
     std::printf ("Silêncio na entrada = silêncio na saída\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         const auto out = runBlocks (p, 100.0f, 0.0f, blockSize, { blockSize }, 48000);
         double peak = 0; for (auto x : out) peak = std::max (peak, (double) std::abs (x));
         std::printf ("  pico na saída: %.2e\n", peak);
@@ -573,6 +640,7 @@ int main()
     for (double rate : { 44100.0, 96000.0, 192000.0 })
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         p.prepareToPlay (rate, 512);
         juce::AudioBuffer<float> buf (2, 512); juce::MidiBuffer midi;
         bool ok = true;
@@ -589,6 +657,7 @@ int main()
     std::printf ("Entrada mono, saída estéreo\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         juce::AudioProcessor::BusesLayout l;
         l.inputBuses.add (juce::AudioChannelSet::mono());
         l.outputBuses.add (juce::AudioChannelSet::stereo());
@@ -603,6 +672,7 @@ int main()
     std::printf ("Religar o DRIVE e o CAB depois de um tempo desligados, sem estalo\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         setParam (p, ParamIDs::driveOn, 0.0f);
         setParam (p, ParamIDs::cab, 0.0f);
         p.prepareToPlay (sr, blockSize);
@@ -632,6 +702,7 @@ int main()
     std::printf ("EQ girando rápido não gera degraus (zipper)\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         setParam (p, ParamIDs::cab, 0.0f);
         setParam (p, ParamIDs::driveOn, 0.0f);
         p.prepareToPlay (sr, blockSize);
@@ -657,6 +728,8 @@ int main()
     std::printf ("Preset atual salvo na sessão\n");
     {
         AuraPreampBassAudioProcessor a, b;
+        destravar (a);
+        destravar (b);
         a.setCurrentProgram (2);
         juce::MemoryBlock mb;
         a.getStateInformation (mb);
@@ -726,6 +799,7 @@ int main()
     std::printf ("Afinador ligado: saída muda, detector recebe a entrada\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         setParam (p, ParamIDs::tuner, 1.0f);
         const auto out = runBlocks (p, 41.203f, 0.25f, blockSize, { blockSize }, 48000);
         double peak = 0; for (size_t i = 4800; i < out.size(); ++i) peak = std::max (peak, (double) std::abs (out[i]));
@@ -737,6 +811,7 @@ int main()
         juce::MemoryBlock mb;
         p.getStateInformation (mb);
         AuraPreampBassAudioProcessor q;
+        destravar (q);
         q.setStateInformation (mb.getData(), (int) mb.getSize());
         check (q.apvts.getRawParameterValue (ParamIDs::tuner)->load() < 0.5f, "sessão nunca reabre com o afinador ligado");
     }
@@ -744,6 +819,7 @@ int main()
     std::printf ("Ligar/desligar o afinador sem estalo\n");
     {
         AuraPreampBassAudioProcessor p;
+        destravar (p);
         p.prepareToPlay (sr, blockSize);
         juce::AudioBuffer<float> buf (2, blockSize); juce::MidiBuffer midi;
         std::vector<float> out;
@@ -769,6 +845,10 @@ int main()
     if (auto* outPath = std::getenv ("AURA_SNAPSHOT"))
     {
         AuraPreampBassAudioProcessor p;
+        // Tela de e-mail: é o estado natural de um processador novo, então só
+        // destrava (pula direto para o teste) quando essa tela não for o alvo.
+        if (std::getenv ("AURA_SNAPSHOT_EMAIL") == nullptr)
+            destravar (p);
         if (auto* hzText = std::getenv ("AURA_SNAPSHOT_TUNER"))
         {
             // Afinador ligado, com uma nota tocando (frequência em Hz)
@@ -796,7 +876,8 @@ int main()
         std::unique_ptr<juce::AudioProcessorEditor> ed (p.createEditor());
         std::printf ("Editor %dx%d\n", ed->getWidth(), ed->getHeight());
         if (std::getenv ("AURA_SNAPSHOT_TUNER") != nullptr
-            || std::getenv ("AURA_SNAPSHOT_LICENCA") != nullptr)
+            || std::getenv ("AURA_SNAPSHOT_LICENCA") != nullptr
+            || std::getenv ("AURA_SNAPSHOT_EMAIL") != nullptr)
             for (int i = 0; i < 40; ++i)     // deixa o timer da interface rodar
                 juce::MessageManager::getInstance()->runDispatchLoopUntil (40);
         auto img = ed->createComponentSnapshot (ed->getLocalBounds(), true, 2.0f);

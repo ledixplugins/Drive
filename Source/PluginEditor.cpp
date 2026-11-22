@@ -734,12 +734,28 @@ LicencaOverlay::LicencaOverlay (AuraPreampBassAudioProcessor& p) : processor (p)
     campoChave.onReturnKey = [this] { tentarAtivar(); };
     addAndMakeVisible (campoChave);
 
+    campoEmail.setTextToShowWhenEmpty (String::fromUTF8 ("seu e-mail"),
+                                       Colours::white.withAlpha (0.35f));
+    campoEmail.setJustification (Justification::centred);
+    campoEmail.setFont (Font (FontOptions (15.0f)));
+    campoEmail.setColour (TextEditor::backgroundColourId, Colour (0xff0e0f11));
+    campoEmail.setColour (TextEditor::outlineColourId, Colour (0xff454a52));
+    campoEmail.setColour (TextEditor::focusedOutlineColourId, Colour (0xffe8890c));
+    campoEmail.setColour (TextEditor::textColourId, Colours::white);
+    campoEmail.onReturnKey = [this] { tentarIniciarTeste(); };
+    addAndMakeVisible (campoEmail);
+
     botaoAcao.onClick = [this]
     {
-        if (processor.licenca.status() == AuraLicenca::Status::licenciada) tentarDesativar();
-        else                                                              tentarAtivar();
+        const auto st = processor.licenca.status();
+        if (st == AuraLicenca::Status::licenciada) tentarDesativar();
+        else if (st == AuraLicenca::Status::precisaEmail && ! modoChave) tentarIniciarTeste();
+        else tentarAtivar();
     };
     addAndMakeVisible (botaoAcao);
+
+    botaoAlternar.onClick = [this] { modoChave = ! modoChave; erro = {}; atualizar(); };
+    addAndMakeVisible (botaoAlternar);
 
     // A venda ainda não está aberta: o botão fica avisando, sem levar a lugar nenhum.
     botaoComprar.setEnabled (false);
@@ -785,6 +801,31 @@ void LicencaOverlay::atualizar()
         return;
     }
 
+    if (st == S::precisaEmail)
+    {
+        if (! modoChave)
+        {
+            mensagem = String::fromUTF8 ("Teste grátis de 15 dias com todos os recursos. Informe seu e-mail "
+                                         "para começar. Cada e-mail só pode usar o teste uma vez. É preciso "
+                                         "estar conectado à internet neste primeiro passo.");
+            botaoAcao.setButtonText (String::fromUTF8 ("INICIAR TESTE GRÁTIS"));
+            botaoAlternar.setButtonText (String::fromUTF8 ("JÁ TENHO UMA CHAVE"));
+        }
+        else
+        {
+            mensagem = String::fromUTF8 ("Cole abaixo a chave de ativação que você recebeu na compra.");
+            botaoAcao.setButtonText (String::fromUTF8 ("ATIVAR"));
+            botaoAlternar.setButtonText (String::fromUTF8 ("VOLTAR AO TESTE GRÁTIS"));
+        }
+        botaoComprar.setButtonText (String::fromUTF8 ("COMPRAR LICENÇA — em breve"));
+        campoEmail.setVisible (! modoChave);
+        campoChave.setVisible (modoChave);
+        botaoAlternar.setVisible (true);
+        botaoAcao.setVisible (true);
+        repaint();
+        return;
+    }
+
     switch (st)
     {
         case S::relogio:
@@ -797,15 +838,20 @@ void LicencaOverlay::atualizar()
             break;
         case S::expirado:
         default:
-            mensagem = String::fromUTF8 ("O seu teste de 15 dias terminou. Para continuar usando o AURA Preamp Bass, "
-                                         "cole a sua chave de ativação.");
+            mensagem = processor.licenca.estadoReutilizado()
+                         ? String::fromUTF8 ("Este e-mail já usou o teste grátis. Para usar o AURA Preamp Bass, "
+                                             "insira sua chave de ativação.")
+                         : String::fromUTF8 ("O seu teste de 15 dias terminou. Para continuar usando o AURA Preamp Bass, "
+                                             "cole a sua chave de ativação.");
             break;
     }
 
     botaoAcao.setButtonText (st == S::licenciada ? String::fromUTF8 ("DESATIVAR ESTE APARELHO")
                                                  : String::fromUTF8 ("ATIVAR"));
     botaoComprar.setButtonText (String::fromUTF8 ("COMPRAR LICENÇA — em breve"));
+    campoEmail.setVisible (false);
     campoChave.setVisible (st != S::relogio);
+    botaoAlternar.setVisible (false);
     botaoAcao.setVisible (st != S::relogio);
     repaint();
 }
@@ -825,6 +871,32 @@ void LicencaOverlay::tentarAtivar()
     trabalho.reset (new LambdaThread ("aura-licenca", [this, chave]
     {
         const auto r = processor.licenca.ativar (chave);
+        MessageManager::callAsync ([this, r]
+        {
+            ocupado = false;
+            botaoAcao.setEnabled (true);
+            erro = r.ok ? String() : r.erro;
+            processor.revisarLicenca();
+            atualizar();
+        });
+    }));
+    trabalho->startThread();
+}
+
+void LicencaOverlay::tentarIniciarTeste()
+{
+    if (ocupado) return;
+    const auto email = campoEmail.getText().trim();
+    if (email.isEmpty()) { erro = String::fromUTF8 ("Digite um e-mail válido."); repaint(); return; }
+
+    ocupado = true;
+    erro = {};
+    botaoAcao.setEnabled (false);
+    repaint();
+
+    trabalho.reset (new LambdaThread ("aura-licenca", [this, email]
+    {
+        const auto r = processor.licenca.iniciarTeste (email);
         MessageManager::callAsync ([this, r]
         {
             ocupado = false;
@@ -898,7 +970,7 @@ void LicencaOverlay::paint (Graphics& g)
     {
         g.setColour (Colour (0xffe8503a));
         g.setFont (Font (FontOptions (12.5f * esc)));
-        g.drawFittedText (erro, getLocalBounds().withTop ((int) (266.0f * esc)).withHeight ((int) (20.0f * esc)),
+        g.drawFittedText (erro, getLocalBounds().withTop ((int) (296.0f * esc)).withHeight ((int) (20.0f * esc)),
                           Justification::centred, 2);
     }
 
@@ -919,8 +991,10 @@ void LicencaOverlay::resized()
     const int meio = getWidth() / 2;
 
     campoChave.setBounds (meio - larg / 2, (int) (150.0f * esc), larg, (int) (36.0f * esc));
+    campoEmail.setBounds (meio - larg / 2, (int) (150.0f * esc), larg, (int) (36.0f * esc));
     botaoAcao.setBounds (meio - larg / 2, (int) (194.0f * esc), larg, (int) (32.0f * esc));
-    botaoComprar.setBounds (meio - larg / 2, (int) (232.0f * esc), larg, (int) (28.0f * esc));
+    botaoAlternar.setBounds (meio - larg / 2, (int) (232.0f * esc), larg, (int) (24.0f * esc));
+    botaoComprar.setBounds (meio - larg / 2, (int) (262.0f * esc), larg, (int) (28.0f * esc));
 }
 
 //==============================================================================

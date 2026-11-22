@@ -3,8 +3,8 @@ Autor e titular: Thiago Galvão
 Copyright (c) 2026 Thiago Galvão. Todos os direitos reservados.
 Leis 9.609/1998 e 9.610/1998 — a proteção independe de registro.
 
-Gerado em (UTC): 2026-11-22T21:40:38Z
-Commit do repositório: 2d6f9fed5b97f72b0feba1f5f189a9f473d24159
+Gerado em (UTC): 2026-11-22T23:50:19Z
+Commit do repositório: 8d7961c4e3bf333f91677d89c45090806de4e298
 Arquivos: 55
 
 SHA-256 de cada arquivo:
@@ -30,15 +30,15 @@ b04ecd6b957c75890593883fee8a778669d4b9c21cb2f116c044f6c338b70eb9  Resources/ui/l
 ec3b1273da7c0cfc5761e01d8da214f583be5e8b0ae90f403718bfeaa5516c99  Source/Autoria.h
 855b67a1c086d1e47196e8a51d4e914186ab1c668ca69feaf78df0311434c8cb  Source/Efeitos.h
 feed357633ec951154634eba91c486f04a54ebe9c3564998a89b935954bee513  Source/Layout.h
-1c82dcf847aead841751b2a252cb714cb5a82020a5826e8032c094b4476ca6c1  Source/Licenca.cpp
-ba508140d36fdd3b490df3bb0ff3ea1af972e57f4a65430d41fe329792434f90  Source/Licenca.h
-fe184924944919ff76b50f92e87ff23c327976ac045252119cef68aaa53d384b  Source/PluginEditor.cpp
-0ebb000c6d26bdbe98580fa336972130969809bff130c2add7e83c74fc87df3b  Source/PluginEditor.h
+d83396b49acbc1be3a15babc734a1b53aac8901a71014b3cdb10f99d0379505e  Source/Licenca.cpp
+de3c9624c605ee63006c6f7993a2478ef5d236ff635eac4b087d19a8c60a6fdf  Source/Licenca.h
+f766da2dcce2e597b50ac1407a94c175c9d47f34c9385ae097f53ffd93638f0a  Source/PluginEditor.cpp
+1e120b3803b7127bd4d41383336ab6b7a092a60f09bcc9346eaca51ae0733d89  Source/PluginEditor.h
 f1d401dbd364eef5d6363d1435e80eada0620c457fbc625da94468330615feea  Source/PluginProcessor.cpp
 87bf9769eb20fdc4370111e1e6fa2352d53fa3d412ad553e189cd62eb5bdd9a9  Source/PluginProcessor.h
 7b8b23d1e401fb91e0618937cc5bf76e9b3b8a1f1c9866d0e3215afd93b2b00d  Source/Tuner.h
 4da8941ca57e5ee6b5dbf95a29032f102dbc4c1dd5242ab9dab6aea31e0d383c  TERCEIROS.md
-2a85042d60e55a942f12746e6fd5bf0f8480a25d9e3a8a8bd0c87ba254b409bf  Tests/DspTest.cpp
+fe89f17597a41b98fba26aefbfbe68cdd6f9aecad2a9cbabd512a0c3a76e6e24  Tests/DspTest.cpp
 d051942142c5348357d526c37ed33079945a9d8f6d32cbc92e1374ae976760bc  Tests/pedalboard-ui-test.py
 ac278c6a82fc6017911db3bf2d544fe492754ebe68046efd792a82ec51d25495  Tests/vergani-dsp-test.js
 8ee401eb4dc1af8dea3b0f4efbdc95128ab37d0b0f6d07bbe449e3339f3a9413  Tests/vergani-ui-test.py
@@ -67,7 +67,7 @@ a0326b7cb6e3885cf252a04186a141253ecd62e0b0c516208d9af1410b0173be  web/sw.js
 --------------------------------------------------------------------
 
 RESUMO DA OBRA (SHA-256 da lista acima):
-c1926810e81ba0ad43dadfcabadb3c639c8cc404ce222ebb2d537b2c7766ecd9
+e1743a5b83f027de0d7482d6cba4d5f7669f27d16d38f22b2e071396ff53acbd
 
 Esse resumo identifica a obra inteira nesta data. Qualquer alteração em
 qualquer arquivo muda o resumo. Para ter prova de data independente,

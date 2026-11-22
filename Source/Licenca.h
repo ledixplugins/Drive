@@ -5,7 +5,9 @@
 // Licença: ver LICENSE  |  https://github.com/ledixplugins/Drive
 //
 // As regras são as mesmas do AURA Synth Bass:
-//   - teste de 15 dias contados da primeira abertura;
+//   - o teste de 15 dias só começa quando a pessoa informa um e-mail (registrado
+//     no mesmo servidor do Synth Bass, separado por produto); um e-mail só
+//     inicia o teste uma vez;
 //   - o estado é guardado em dois lugares, então reinstalar não reinicia o teste;
 //   - adiantar o relógio não estende o teste; atrasar bloqueia;
 //   - depois do teste, chave de ativação (o limite de aparelhos é do servidor);
@@ -25,21 +27,27 @@ namespace AuraLicenca
     inline constexpr int    diasDeTolerancia = 30;   // uso offline depois de ativada
     inline constexpr double umDiaMs         = 24.0 * 60.0 * 60.0 * 1000.0;
     inline constexpr const char* servidor   = "https://api.lemonsqueezy.com/v1/licenses";
+    inline constexpr const char* servidorTeste = "https://aura-trial.ledixplugins.workers.dev";
+    inline constexpr const char* produto    = "preamp-bass";
     inline constexpr const char* semente    = "AURA-PREAMP-BASS-TRG-2026";
 
     /** O que fica guardado no disco. Tempos em milissegundos desde 1970. */
     struct Estado
     {
-        double t0   = 0.0;    // primeira abertura
+        double t0   = 0.0;    // primeira abertura (só é marcada quando o teste é iniciado com e-mail)
         double seen = 0.0;    // maior data já vista (pega o relógio atrasado)
         double val  = 0.0;    // última validação com o servidor
         juce::String chave, instancia, aparelho;
+        juce::String email;   // e-mail que iniciou o teste
+        bool reutilizado = false;  // esse e-mail já tinha usado o teste antes (noutro aparelho)
 
         bool temChave() const noexcept { return chave.isNotEmpty() && instancia.isNotEmpty(); }
+        bool temEmail() const noexcept { return email.isNotEmpty(); }
     };
 
     enum class Status
     {
+        precisaEmail, // ainda não informou o e-mail: o teste não começou
         teste,        // dentro dos 15 dias
         expirado,     // teste terminou, sem chave
         relogio,      // o relógio do sistema voltou no tempo
@@ -83,6 +91,7 @@ namespace AuraLicenca
         juce::String idDoAparelho() const        { return idAparelho; }
         juce::String nomeDoAparelho() const      { return nomeAparelho; }
         juce::String chaveMascarada() const;
+        bool estadoReutilizado() const noexcept  { return estado.reutilizado; }
 
         /** Relê o disco, marca o uso de hoje e recalcula o status. */
         void atualizar();
@@ -93,6 +102,7 @@ namespace AuraLicenca
         struct Resposta { bool ok = false; juce::String erro; };
 
         /** Chamadas de rede — bloqueiam; nunca use na thread de áudio. */
+        Resposta iniciarTeste (const juce::String& email);
         Resposta ativar (const juce::String& chave);
         Resposta desativar();
         Resposta revalidar();
@@ -104,7 +114,8 @@ namespace AuraLicenca
     private:
         void carregar();
         void gravar();
-        juce::var chamar (const juce::String& caminho, const juce::StringPairArray& campos, int& httpStatus);
+        juce::var chamar (const juce::String& baseUrl, const juce::String& caminho,
+                          const juce::StringPairArray& campos, int& httpStatus);
 
         Estado estado;
         Status statusAtual = Status::teste;

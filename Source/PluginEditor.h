@@ -86,14 +86,18 @@ private:
     void timerCallback() override;
     void tentarAtivar();
     void tentarDesativar();
+    void tentarIniciarTeste();
 
     AuraPreampBassAudioProcessor& processor;
     juce::TextEditor campoChave;
+    juce::TextEditor campoEmail;
     juce::TextButton botaoAcao;
+    juce::TextButton botaoAlternar;    // "já tenho uma chave" / "voltar ao teste"
     juce::TextButton botaoComprar;
     juce::String mensagem, erro;
     bool ocupado = false;
     bool forcada = false;
+    bool modoChave = false;     // na tela de e-mail, alternado para colar uma chave direto
     std::unique_ptr<juce::Thread> trabalho;
 };
 

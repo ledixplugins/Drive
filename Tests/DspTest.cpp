@@ -284,6 +284,19 @@ int main()
         check (! liberado (avaliar (lic, hoje + 31 * dia)), "revalidação pendente não libera");
         check (avaliar (lic, hoje + 400 * dia) == Status::revalidar, "licença nunca volta a ser teste");
 
+        // Acesso total do dono: mesma tolerância de 30 dias da chave, mas tem prioridade sobre
+        // o teste e sobre uma chave normal (não depende de e-mail nem de chave).
+        Estado dono; dono.dono = "tok"; dono.donoVal = hoje;
+        check (avaliar (dono, hoje + 29 * dia) == Status::acessoTotal, "acesso do dono vale offline por 30 dias");
+        check (liberado (avaliar (dono, hoje + 29 * dia)), "acesso do dono libera o processamento");
+        check (avaliar (dono, hoje + 31 * dia) == Status::revalidar, "acesso do dono também pede revalidação após 30 dias");
+
+        Estado donoEteste = dono; donoEteste.t0 = hoje; donoEteste.seen = hoje; donoEteste.email = "a@b.com";
+        check (avaliar (donoEteste, hoje + 1 * dia) == Status::acessoTotal, "acesso do dono tem prioridade sobre o teste");
+
+        Estado donoEchave = dono; donoEchave.chave = "K"; donoEchave.instancia = "i"; donoEchave.val = hoje;
+        check (avaliar (donoEchave, hoje) == Status::acessoTotal, "acesso do dono tem prioridade sobre uma chave ativa");
+
         // Mesclar os dois arquivos: vale a abertura mais antiga e o e-mail já registrado
         Estado a1; a1.t0 = hoje + 5 * dia; a1.seen = hoje + 6 * dia;
         Estado a2; a2.t0 = hoje;           a2.seen = hoje + 2 * dia; a2.email = "a@b.com";
@@ -295,6 +308,13 @@ int main()
 
         Estado comChave; comChave.chave = "K"; comChave.instancia = "i"; comChave.val = hoje + 9 * dia;
         check (mesclar (a1, comChave).temChave(), "mesclar preserva a chave ativada");
+
+        Estado comDono; comDono.dono = "tok"; comDono.donoVal = hoje + 9 * dia;
+        check (mesclar (a1, comDono).temDono(), "mesclar preserva o acesso do dono");
+
+        Estado donoVelho; donoVelho.dono = "velho"; donoVelho.donoVal = hoje;
+        Estado donoNovo;  donoNovo.dono  = "novo";  donoNovo.donoVal  = hoje + 5 * dia;
+        check (mesclar (donoVelho, donoNovo).dono == "novo", "mesclar mantém o acesso do dono mais recente");
 
         // O gerente grava nos dois lugares e não reinicia ao apagar um deles
         Gerente g;
@@ -870,6 +890,23 @@ int main()
         {
             p.licenca.agora = [] { return (double) juce::Time::currentTimeMillis()
                                           + 400.0 * AuraLicenca::umDiaMs; };
+            p.revisarLicenca();
+        }
+
+        // Tela de "acesso do desenvolvedor" vencido (e-mail + código de novo)
+        if (std::getenv ("AURA_SNAPSHOT_DONO") != nullptr)
+        {
+            AuraLicenca::Estado estado;
+            estado.dono = "token-de-teste";
+            estado.donoVal = (double) juce::Time::currentTimeMillis();
+            const auto texto = juce::JSON::toString (AuraLicenca::paraVar (estado), true);
+            p.licenca.arquivo1.getParentDirectory().createDirectory();
+            p.licenca.arquivo1.replaceWithText (texto);
+            p.licenca.arquivo2.getParentDirectory().createDirectory();
+            p.licenca.arquivo2.replaceWithText (texto);
+            p.licenca.agora = [] { return (double) juce::Time::currentTimeMillis()
+                                          + 40.0 * AuraLicenca::umDiaMs; };
+            p.licenca.atualizar();
             p.revisarLicenca();
         }
 

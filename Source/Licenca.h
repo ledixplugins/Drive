@@ -42,9 +42,12 @@ namespace AuraLicenca
         juce::String chave, instancia, aparelho;
         juce::String email;   // e-mail que iniciou o teste
         bool reutilizado = false;  // esse e-mail já tinha usado o teste antes (noutro aparelho)
+        juce::String dono;    // prova (owner_token) do acesso total do desenvolvedor, se houver
+        double donoVal = 0.0; // última confirmação do acesso total com o servidor
 
         bool temChave() const noexcept { return chave.isNotEmpty() && instancia.isNotEmpty(); }
         bool temEmail() const noexcept { return email.isNotEmpty(); }
+        bool temDono() const noexcept  { return dono.isNotEmpty(); }
     };
 
     enum class Status
@@ -54,7 +57,8 @@ namespace AuraLicenca
         expirado,     // teste terminou, sem chave
         relogio,      // o relógio do sistema voltou no tempo
         licenciada,   // chave ativa e validada
-        revalidar     // chave ativa, mas passou da tolerância offline
+        acessoTotal,  // acesso total do desenvolvedor (e-mail + código secreto), confirmado com o servidor
+        revalidar     // chave (ou acesso do dono) ativa, mas passou da tolerância offline
     };
 
     //==============================================================================
@@ -72,7 +76,7 @@ namespace AuraLicenca
     /** O plugin processa som? Teste válido ou licença em dia. */
     inline bool liberado (Status s) noexcept
     {
-        return s == Status::teste || s == Status::licenciada;
+        return s == Status::teste || s == Status::licenciada || s == Status::acessoTotal;
     }
 
     juce::String textoDoStatus (Status s, int diasRestantes);
@@ -94,6 +98,7 @@ namespace AuraLicenca
         juce::String nomeDoAparelho() const      { return nomeAparelho; }
         juce::String chaveMascarada() const;
         bool estadoReutilizado() const noexcept  { return estado.reutilizado; }
+        bool estaComoDono() const noexcept       { return estado.temDono(); }
 
         /** Relê o disco, marca o uso de hoje e recalcula o status. */
         void atualizar();
@@ -108,6 +113,14 @@ namespace AuraLicenca
         Resposta ativar (const juce::String& chave);
         Resposta desativar();
         Resposta revalidar();
+
+        /** Acesso total do desenvolvedor: e-mail cadastrado no servidor (OWNER_EMAILS)
+            mais o código secreto. Guarda a prova assinada que o servidor devolve, para
+            revalidar sem precisar digitar o código de novo. */
+        Resposta entrarComoDono (const juce::String& email, const juce::String& codigo);
+
+        /** Sai do acesso total neste aparelho (volta ao teste/chave normal). */
+        Resposta sairAcessoTotal();
 
         // Visível para os testes: caminhos e relógio podem ser trocados.
         std::function<double()> agora { [] { return (double) juce::Time::currentTimeMillis(); } };

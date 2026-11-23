@@ -30,6 +30,11 @@ Estado mesclar (const Estado& a, const Estado& b)
         r.reutilizado = a.email.isNotEmpty() ? a.reutilizado : b.reutilizado;
     }
 
+    // O acesso do dono vale pela confirmação mais recente, independente de qual
+    // dos dois arquivos "venceu" acima pela validação da chave.
+    if (a.donoVal >= b.donoVal) { r.dono = a.dono; r.donoVal = a.donoVal; }
+    else                        { r.dono = b.dono; r.donoVal = b.donoVal; }
+
     return r;
 }
 
@@ -38,6 +43,11 @@ Status avaliar (const Estado& e, double agora)
     // Relógio atrasado mais de um dia em relação ao que já vimos: bloqueia.
     if (e.seen > 0.0 && agora < e.seen - umDiaMs)
         return Status::relogio;
+
+    // O acesso total do dono vale para qualquer produto e tem prioridade sobre
+    // o teste e sobre uma chave normal (mesma regra do AURA Synth Bass).
+    if (e.temDono())
+        return (agora - e.donoVal) <= diasDeTolerancia * umDiaMs ? Status::acessoTotal : Status::revalidar;
 
     if (e.temChave())
         return (agora - e.val) <= diasDeTolerancia * umDiaMs ? Status::licenciada
@@ -71,6 +81,7 @@ String textoDoStatus (Status s, int dias)
         case Status::expirado:   return String::fromUTF8 ("O teste de 15 dias terminou");
         case Status::relogio:    return String::fromUTF8 ("O relógio do sistema está atrasado");
         case Status::licenciada: return String::fromUTF8 ("Licença ativa neste aparelho");
+        case Status::acessoTotal: return String::fromUTF8 ("Acesso total do desenvolvedor neste aparelho");
         case Status::revalidar:  return String::fromUTF8 ("Precisamos revalidar a sua licença");
     }
     return {};
@@ -87,6 +98,8 @@ var paraVar (const Estado& e)
     o->setProperty ("name", e.aparelho);
     o->setProperty ("email", e.email);
     o->setProperty ("reused", e.reutilizado);
+    o->setProperty ("owner", e.dono);
+    o->setProperty ("ownerVal", e.donoVal);
     return var (o);
 }
 
@@ -103,6 +116,8 @@ Estado deVar (const var& v)
         e.aparelho  = o->getProperty ("name").toString();
         e.email     = o->getProperty ("email").toString();
         e.reutilizado = (bool) o->getProperty ("reused");
+        e.dono      = o->getProperty ("owner").toString();
+        e.donoVal   = (double) o->getProperty ("ownerVal");
     }
     return e;
 }
@@ -284,6 +299,56 @@ Gerente::Resposta Gerente::iniciarTeste (const String& emailDigitado)
     }
 
     return { false, String::fromUTF8 ("Não foi possível iniciar o teste agora. Tente de novo.") };
+}
+
+Gerente::Resposta Gerente::entrarComoDono (const String& emailDigitado, const String& codigoDigitado)
+{
+    const auto email = emailDigitado.trim().toLowerCase();
+    if (! pareceEmailValido (email))
+        return { false, String::fromUTF8 ("Digite um e-mail válido.") };
+
+    const auto codigo = codigoDigitado.trim();
+    if (codigo.isEmpty())
+        return { false, String::fromUTF8 ("Digite o código do desenvolvedor.") };
+
+    StringPairArray campos;
+    campos.set ("email", email);
+    campos.set ("device", idAparelho);
+    campos.set ("owner_code", codigo);
+
+    int http = 0;
+    const auto r = chamar (servidorTeste, caminhoTeste, campos, http);
+
+    if (http == 0)
+        return { false, String::fromUTF8 ("Sem conexão com o servidor.") };
+
+    if (auto* o = r.getDynamicObject())
+    {
+        if ((bool) o->getProperty ("ok") && (bool) o->getProperty ("owner") && o->hasProperty ("owner_token"))
+        {
+            estado.email = email;
+            estado.dono = o->getProperty ("owner_token").toString();
+            estado.donoVal = agora();
+            if (estado.donoVal > estado.seen) estado.seen = estado.donoVal;
+            gravar();
+            atualizar();
+            return { true, {} };
+        }
+
+        const auto erro = o->getProperty ("error").toString();
+        if (erro.isNotEmpty()) return { false, erro };
+    }
+
+    return { false, String::fromUTF8 ("Código inválido.") };
+}
+
+Gerente::Resposta Gerente::sairAcessoTotal()
+{
+    estado.dono = {};
+    estado.donoVal = 0.0;
+    gravar();
+    atualizar();
+    return { true, {} };
 }
 
 Gerente::Resposta Gerente::ativar (const String& chave)

@@ -745,17 +745,42 @@ LicencaOverlay::LicencaOverlay (AuraPreampBassAudioProcessor& p) : processor (p)
     campoEmail.onReturnKey = [this] { tentarIniciarTeste(); };
     addAndMakeVisible (campoEmail);
 
+    campoDono.setTextToShowWhenEmpty (String::fromUTF8 ("código de desenvolvedor"),
+                                      Colours::white.withAlpha (0.35f));
+    campoDono.setJustification (Justification::centred);
+    campoDono.setFont (Font (FontOptions (15.0f)));
+    campoDono.setColour (TextEditor::backgroundColourId, Colour (0xff0e0f11));
+    campoDono.setColour (TextEditor::outlineColourId, Colour (0xff454a52));
+    campoDono.setColour (TextEditor::focusedOutlineColourId, Colour (0xffe8890c));
+    campoDono.setColour (TextEditor::textColourId, Colours::white);
+    campoDono.setPasswordCharacter (juce::juce_wchar (0x2022));
+    campoDono.onReturnKey = [this] { tentarEntrarComoDono(); };
+    addChildComponent (campoDono);
+
     botaoAcao.onClick = [this]
     {
+        using S = AuraLicenca::Status;
         const auto st = processor.licenca.status();
-        if (st == AuraLicenca::Status::licenciada) tentarDesativar();
-        else if (st == AuraLicenca::Status::precisaEmail && ! modoChave) tentarIniciarTeste();
+        const bool entrarDono = modoDono || (st == S::revalidar && processor.licenca.estaComoDono());
+        if (st == S::acessoTotal) tentarSairAcessoTotal();
+        else if (st == S::licenciada) tentarDesativar();
+        else if (entrarDono) tentarEntrarComoDono();
+        else if (st == S::precisaEmail && ! modoChave) tentarIniciarTeste();
         else tentarAtivar();
     };
     addAndMakeVisible (botaoAcao);
 
-    botaoAlternar.onClick = [this] { modoChave = ! modoChave; erro = {}; atualizar(); };
+    botaoAlternar.onClick = [this] { modoChave = ! modoChave; modoDono = false; erro = {}; atualizar(); };
     addAndMakeVisible (botaoAlternar);
+
+    // Estilo de link, como no site: sem fundo, texto discreto.
+    linkDono.setButtonText (String::fromUTF8 ("acesso do desenvolvedor"));
+    linkDono.setColour (TextButton::buttonColourId, Colours::transparentBlack);
+    linkDono.setColour (TextButton::buttonOnColourId, Colours::transparentBlack);
+    linkDono.setColour (TextButton::textColourOffId, Colour (0xff7d838c));
+    linkDono.setColour (TextButton::textColourOnId, Colour (0xff7d838c));
+    linkDono.onClick = [this] { modoDono = ! modoDono; erro = {}; atualizar(); };
+    addChildComponent (linkDono);
 
     // A venda ainda não está aberta: o botão fica avisando, sem levar a lugar nenhum.
     botaoComprar.setEnabled (false);
@@ -785,17 +810,24 @@ void LicencaOverlay::atualizar()
 
     if (forcada && AuraLicenca::liberado (st))
     {
-        mensagem = st == AuraLicenca::Status::licenciada
+        mensagem = st == AuraLicenca::Status::acessoTotal
+                     ? String::fromUTF8 ("Acesso total do desenvolvedor neste aparelho.")
+                     : st == AuraLicenca::Status::licenciada
                      ? String::fromUTF8 ("Licença ativa neste aparelho. Chave ")
                          + processor.licenca.chaveMascarada() + "."
                      : String::fromUTF8 ("Você está no teste de 15 dias — faltam ")
                          + String (processor.licenca.diasRestantes())
                          + String::fromUTF8 (" dias. Já tem uma chave? Cole abaixo.");
-        botaoAcao.setButtonText (st == AuraLicenca::Status::licenciada
+        botaoAcao.setButtonText (st == AuraLicenca::Status::acessoTotal
+                                   ? String::fromUTF8 ("SAIR DO ACESSO TOTAL")
+                                   : st == AuraLicenca::Status::licenciada
                                    ? String::fromUTF8 ("DESATIVAR ESTE APARELHO")
                                    : String::fromUTF8 ("ATIVAR"));
         botaoComprar.setButtonText (String::fromUTF8 ("COMPRAR LICENÇA — em breve"));
-        campoChave.setVisible (st != AuraLicenca::Status::licenciada);
+        campoChave.setVisible (st == AuraLicenca::Status::teste);
+        campoEmail.setVisible (false);
+        campoDono.setVisible (false);
+        linkDono.setVisible (false);
         botaoAcao.setVisible (true);
         repaint();
         return;
@@ -805,10 +837,19 @@ void LicencaOverlay::atualizar()
     {
         if (! modoChave)
         {
-            mensagem = String::fromUTF8 ("Teste grátis de 15 dias com todos os recursos. Informe seu e-mail "
-                                         "para começar. Cada e-mail só pode usar o teste uma vez. É preciso "
-                                         "estar conectado à internet neste primeiro passo.");
-            botaoAcao.setButtonText (String::fromUTF8 ("INICIAR TESTE GRÁTIS"));
+            if (! modoDono)
+            {
+                mensagem = String::fromUTF8 ("Teste grátis de 15 dias com todos os recursos. Informe seu e-mail "
+                                             "para começar. Cada e-mail só pode usar o teste uma vez. É preciso "
+                                             "estar conectado à internet neste primeiro passo.");
+                botaoAcao.setButtonText (String::fromUTF8 ("INICIAR TESTE GRÁTIS"));
+            }
+            else
+            {
+                mensagem = String::fromUTF8 ("Acesso total do desenvolvedor: informe o e-mail cadastrado e o "
+                                             "código secreto.");
+                botaoAcao.setButtonText (String::fromUTF8 ("ENTRAR COMO DONO"));
+            }
             botaoAlternar.setButtonText (String::fromUTF8 ("JÁ TENHO UMA CHAVE"));
         }
         else
@@ -820,11 +861,15 @@ void LicencaOverlay::atualizar()
         botaoComprar.setButtonText (String::fromUTF8 ("COMPRAR LICENÇA — em breve"));
         campoEmail.setVisible (! modoChave);
         campoChave.setVisible (modoChave);
+        campoDono.setVisible (! modoChave && modoDono);
+        linkDono.setVisible (! modoChave);
         botaoAlternar.setVisible (true);
         botaoAcao.setVisible (true);
         repaint();
         return;
     }
+
+    const bool revalidarDono = (st == S::revalidar && processor.licenca.estaComoDono());
 
     switch (st)
     {
@@ -833,8 +878,12 @@ void LicencaOverlay::atualizar()
                                          "Acerte a data e a hora do sistema para continuar.");
             break;
         case S::revalidar:
-            mensagem = String::fromUTF8 ("Faz mais de 30 dias que não conseguimos confirmar a sua licença. "
-                                         "Conecte-se à internet e toque em ATIVAR.");
+            mensagem = revalidarDono
+                         ? String::fromUTF8 ("Faz mais de 30 dias que não conseguimos confirmar o acesso total "
+                                             "do desenvolvedor. Conecte-se à internet e informe o e-mail e o "
+                                             "código de novo.")
+                         : String::fromUTF8 ("Faz mais de 30 dias que não conseguimos confirmar a sua licença. "
+                                             "Conecte-se à internet e toque em ATIVAR.");
             break;
         case S::expirado:
         default:
@@ -847,10 +896,13 @@ void LicencaOverlay::atualizar()
     }
 
     botaoAcao.setButtonText (st == S::licenciada ? String::fromUTF8 ("DESATIVAR ESTE APARELHO")
+                                                 : revalidarDono ? String::fromUTF8 ("ENTRAR COMO DONO")
                                                  : String::fromUTF8 ("ATIVAR"));
     botaoComprar.setButtonText (String::fromUTF8 ("COMPRAR LICENÇA — em breve"));
-    campoEmail.setVisible (false);
-    campoChave.setVisible (st != S::relogio);
+    campoEmail.setVisible (revalidarDono);
+    campoChave.setVisible (st != S::relogio && ! revalidarDono);
+    campoDono.setVisible (revalidarDono);
+    linkDono.setVisible (false);
     botaoAlternar.setVisible (false);
     botaoAcao.setVisible (st != S::relogio);
     repaint();
@@ -897,6 +949,58 @@ void LicencaOverlay::tentarIniciarTeste()
     trabalho.reset (new LambdaThread ("aura-licenca", [this, email]
     {
         const auto r = processor.licenca.iniciarTeste (email);
+        MessageManager::callAsync ([this, r]
+        {
+            ocupado = false;
+            botaoAcao.setEnabled (true);
+            erro = r.ok ? String() : r.erro;
+            processor.revisarLicenca();
+            atualizar();
+        });
+    }));
+    trabalho->startThread();
+}
+
+void LicencaOverlay::tentarEntrarComoDono()
+{
+    if (ocupado) return;
+    const auto email = campoEmail.getText().trim();
+    const auto codigo = campoDono.getText().trim();
+    if (email.isEmpty()) { erro = String::fromUTF8 ("Digite um e-mail válido."); repaint(); return; }
+    if (codigo.isEmpty()) { erro = String::fromUTF8 ("Digite o código do desenvolvedor."); repaint(); return; }
+
+    ocupado = true;
+    erro = {};
+    botaoAcao.setEnabled (false);
+    repaint();
+
+    trabalho.reset (new LambdaThread ("aura-licenca", [this, email, codigo]
+    {
+        const auto r = processor.licenca.entrarComoDono (email, codigo);
+        MessageManager::callAsync ([this, r]
+        {
+            ocupado = false;
+            botaoAcao.setEnabled (true);
+            erro = r.ok ? String() : r.erro;
+            if (r.ok) { modoDono = false; campoDono.setText ({}, false); }
+            processor.revisarLicenca();
+            atualizar();
+        });
+    }));
+    trabalho->startThread();
+}
+
+void LicencaOverlay::tentarSairAcessoTotal()
+{
+    if (ocupado) return;
+    ocupado = true;
+    erro = {};
+    botaoAcao.setEnabled (false);
+    repaint();
+
+    trabalho.reset (new LambdaThread ("aura-licenca", [this]
+    {
+        const auto r = processor.licenca.sairAcessoTotal();
         MessageManager::callAsync ([this, r]
         {
             ocupado = false;
@@ -990,11 +1094,18 @@ void LicencaOverlay::resized()
     const int larg = (int) (340.0f * esc);
     const int meio = getWidth() / 2;
 
-    campoChave.setBounds (meio - larg / 2, (int) (150.0f * esc), larg, (int) (36.0f * esc));
-    campoEmail.setBounds (meio - larg / 2, (int) (150.0f * esc), larg, (int) (36.0f * esc));
-    botaoAcao.setBounds (meio - larg / 2, (int) (194.0f * esc), larg, (int) (32.0f * esc));
-    botaoAlternar.setBounds (meio - larg / 2, (int) (232.0f * esc), larg, (int) (24.0f * esc));
-    botaoComprar.setBounds (meio - larg / 2, (int) (262.0f * esc), larg, (int) (28.0f * esc));
+    campoChave.setBounds (meio - larg / 2, (int) (150.0f * esc), larg, (int) (32.0f * esc));
+    campoEmail.setBounds (meio - larg / 2, (int) (150.0f * esc), larg, (int) (32.0f * esc));
+    campoDono.setBounds (meio - larg / 2, (int) (184.0f * esc), larg, (int) (24.0f * esc));
+    botaoAcao.setBounds (meio - larg / 2, (int) (214.0f * esc), larg, (int) (26.0f * esc));
+
+    // "já tenho uma chave" e "acesso do desenvolvedor" dividem a mesma linha,
+    // lado a lado (a segunda só aparece quando a primeira também aparece).
+    const int meioLarg = larg / 2 - (int) (4.0f * esc);
+    botaoAlternar.setBounds (meio - larg / 2, (int) (246.0f * esc), meioLarg, (int) (20.0f * esc));
+    linkDono.setBounds (meio + larg / 2 - meioLarg, (int) (246.0f * esc), meioLarg, (int) (20.0f * esc));
+
+    botaoComprar.setBounds (meio - larg / 2, (int) (272.0f * esc), larg, (int) (24.0f * esc));
 }
 
 //==============================================================================

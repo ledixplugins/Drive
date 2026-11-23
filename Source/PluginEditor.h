@@ -87,17 +87,22 @@ private:
     void tentarAtivar();
     void tentarDesativar();
     void tentarIniciarTeste();
+    void tentarEntrarComoDono();
+    void tentarSairAcessoTotal();
 
     AuraPreampBassAudioProcessor& processor;
     juce::TextEditor campoChave;
     juce::TextEditor campoEmail;
+    juce::TextEditor campoDono;        // código secreto do desenvolvedor
     juce::TextButton botaoAcao;
     juce::TextButton botaoAlternar;    // "já tenho uma chave" / "voltar ao teste"
+    juce::TextButton linkDono;         // "acesso do desenvolvedor"
     juce::TextButton botaoComprar;
     juce::String mensagem, erro;
     bool ocupado = false;
     bool forcada = false;
     bool modoChave = false;     // na tela de e-mail, alternado para colar uma chave direto
+    bool modoDono = false;      // revela o campo do código secreto
     std::unique_ptr<juce::Thread> trabalho;
 };
 

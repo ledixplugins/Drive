@@ -22,22 +22,18 @@ cp Resources/ir/cab_4x10.wav Resources/ir/cab_1x15.wav "$OUT/assets/"
 cp Resources/fonts/Roboto.ttf Resources/fonts/RussoOne-Regular.ttf "$OUT/assets/"
 cp Resources/fonts/OFL-Roboto.txt Resources/fonts/OFL-RussoOne.txt "$OUT/assets/"
 
-# Ícones do app, recortados do próprio painel (logotipo sobre o metal).
+# Ícones do app: a mesma arte quadrada usada no instalador/app nativo
+# (Resources/icon/icon.png, ver Tools/gera_icone_app.py), só redimensionada.
 # Os ícones ficam versionados em web/icons/ para que o site possa ser montado
-# em qualquer máquina; se o Pillow estiver instalado, são regerados do painel.
+# em qualquer máquina; se o Pillow estiver instalado, são regerados daqui.
 if python3 -c "import PIL" 2>/dev/null; then
   python3 - "$OUT" <<'PY'
 import sys
 from PIL import Image
 out = sys.argv[1]
-panel = Image.open('Resources/ui/background.jpg').convert('RGB')
-logo = panel.crop((150, 100, 1150, 300))           # faixa do logotipo, em 2x
+fonte = Image.open('Resources/icon/icon.png').convert('RGB')
 for size in (192, 512):
-    canvas = Image.new('RGB', (size, size), (16, 17, 19))
-    w = int(size * 0.86)
-    scaled = logo.resize((w, max(1, round(w * logo.height / logo.width))), Image.LANCZOS)
-    canvas.paste(scaled, ((size - scaled.width) // 2, (size - scaled.height) // 2))
-    canvas.save(f'web/icons/icon-{size}.png')
+    fonte.resize((size, size), Image.LANCZOS).save(f'web/icons/icon-{size}.png')
 PY
 fi
 cp web/icons/icon-192.png web/icons/icon-512.png "$OUT/assets/"

@@ -46,6 +46,8 @@ juce_add_plugin(AuraPreampBass
     PLUGIN_MANUFACTURER_CODE    Thgo
     PLUGIN_CODE                 Grdi
     PRODUCT_NAME                "AURA Preamp Bass"
+    ICON_BIG                    Resources/icon/icon.png
+    ICON_SMALL                  Resources/icon/icon.png
     FORMATS                     ${AURA_FORMATS}
     IS_SYNTH                    FALSE
     NEEDS_MIDI_INPUT            FALSE
